@@ -33,6 +33,7 @@
 		A93F7EE05F70358A9B46BB55 /* TripPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04923700719FF91F325A050F /* TripPlannerView.swift */; };
 		B236D2665FB2BC2B11E5ED97 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */; };
 		BE896A2B2E5512B88A53E925 /* CrashSafeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */; };
+		C1CC2CF9212A2D9F2835ED24 /* CrashSafeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */; };
 		C4A44E4EB8266ACB6EA5E0B5 /* ProfileViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E31545103C293A896868B20 /* ProfileViewModels.swift */; };
 		C5D165A1C5E401B63933232A /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA3CDA3D3AA0D68A5D496B1 /* SignUpView.swift */; };
 		C96B14B40A66491909AC06D9 /* FormField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D7C06E7C1CE9F4C0B73 /* FormField.swift */; };
@@ -62,6 +63,7 @@
 		1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthService.swift; sourceTree = "<group>"; };
 		25CD44FEA8F13BE11BFE94E3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		33EA991DDA4262AAAAD072E5 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashSafeTests.swift; sourceTree = "<group>"; };
 		402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		4A6AD8E09B52B378D34374AF /* AssistantService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantService.swift; sourceTree = "<group>"; };
 		4EAA0D4323A0D7B1FC568FDF /* AssistantViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantViewModel.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 		AE511D98B765FCB817D778E4 /* CrashSafeTests */ = {
 			isa = PBXGroup;
 			children = (
+				389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */,
 			);
 			path = CrashSafeTests;
 			sourceTree = "<group>";
@@ -467,6 +470,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1CC2CF9212A2D9F2835ED24 /* CrashSafeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
