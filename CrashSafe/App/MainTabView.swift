@@ -25,6 +25,9 @@ struct MainTabView: View {
             .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
             .tag(AppRouter.Tab.profile)
         }
+        .fullScreenCover(item: $router.activeCrash) { event in
+            CheckInContainer(event: event, user: user)
+        }
     }
 
     private func placeholder(_ title: String) -> some View {
