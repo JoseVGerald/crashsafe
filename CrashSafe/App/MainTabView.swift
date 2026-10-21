@@ -14,8 +14,15 @@ struct MainTabView: View {
             TripPlannerView(userID: user.id)
                 .tabItem { Label("Trips", systemImage: "map.fill") }
                 .tag(AppRouter.Tab.trips)
-            placeholder("Assistant")
-                .tabItem { Label("Assistant", systemImage: "waveform.circle.fill") }
+            AssistantView(user: user, viewModel: AssistantViewModel(
+                service: env.assistant,
+                voice: env.voiceInput,
+                contextProvider: { [user] in
+                    AssistantContext(userName: user.name, isOnline: true, scenario: .general, carDescription: "",
+                                     insurer: "", medicalNotes: "", familyContactNames: [])
+                }
+            ))
+            .tabItem { Label("Assistant", systemImage: "waveform.circle.fill") }
                 .tag(AppRouter.Tab.assistant)
             VStack(spacing: 16) {
                 Text("Signed in as \(user.name)")
