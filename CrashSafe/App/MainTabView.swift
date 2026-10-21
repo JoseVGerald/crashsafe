@@ -8,7 +8,7 @@ struct MainTabView: View {
     var body: some View {
         @Bindable var router = env.router
         TabView(selection: $router.selectedTab) {
-            placeholder("Home")
+            HomeView(user: user, viewModel: HomeViewModel(detector: env.crashDetector, userID: user.id))
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(AppRouter.Tab.home)
             placeholder("Trips")
