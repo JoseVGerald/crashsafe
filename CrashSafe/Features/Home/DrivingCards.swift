@@ -44,7 +44,8 @@ struct ConditionsCard: View {
                 Spacer()
                 if let weather {
                     Image(systemName: weather.condition.systemImage(isDay: weather.isDay))
-                        .symbolRenderingMode(.multicolor)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(Brand.blueInk) // multicolor fog/cloud symbols are white and vanish on light cards
                         .font(.system(size: 46))
                         .transition(.scale.combined(with: .opacity))
                 }
