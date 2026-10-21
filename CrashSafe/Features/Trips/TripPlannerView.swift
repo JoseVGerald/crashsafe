@@ -200,15 +200,10 @@ struct TripPlannerView: View {
 
     private var datesCard: some View {
         VStack(spacing: 4) {
-            DatePicker(selection: $viewModel.startDate, displayedComponents: [.date, .hourAndMinute]) {
-                Label("Leave", systemImage: "calendar").foregroundStyle(Brand.textPrimary)
-            }
-            .frame(minHeight: 44)
+            DateField(title: "Leave", systemImage: "calendar", date: $viewModel.startDate, minimum: nil)
             Divider().overlay(Brand.stroke)
-            DatePicker(selection: $viewModel.endDate, in: viewModel.startDate..., displayedComponents: .date) {
-                Label("Return", systemImage: "calendar.badge.clock").foregroundStyle(Brand.textPrimary)
-            }
-            .frame(minHeight: 44)
+            DateField(title: "Return", systemImage: "calendar.badge.clock", date: $viewModel.endDate,
+                      minimum: viewModel.startDate)
         }
         .card(padding: Space.md)
     }
@@ -312,4 +307,60 @@ struct TripCard: View {
     TripPlannerView(userID: PreviewData.user.id)
         .environment(PreviewData.environment())
         .modelContainer(PreviewData.container())
+}
+
+/// Row with a consistently formatted date ("Oct 22, 2026 · 9:13 AM") that opens Apple's calendar picker.
+/// (The compact DatePicker switches to "10/22/26" for any day that isn't today.)
+struct DateField: View {
+    let title: String
+    let systemImage: String
+    @Binding var date: Date
+    let minimum: Date?
+    @State private var editing = false
+
+    var body: some View {
+        Button {
+            editing = true
+        } label: {
+            HStack {
+                Label(title, systemImage: systemImage).foregroundStyle(Brand.textPrimary)
+                Spacer(minLength: 8)
+                Text(date.formatted(.dateTime.month(.abbreviated).day().year()) + " · " + date.formatted(date: .omitted, time: .shortened))
+                    .font(.body.monospacedDigit())
+                    .foregroundStyle(Brand.blueInk)
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 36)
+                    .background(Brand.fieldFill, in: Capsule())
+            }
+            .frame(minHeight: 48)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.pressable)
+        .accessibilityLabel("\(title), \(date.formatted(date: .complete, time: .shortened))")
+        .accessibilityHint("Opens a calendar")
+        .sheet(isPresented: $editing) {
+            NavigationStack {
+                Group {
+                    if let minimum {
+                        DatePicker(title, selection: $date, in: minimum..., displayedComponents: [.date, .hourAndMinute])
+                    } else {
+                        DatePicker(title, selection: $date, displayedComponents: [.date, .hourAndMinute])
+                    }
+                }
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+                .padding(.horizontal)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { editing = false }.fontWeight(.semibold)
+                    }
+                }
+            }
+            .presentationDetents([.height(560), .large])
+            .presentationCornerRadius(28)
+        }
+    }
 }

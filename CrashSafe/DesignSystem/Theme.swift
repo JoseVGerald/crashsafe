@@ -405,3 +405,19 @@ struct AdaptiveStack<Content: View>: View {
         }
     }
 }
+
+/// Settings-style row label with a fixed-width icon so rows line up.
+struct RowLabel: View {
+    let title: String
+    let systemImage: String
+
+    var body: some View {
+        Label {
+            Text(title).foregroundStyle(Brand.textPrimary)
+        } icon: {
+            Image(systemName: systemImage)
+                .foregroundStyle(Brand.textPrimary)
+                .frame(width: 28)
+        }
+    }
+}
