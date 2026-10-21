@@ -11,33 +11,29 @@ struct MainTabView: View {
             HomeView(user: user, viewModel: HomeViewModel(detector: env.crashDetector, userID: user.id))
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(AppRouter.Tab.home)
+
             TripPlannerView(userID: user.id)
                 .tabItem { Label("Trips", systemImage: "map.fill") }
                 .tag(AppRouter.Tab.trips)
+
             AssistantView(user: user, viewModel: AssistantViewModel(
                 service: env.assistant,
                 voice: env.voiceInput,
+                // Replaced by AssistantView with one that reads the live profile.
                 contextProvider: { [user] in
                     AssistantContext(userName: user.name, isOnline: true, scenario: .general, carDescription: "",
                                      insurer: "", medicalNotes: "", familyContactNames: [])
                 }
             ))
             .tabItem { Label("Assistant", systemImage: "waveform.circle.fill") }
-                .tag(AppRouter.Tab.assistant)
-            VStack(spacing: 16) {
-                Text("Signed in as \(user.name)")
-                Button("Sign out") { env.session.signOut() }.buttonStyle(.secondary)
-            }
-            .padding()
-            .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
-            .tag(AppRouter.Tab.profile)
+            .tag(AppRouter.Tab.assistant)
+
+            ProfileView(user: user, viewModel: ProfileViewModel(userID: user.id, session: env.session))
+                .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
+                .tag(AppRouter.Tab.profile)
         }
         .fullScreenCover(item: $router.activeCrash) { event in
             CheckInContainer(event: event, user: user)
         }
-    }
-
-    private func placeholder(_ title: String) -> some View {
-        Text(title).font(.title)
     }
 }
