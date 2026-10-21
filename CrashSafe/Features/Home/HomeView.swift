@@ -109,13 +109,13 @@ struct HomeView: View {
     // MARK: Sections
 
     private var header: some View {
-        HStack(alignment: .center) {
+        AdaptiveStack(spacing: Space.sm) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(greeting)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Brand.textSecondary)
                 Text(user.firstName)
-                    .font(.system(size: 34, weight: .bold))
+                    .font(.largeTitle.bold())
                     .foregroundStyle(Brand.textPrimary)
             }
             Spacer()
@@ -197,7 +197,7 @@ struct HomeView: View {
     }
 
     private var quickActions: some View {
-        HStack(spacing: 12) {
+        AdaptiveStack(spacing: 12, horizontalAlignment: .center) {
             QuickAction(title: "CarPlay", systemImage: "car.rear.fill", tint: Brand.teal) {
                 env.router.showingCarPlay = true
             }
@@ -213,13 +213,15 @@ struct HomeView: View {
     @ViewBuilder
     private var lastCheckIn: some View {
         if let last = checkIns.first {
-            HStack(spacing: 12) {
-                Image(systemName: last.outcome.systemImage)
-                    .foregroundStyle(last.outcome == .ok ? Brand.greenInk : Brand.redInk)
-                Text("Last check-in · \(last.outcome.shortLabel)")
-                    .foregroundStyle(Brand.textPrimary)
-                    .lineLimit(1)
-                Spacer()
+            AdaptiveStack(spacing: 12) {
+                Label {
+                    Text("Last check-in · \(last.outcome.shortLabel)")
+                        .foregroundStyle(Brand.textPrimary)
+                } icon: {
+                    Image(systemName: last.outcome.systemImage)
+                        .foregroundStyle(last.outcome == .ok ? Brand.greenInk : Brand.redInk)
+                }
+                Spacer(minLength: 0)
                 Text(last.date.formatted(.relative(presentation: .named)))
                     .foregroundStyle(Brand.textSecondary)
             }

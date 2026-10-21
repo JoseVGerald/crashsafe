@@ -38,7 +38,6 @@ struct PillButtonStyle: ButtonStyle {
                     Capsule().strokeBorder(Brand.blueInk.opacity(0.35), lineWidth: 1.5)
                 }
             }
-            .shadow(color: shadowColor, radius: configuration.isPressed ? 4 : 12, y: configuration.isPressed ? 2 : 6)
             .opacity(isEnabled ? 1 : 0.45)
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .brightness(configuration.isPressed ? -0.03 : 0)
@@ -56,7 +55,7 @@ struct PillButtonStyle: ButtonStyle {
 
     private var background: AnyShapeStyle {
         switch kind {
-        case .primary: AnyShapeStyle(Brand.heroGradient)
+        case .primary: AnyShapeStyle(Brand.blue)
         case .danger: AnyShapeStyle(Brand.red)
         case .safe: AnyShapeStyle(Brand.green)
         case .dark: AnyShapeStyle(colorScheme == .dark ? Color.white : Color.black)
@@ -65,14 +64,6 @@ struct PillButtonStyle: ButtonStyle {
         }
     }
 
-    private var shadowColor: Color {
-        switch kind {
-        case .primary: Brand.blue.opacity(0.28)
-        case .danger: Brand.red.opacity(0.28)
-        case .safe: Brand.green.opacity(0.25)
-        default: .clear
-        }
-    }
 }
 
 extension ButtonStyle where Self == PillButtonStyle {
@@ -134,17 +125,8 @@ struct BrandBackground: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        ZStack(alignment: .top) {
-            Brand.background
-            if colorScheme == .dark {
-                RadialGradient(colors: [Brand.blue.opacity(0.24), .clear], center: .top, startRadius: 0, endRadius: 420)
-                    .frame(height: 420)
-                RadialGradient(colors: [Brand.teal.opacity(0.14), .clear], center: .bottomTrailing, startRadius: 0, endRadius: 460)
-            } else {
-                RadialGradient(colors: [Brand.teal.opacity(0.06), .clear], center: .topTrailing, startRadius: 0, endRadius: 380)
-            }
-        }
-        .ignoresSafeArea()
+        Brand.background
+            .ignoresSafeArea()
     }
 }
 
@@ -161,7 +143,7 @@ struct IconBadge: View {
             .font(.system(size: size * 0.42, weight: .semibold))
             .foregroundStyle(.white)
             .frame(width: size, height: size)
-            .background(tint.gradient, in: Circle())
+            .background(tint, in: Circle())
             .accessibilityHidden(true)
     }
 }
@@ -354,9 +336,8 @@ struct StatusBarScrim: ViewModifier {
     func body(content: Content) -> some View {
         content.overlay(alignment: .top) {
             GeometryReader { proxy in
-                LinearGradient(colors: [Brand.background, Brand.background.opacity(0.85), Brand.background.opacity(0)],
-                               startPoint: .top, endPoint: .bottom)
-                    .frame(height: proxy.safeAreaInsets.top + 14)
+                Brand.background
+                    .frame(height: proxy.safeAreaInsets.top)
                     .ignoresSafeArea(edges: .top)
             }
             .allowsHitTesting(false)
@@ -387,6 +368,40 @@ extension View {
             self.scrollEdgeEffectStyle(.hard, for: .top)
         } else {
             self.toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        }
+    }
+}
+
+/// Safety disclaimer (App Review 1.4.1): CrashSafe helps, but it isn't an emergency service.
+struct SafetyNotice: View {
+    var body: some View {
+        Label {
+            Text("CrashSafe isn't an emergency service and doesn't replace 911 or your iPhone's Crash Detection. Crash detection can miss crashes or trigger by mistake. Driving advice is general guidance, not a guarantee of safety.")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        } icon: {
+            Image(systemName: "info.circle.fill")
+                .foregroundStyle(Brand.textSecondary)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Horizontal normally; switches to vertical at accessibility text sizes (HIG: Dynamic Type layouts).
+struct AdaptiveStack<Content: View>: View {
+    var spacing: CGFloat = Space.md
+    var horizontalAlignment: HorizontalAlignment = .leading
+    var verticalAlignment: VerticalAlignment = .center
+    @ViewBuilder var content: Content
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
+        if typeSize.isAccessibilitySize {
+            VStack(alignment: horizontalAlignment, spacing: spacing) { content }
+                .frame(maxWidth: .infinity, alignment: Alignment(horizontal: horizontalAlignment, vertical: .center))
+        } else {
+            HStack(alignment: verticalAlignment, spacing: spacing) { content }
         }
     }
 }

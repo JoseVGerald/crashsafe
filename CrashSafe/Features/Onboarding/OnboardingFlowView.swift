@@ -71,7 +71,7 @@ struct OnboardingFlowView: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(Brand.fieldFill)
                     Capsule()
-                        .fill(Brand.heroGradient)
+                        .fill(Brand.blue)
                         .frame(width: proxy.size.width * Double(step.rawValue) / Double(Step.allCases.count - 2))
                 }
             }
@@ -141,7 +141,7 @@ private struct StepScaffold<Content: View>: View {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.sm) {
                     Text(title)
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.largeTitle.bold())
                         .foregroundStyle(Brand.textPrimary)
                     Text(subtitle)
                         .font(.body)
@@ -172,13 +172,13 @@ private struct WelcomeStep: View {
                     .font(.system(size: 56, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(width: 124, height: 124)
-                    .background(Brand.heroGradient, in: Circle())
+                    .background(Brand.blue, in: Circle())
             }
             .frame(height: 220)
             .fadeUp()
             VStack(spacing: Space.sm) {
                 Text("Welcome, \(name)")
-                    .font(.system(size: 34, weight: .bold))
+                    .font(.largeTitle.bold())
                     .foregroundStyle(Brand.textPrimary)
                 Text("Let's set up your safety profile. It takes about two minutes, and everything stays on this phone.")
                     .font(.body)
@@ -444,6 +444,8 @@ private struct PermissionsStep: View {
                             .requestAuthorization(options: [.alert, .sound, .criticalAlert])) ?? false
                     }
                 }
+                SafetyNotice()
+                    .padding(.top, Space.sm)
             }
         }
         .task {
@@ -515,13 +517,13 @@ private struct DoneStep: View {
                     .font(.system(size: 56, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(width: 124, height: 124)
-                    .background(Brand.green.gradient, in: Circle())
+                    .background(Brand.green, in: Circle())
                     .scaleEffect(pop ? 1 : 0.4)
             }
             .frame(height: 220)
             VStack(spacing: Space.sm) {
                 Text("You're all set, \(name)")
-                    .font(.system(size: 32, weight: .bold))
+                    .font(.largeTitle.bold())
                     .foregroundStyle(Brand.textPrimary)
                     .multilineTextAlignment(.center)
                 Text("Pulse will watch out for you on every drive.")

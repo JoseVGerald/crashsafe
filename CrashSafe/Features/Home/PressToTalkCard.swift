@@ -62,18 +62,18 @@ struct PressToTalkCard: View {
 
     var body: some View {
         VStack(spacing: Space.md) {
-            HStack {
+            AdaptiveStack(spacing: Space.sm) {
                 Label("Pulse", systemImage: "sparkles")
                     .font(.headline)
                     .foregroundStyle(.white)
-                Spacer()
+                Spacer(minLength: 0)
                 Button("Open chat", action: onOpenChat)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.85))
                     .frame(minHeight: 44)
             }
 
-            HStack(spacing: Space.md) {
+            AdaptiveStack(spacing: Space.md) {
                 orb
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title)
@@ -83,7 +83,6 @@ struct PressToTalkCard: View {
                     Text(subtitle)
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.8))
-                        .lineLimit(3)
                         .contentTransition(.opacity)
                 }
                 Spacer(minLength: 0)
@@ -101,15 +100,8 @@ struct PressToTalkCard: View {
             }
         }
         .padding(Space.md + 4)
-        .background {
-            ZStack {
-                LinearGradient(colors: [Color(hex: 0x0B2A6B), Brand.blue, Brand.teal],
-                               startPoint: .topLeading, endPoint: .bottomTrailing)
-                RadialGradient(colors: [.white.opacity(0.18), .clear], center: .topTrailing, startRadius: 0, endRadius: 260)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-        }
-        .shadow(color: Brand.blue.opacity(0.3), radius: 20, y: 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Brand.blue, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: viewModel.phase)
     }
 

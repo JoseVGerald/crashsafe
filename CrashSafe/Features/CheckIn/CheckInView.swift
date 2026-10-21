@@ -34,6 +34,9 @@ struct CheckInContainer: View {
 struct CheckInView: View {
     let user: AuthUser
     @State private var viewModel: CheckInViewModel
+    /// Big for panicked eyes, but still scales with Dynamic Type.
+    @ScaledMetric(relativeTo: .largeTitle) private var headlineSize: CGFloat = 48
+    @ScaledMetric(relativeTo: .largeTitle) private var countdownSize: CGFloat = 64
 
     init(user: AuthUser, viewModel: CheckInViewModel) {
         self.user = user
@@ -80,7 +83,7 @@ struct CheckInView: View {
             Spacer(minLength: Space.md)
 
             Text("Are you OK?")
-                .font(.system(size: 48, weight: .bold))
+                .font(.system(size: headlineSize, weight: .bold))
                 .minimumScaleFactor(0.6)
 
             ZStack {
@@ -89,11 +92,11 @@ struct CheckInView: View {
                 Circle().stroke(.white.opacity(0.1), lineWidth: 14)
                 Circle()
                     .trim(from: 0, to: viewModel.progress)
-                    .stroke(Brand.dangerGradient, style: StrokeStyle(lineWidth: 14, lineCap: .round))
+                    .stroke(Brand.red, style: StrokeStyle(lineWidth: 14, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 1), value: viewModel.progress)
                 Text("\(viewModel.secondsRemaining)")
-                    .font(.system(size: 64, weight: .bold, design: .rounded))
+                    .font(.system(size: min(countdownSize, 84), weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText(countsDown: true))
                     .animation(.default, value: viewModel.secondsRemaining)
@@ -135,13 +138,7 @@ struct CheckInView: View {
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            ZStack {
-                Color.black
-                RadialGradient(colors: [Brand.red.opacity(0.25), .clear], center: .center, startRadius: 0, endRadius: 360)
-            }
-            .ignoresSafeArea()
-        )
+        .background(Color.black.ignoresSafeArea())
     }
 
     private var contactSummary: String {
