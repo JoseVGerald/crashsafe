@@ -7,6 +7,9 @@ final class AppEnvironment {
     let session: SessionStore
     let router: AppRouter
     let connectivity: ConnectivityMonitor
+    let location: LocationService
+    let conditions: ConditionsStore
+    let driving: DrivingMonitor
     @ObservationIgnored let crashDetector: any CrashDetector
     @ObservationIgnored let assistant: any AssistantService
     @ObservationIgnored let voiceInput: any VoiceInputService
@@ -19,10 +22,15 @@ final class AppEnvironment {
          voiceInput: any VoiceInputService,
          tripPacks: any TripPackService,
          alerts: any EmergencyAlertService,
-         connectivity: ConnectivityMonitor) {
+         weather: any WeatherService,
+         connectivity: ConnectivityMonitor,
+         location: LocationService = LocationService()) {
         self.session = SessionStore(auth: auth)
         self.router = AppRouter()
         self.connectivity = connectivity
+        self.location = location
+        self.conditions = ConditionsStore(service: weather)
+        self.driving = DrivingMonitor(location: location)
         self.crashDetector = crashDetector
         self.assistant = assistant
         self.voiceInput = voiceInput
@@ -37,8 +45,9 @@ final class AppEnvironment {
             crashDetector: MockCrashDetector(),       // DETECTION TEAM: CoreMotionCrashDetector()
             assistant: MockAssistantService(),        // AI TEAM: Cloud / on-device assistant
             voiceInput: MockVoiceInputService(),      // AI TEAM: speech recognizer
-            tripPacks: MockTripPackService(),         // MAPS TEAM: MapKitTripPackService()
+            tripPacks: MapKitTripPackService(),       // Apple Maps search (mock fallback without coordinates)
             alerts: MockEmergencyAlertService(),      // Backend push/SMS
+            weather: OpenMeteoWeatherService(),       // Live weather, no key needed
             connectivity: ConnectivityMonitor()
         )
     }
@@ -110,6 +119,8 @@ final class AppRouter {
     var activeCrash: CrashEvent?
     /// Set when the check-in hands off to the assistant; consumed by the assistant screen.
     var pendingAssistantScenario: AssistantScenario?
+    /// Full-screen CarPlay-style driving mode.
+    var showingCarPlay = false
 
     func openAssistant(after outcome: CheckInOutcome) {
         pendingAssistantScenario = .afterCrash(outcome)
