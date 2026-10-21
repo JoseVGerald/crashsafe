@@ -1,0 +1,33 @@
+import SwiftUI
+
+/// The signed-in app.
+struct MainTabView: View {
+    let user: AuthUser
+    @Environment(AppEnvironment.self) private var env
+
+    var body: some View {
+        @Bindable var router = env.router
+        TabView(selection: $router.selectedTab) {
+            placeholder("Home")
+                .tabItem { Label("Home", systemImage: "house.fill") }
+                .tag(AppRouter.Tab.home)
+            placeholder("Trips")
+                .tabItem { Label("Trips", systemImage: "map.fill") }
+                .tag(AppRouter.Tab.trips)
+            placeholder("Assistant")
+                .tabItem { Label("Assistant", systemImage: "waveform.circle.fill") }
+                .tag(AppRouter.Tab.assistant)
+            VStack(spacing: 16) {
+                Text("Signed in as \(user.name)")
+                Button("Sign out") { env.session.signOut() }.buttonStyle(.secondary)
+            }
+            .padding()
+            .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
+            .tag(AppRouter.Tab.profile)
+        }
+    }
+
+    private func placeholder(_ title: String) -> some View {
+        Text(title).font(.title)
+    }
+}
