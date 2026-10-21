@@ -87,6 +87,7 @@ struct SignInView: View {
         .scrollDismissesKeyboard(.interactively)
         .background(BrandBackground())
         .navigationBarTitleDisplayMode(.inline)
+        .softTopEdge()
         .animation(.easeOut(duration: 0.2), value: viewModel.errorMessage)
         .sheet(isPresented: $showingForgotPassword) {
             ForgotPasswordView(viewModel: ForgotPasswordViewModel(auth: env.session.auth, email: viewModel.email))

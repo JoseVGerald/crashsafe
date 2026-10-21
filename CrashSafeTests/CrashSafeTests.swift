@@ -196,3 +196,34 @@ struct DrivingIntelligenceTests {
         #expect(WeatherCondition(wmoCode: 95) == .thunderstorm)
     }
 }
+
+import CarPlay
+
+@MainActor
+struct CarPlayTests {
+    @Test func appDeclaresCarPlayScene() throws {
+        let manifest = try #require(Bundle.main.object(forInfoDictionaryKey: "UIApplicationSceneManifest") as? [String: Any])
+        let configs = try #require(manifest["UISceneConfigurations"] as? [String: Any])
+        let carPlay = try #require(configs["CPTemplateApplicationSceneSessionRoleApplication"] as? [[String: Any]])
+        let delegate = try #require(carPlay.first?["UISceneDelegateClassName"] as? String)
+        #expect(delegate.hasSuffix(".CarPlaySceneDelegate"))
+        #expect(NSClassFromString(delegate) != nil)
+    }
+
+    @Test func dashboardShowsLiveDrivingData() async throws {
+        let env = PreviewData.environment()
+        SharedEnvironment.current = env
+        defer { SharedEnvironment.current = nil; env.driving.stop() }
+        env.driving.startDemo(.highwayRain)
+        env.conditions.override(with: DriveScenario.highwayRain.weather)
+        try await Task.sleep(for: .seconds(1.6))
+
+        let template = CarPlaySceneDelegate().makeDashboard()
+        let titles = template.items.map(\.title)
+        #expect(titles.prefix(3) == ["Speed", "Safe now", "Status"])
+        #expect(titles.contains("Conditions"))
+        #expect(template.items.first?.detail?.hasSuffix("mph") == true)
+        #expect(template.items[1].detail == "50 mph") // 65 limit × heavy rain 0.75 → 50
+        #expect(template.actions.map(\.title) == ["Mute Pulse", "I need help"])
+    }
+}
