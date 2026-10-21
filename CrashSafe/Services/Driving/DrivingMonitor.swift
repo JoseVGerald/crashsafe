@@ -72,6 +72,15 @@ enum DriveScenario: String, CaseIterable, Identifiable, Sendable {
 
     var isNight: Bool { self == .forestNight }
 
+    /// Time of day the demo is set at (shown instead of the real clock).
+    var demoClock: String {
+        switch self {
+        case .forestNight: "11:40 PM"
+        case .cityRushHour: "5:30 PM"
+        case .highwayRain: "2:15 PM"
+        }
+    }
+
     var weather: WeatherSnapshot {
         switch self {
         case .forestNight:

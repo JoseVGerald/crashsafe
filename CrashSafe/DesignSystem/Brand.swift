@@ -10,8 +10,9 @@ enum Brand {
     // MARK: Core
     /// Pulse Blue — the one accent. Fill for primary actions.
     static let blue = Color(hex: 0x2563EB)
-    /// Deep indigo used with `blue` in gradients.
-    static let indigo = Color(hex: 0x4F46E5)
+    /// Signal Teal — the greenish secondary accent, paired with `blue` in gradients.
+    /// Dark enough for white text (≈ 4.9:1).
+    static let teal = Color(hex: 0x0E7C86)
     /// Night navy — the brand's dark canvas.
     static let navy = Color(hex: 0x0B1426)
 
@@ -26,6 +27,7 @@ enum Brand {
     static let redInk = Color(light: 0xB91C1C, dark: 0xFF8A80)
     static let greenInk = Color(light: 0x15803D, dark: 0x4ADE80)
     static let amberInk = Color(light: 0xB45309, dark: 0xFBBF24)
+    static let tealInk = Color(light: 0x0F766E, dark: 0x5EEAD4)
 
     // MARK: Surfaces
     static let background = Color(light: 0xF5F5F7, dark: 0x05080F)
@@ -40,7 +42,7 @@ enum Brand {
     static let textSecondary = Color(light: 0x6E6E73, dark: 0xA1A7B5)
 
     // MARK: Gradients
-    static let heroGradient = LinearGradient(colors: [blue, indigo], startPoint: .topLeading, endPoint: .bottomTrailing)
+    static let heroGradient = LinearGradient(colors: [blue, teal], startPoint: .topLeading, endPoint: .bottomTrailing)
     static let dangerGradient = LinearGradient(colors: [Color(hex: 0xEF4444), Color(hex: 0xB91C1C)],
                                                startPoint: .topLeading, endPoint: .bottomTrailing)
 }

@@ -250,7 +250,7 @@ private struct DriverStep: View {
 
     private var example: String {
         switch profile.coachingStyle {
-        case .logical: "At 58 mph on wet pavement you need about 375 ft to stop. At 45 it's 250 ft."
+        case .logical: "At 58 mph on wet pavement you need about 330 ft to stop. At 45 it's 220 ft."
         case .emotional: "Your mom would rather you get home a few minutes late. Let's ease off."
         }
     }
@@ -389,7 +389,7 @@ private struct FamilyStep: View {
                 if profile.familyContacts.isEmpty {
                     EmptyStateCard(systemImage: "person.2.fill", title: "No one added yet",
                                    message: "Parents, a partner, a close friend — whoever should know first.",
-                                   tint: Brand.indigo)
+                                   tint: Brand.teal)
                         .transition(.opacity)
                 }
                 ForEach(profile.sortedContacts) { contact in

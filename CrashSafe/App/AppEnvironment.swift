@@ -10,6 +10,8 @@ final class AppEnvironment {
     let location: LocationService
     let conditions: ConditionsStore
     let driving: DrivingMonitor
+    let coach: DriveCoach
+    let autoDetector = DriveAutoDetector()
     @ObservationIgnored let crashDetector: any CrashDetector
     @ObservationIgnored let assistant: any AssistantService
     @ObservationIgnored let voiceInput: any VoiceInputService
@@ -29,8 +31,11 @@ final class AppEnvironment {
         self.router = AppRouter()
         self.connectivity = connectivity
         self.location = location
-        self.conditions = ConditionsStore(service: weather)
-        self.driving = DrivingMonitor(location: location)
+        let conditions = ConditionsStore(service: weather)
+        let driving = DrivingMonitor(location: location)
+        self.conditions = conditions
+        self.driving = driving
+        self.coach = DriveCoach(driving: driving, conditions: conditions)
         self.crashDetector = crashDetector
         self.assistant = assistant
         self.voiceInput = voiceInput

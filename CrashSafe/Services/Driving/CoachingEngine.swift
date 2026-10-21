@@ -33,7 +33,7 @@ enum CoachingEngine {
 
         switch comparison.status {
         case .tooFast, .caution:
-            guard let recommended = comparison.recommendedMaxMPH, snapshot.speedMPH > recommended else {
+            guard let recommended = comparison.recommendedMaxMPH, snapshot.speedMPH > recommended + 2 else {
                 return harshEvents(input)
             }
             let now = stoppingDistanceFeet(mph: snapshot.speedMPH, friction: friction)
