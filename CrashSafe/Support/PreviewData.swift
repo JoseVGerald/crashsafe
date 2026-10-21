@@ -33,8 +33,7 @@ enum PreviewData {
         context.insert(profile)
         let mom = FamilyContact(name: "Maria Gerald", phone: "555-0100", relationship: "Mom")
         let bro = FamilyContact(name: "Leo Gerald", phone: "555-0199", relationship: "Brother")
-        mom.profile = profile
-        bro.profile = profile
+        profile.familyContacts.append(contentsOf: [mom, bro])
 
         let trip = Trip(ownerID: user.id, origin: "Seattle", destination: "Spokane",
                         startDate: .now, endDate: .now.addingTimeInterval(86_400 * 2))
