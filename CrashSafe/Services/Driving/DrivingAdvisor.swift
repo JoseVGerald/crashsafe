@@ -39,8 +39,10 @@ struct DrivingAdvice: Equatable {
         }
         if condition == .snow || condition == .freezingRain {
             tips.append(Tip(systemImage: "snowflake", text: "Brake early and gently"))
-        } else if condition.isWet {
+        } else if condition.isWet, condition != .fog {
             tips.append(Tip(systemImage: "drop.fill", text: "Avoid sudden braking"))
+        } else if condition == .fog {
+            tips.append(Tip(systemImage: "eye.fill", text: "Low beams, not high beams"))
         }
         if let wind = weather?.windMph, wind > 25 {
             tips.append(Tip(systemImage: "wind", text: "Strong gusts — both hands on the wheel"))
