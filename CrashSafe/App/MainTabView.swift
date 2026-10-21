@@ -11,7 +11,7 @@ struct MainTabView: View {
             HomeView(user: user, viewModel: HomeViewModel(detector: env.crashDetector, userID: user.id))
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(AppRouter.Tab.home)
-            placeholder("Trips")
+            TripPlannerView(userID: user.id)
                 .tabItem { Label("Trips", systemImage: "map.fill") }
                 .tag(AppRouter.Tab.trips)
             placeholder("Assistant")
