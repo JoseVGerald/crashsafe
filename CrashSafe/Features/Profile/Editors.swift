@@ -265,7 +265,7 @@ struct ContactRow: View {
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(width: 44, height: 44)
-                .background(Brand.indigo.gradient, in: Circle())
+                .background(Brand.teal.gradient, in: Circle())
             VStack(alignment: .leading, spacing: 3) {
                 Text(contact.name).font(.headline).foregroundStyle(Brand.textPrimary)
                 Text([contact.relationship, PhoneFormat.display(contact.phone)].filter { !$0.isEmpty }.joined(separator: " · "))

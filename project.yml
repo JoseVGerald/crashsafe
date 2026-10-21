@@ -31,7 +31,13 @@ targets:
         NSLocationWhenInUseUsageDescription: "CrashSafe uses your location to show road conditions, find help nearby, and tell responders where you are."
         NSLocationAlwaysAndWhenInUseUsageDescription: "During trips, CrashSafe keeps watching your drive in the background so it can coach you and check on you after a crash."
         NSMotionUsageDescription: "CrashSafe uses motion data to notice hard braking and possible crashes."
-        UIBackgroundModes: [location]
+        UIBackgroundModes: [location, audio]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            CPTemplateApplicationSceneSessionRoleApplication:
+              - UISceneConfigurationName: CarPlay
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).CarPlaySceneDelegate
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.cac.crashsafe
@@ -40,7 +46,8 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: CrashSafe
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        # CarPlay entitlement only on simulator builds: device builds need Apple's approval first.
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": CrashSafe/CrashSafe-CarPlay.entitlements
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

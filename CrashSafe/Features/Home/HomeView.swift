@@ -198,7 +198,7 @@ struct HomeView: View {
 
     private var quickActions: some View {
         HStack(spacing: 12) {
-            QuickAction(title: "CarPlay", systemImage: "car.rear.fill", tint: Brand.indigo) {
+            QuickAction(title: "CarPlay", systemImage: "car.rear.fill", tint: Brand.teal) {
                 env.router.showingCarPlay = true
             }
             QuickAction(title: "Nearby help", systemImage: "cross.case.fill", tint: Brand.green) {
