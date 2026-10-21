@@ -3,31 +3,6 @@ import Observation
 import SwiftData
 
 @Observable
-final class ProfileViewModel {
-    @ObservationIgnored private let userID: String
-    @ObservationIgnored private let session: SessionStore
-
-    init(userID: String, session: SessionStore) {
-        self.userID = userID
-        self.session = session
-    }
-
-    /// Every account gets exactly one profile, created on first visit.
-    func ensureProfile(existing: [Profile], in context: ModelContext) {
-        guard existing.isEmpty else { return }
-        context.insert(Profile(ownerID: userID))
-    }
-
-    func remove(_ contact: FamilyContact, in context: ModelContext) {
-        context.delete(contact)
-    }
-
-    func signOut() {
-        session.signOut()
-    }
-}
-
-@Observable
 final class AddContactViewModel {
     var name = ""
     var phone = ""

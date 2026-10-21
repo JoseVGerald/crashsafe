@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ForgotPasswordView: View {
     @State private var viewModel: ForgotPasswordViewModel
+    @FocusState private var focus: Bool?
     @Environment(\.dismiss) private var dismiss
 
     init(viewModel: ForgotPasswordViewModel) {
@@ -10,20 +11,27 @@ struct ForgotPasswordView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: Space.lg) {
                 if viewModel.sent {
-                    ContentUnavailableView(
-                        "Check your email",
-                        systemImage: "envelope.badge.fill",
-                        description: Text("If an account exists for \(viewModel.email), we sent a link to reset your password.")
-                    )
+                    VStack(spacing: Space.md) {
+                        IconBadge(systemName: "envelope.badge.fill", tint: Brand.green, size: 64)
+                        Text("Check your email").font(.title2.bold())
+                        Text("If an account exists for \(viewModel.email), we sent a link to reset your password.")
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(Brand.textSecondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .transition(.scale(scale: 0.9).combined(with: .opacity))
+                    Spacer()
                     Button("Done") { dismiss() }
                         .buttonStyle(.primary)
                 } else {
                     Text("Enter the email you signed up with and we'll send you a reset link.")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Brand.textSecondary)
                     FormField(title: "Email", text: $viewModel.email, error: viewModel.errorMessage,
-                              contentType: .emailAddress, keyboard: .emailAddress, autocapitalization: .never)
+                              systemImage: "envelope.fill", contentType: .emailAddress, keyboard: .emailAddress,
+                              autocapitalization: .never, focus: $focus, field: true)
+                    Spacer()
                     Button {
                         Task { await viewModel.send() }
                     } label: {
@@ -35,11 +43,10 @@ struct ForgotPasswordView: View {
                     }
                     .buttonStyle(.primary)
                     .disabled(viewModel.isLoading)
-                    Spacer()
                 }
             }
-            .padding(24)
-            .background(Color(.systemGroupedBackground).ignoresSafeArea())
+            .padding(Space.lg)
+            .animation(.spring(response: 0.4), value: viewModel.sent)
             .navigationTitle("Reset password")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -48,7 +55,8 @@ struct ForgotPasswordView: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium])
+        .presentationCornerRadius(28)
     }
 }
 

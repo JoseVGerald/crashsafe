@@ -24,69 +24,72 @@ struct CheckInContainer: View {
         viewModel.onResolve = { [context, user] outcome in
             context.insert(CheckInRecord(ownerID: user.id, outcome: outcome, wasSimulated: event.isSimulated))
         }
-        return CheckInView(viewModel: viewModel)
+        return CheckInView(user: user, viewModel: viewModel)
     }
 }
 
 /// Full-screen "Are you OK?" check-in. Built for one-handed use: every action sits
 /// in the bottom half of the screen, and the safest answer is the biggest button.
+/// Once answered (or timed out), it becomes the post-crash help hub.
 struct CheckInView: View {
+    let user: AuthUser
     @State private var viewModel: CheckInViewModel
-    @Environment(AppEnvironment.self) private var env
-    @Environment(\.openURL) private var openURL
 
-    init(viewModel: CheckInViewModel) {
+    init(user: AuthUser, viewModel: CheckInViewModel) {
+        self.user = user
         _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
             switch viewModel.phase {
             case .counting:
                 countdown
+                    .transition(.opacity)
             case .resolved(let outcome):
-                resolved(outcome)
-                    .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                RecoveryView(user: user, outcome: outcome, banner: banner(for: outcome))
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .foregroundStyle(.white)
         .preferredColorScheme(.dark)
-        .animation(.easeInOut(duration: 0.3), value: viewModel.phase)
+        .animation(.spring(response: 0.5, dampingFraction: 0.9), value: viewModel.phase)
         .sensoryFeedback(.warning, trigger: viewModel.secondsRemaining) { _, new in new <= 10 && new > 0 }
         .sensoryFeedback(.success, trigger: viewModel.phase) { _, new in new == .resolved(.ok) }
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.stop() }
     }
 
-    // MARK: - Countdown
+    // MARK: Countdown
 
     private var countdown: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 Label("Possible crash detected", systemImage: "exclamationmark.triangle.fill")
                     .font(.headline)
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(Brand.amber)
                 if viewModel.event.isSimulated {
                     Text("SIMULATED")
                         .font(.caption.weight(.heavy))
-                        .padding(.horizontal, 8).padding(.vertical, 3)
-                        .background(.white.opacity(0.15), in: Capsule())
+                        .tracking(1)
+                        .padding(.horizontal, 10).padding(.vertical, 4)
+                        .background(.white.opacity(0.12), in: Capsule())
                 }
             }
-            .padding(.top, 24)
+            .padding(.top, Space.lg)
 
-            Spacer(minLength: 16)
+            Spacer(minLength: Space.md)
 
             Text("Are you OK?")
                 .font(.system(size: 48, weight: .bold))
                 .minimumScaleFactor(0.6)
 
             ZStack {
-                Circle().stroke(.white.opacity(0.15), lineWidth: 14)
+                PulseRings(color: Brand.red, count: 2)
+                Circle().fill(Brand.navy)
+                Circle().stroke(.white.opacity(0.1), lineWidth: 14)
                 Circle()
                     .trim(from: 0, to: viewModel.progress)
-                    .stroke(Theme.danger, style: StrokeStyle(lineWidth: 14, lineCap: .round))
+                    .stroke(Brand.dangerGradient, style: StrokeStyle(lineWidth: 14, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 1), value: viewModel.progress)
                 Text("\(viewModel.secondsRemaining)")
@@ -95,8 +98,8 @@ struct CheckInView: View {
                     .contentTransition(.numericText(countsDown: true))
                     .animation(.default, value: viewModel.secondsRemaining)
             }
-            .frame(width: 170, height: 170)
-            .padding(.vertical, 24)
+            .frame(width: 176, height: 176)
+            .padding(.vertical, 32)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("\(viewModel.secondsRemaining) seconds to respond")
 
@@ -108,29 +111,37 @@ struct CheckInView: View {
                 .foregroundStyle(.white.opacity(0.8))
                 .padding(.horizontal, 32)
 
-            Spacer(minLength: 16)
+            Spacer(minLength: Space.md)
 
             VStack(spacing: 14) {
                 Button {
                     viewModel.respond(.needsHelp)
                 } label: {
                     Label("I need help", systemImage: "cross.case.fill")
-                        .frame(minHeight: 64)
+                        .font(.title3.weight(.semibold))
                 }
-                .buttonStyle(.primary(tint: Theme.emergencyFill))
+                .buttonStyle(.pill(.danger, height: 64))
 
                 Button {
                     viewModel.respond(.ok)
                 } label: {
                     Label("I'm OK", systemImage: "checkmark.circle.fill")
                         .font(.title.weight(.bold))
-                        .frame(minHeight: 96)
                 }
-                .buttonStyle(.primary(tint: Theme.safeFill))
+                .buttonStyle(.pill(.safe, height: 92))
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 12)
         }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            ZStack {
+                Color.black
+                RadialGradient(colors: [Brand.red.opacity(0.25), .clear], center: .center, startRadius: 0, endRadius: 360)
+            }
+            .ignoresSafeArea()
+        )
     }
 
     private var contactSummary: String {
@@ -142,104 +153,39 @@ struct CheckInView: View {
         }
     }
 
-    // MARK: - Outcomes
-
-    @ViewBuilder
-    private func resolved(_ outcome: CheckInOutcome) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Spacer(minLength: 24)
-            Image(systemName: outcome.systemImage)
-                .font(.system(size: 60))
-                .foregroundStyle(outcome == .ok ? .green : Theme.danger)
-            Text(title(for: outcome))
-                .font(.largeTitle.bold())
-            Text(message(for: outcome))
-                .font(.title3)
-                .foregroundStyle(.white.opacity(0.85))
-
-            if outcome != .ok {
-                alertStatus
-            }
-
-            Spacer(minLength: 16)
-
-            VStack(spacing: 14) {
-                if outcome != .ok {
-                    Button {
-                        if let url = URL(string: "tel://911") { openURL(url) }
-                    } label: {
-                        Label("Call 911", systemImage: "phone.fill")
-                            .font(.title2.weight(.bold))
-                            .frame(minHeight: 72)
-                    }
-                    .buttonStyle(.primary(tint: Theme.emergencyFill))
-                }
-
-                Button {
-                    env.router.openAssistant(after: outcome)
-                } label: {
-                    Label(outcome == .noResponse ? "I'm awake — help me" : "Talk to the assistant",
-                          systemImage: "waveform.circle.fill")
-                        .frame(minHeight: outcome == .ok ? 80 : 60)
-                }
-                .buttonStyle(.primary)
-
-                Button("Close") { env.router.activeCrash = nil }
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, minHeight: 48)
-            }
+    private func banner(for outcome: CheckInOutcome) -> RecoveryBanner {
+        if outcome == .ok {
+            return RecoveryBanner(text: "Glad you're OK. Take a slow breath — help is here if you need it.",
+                                  systemImage: "checkmark.circle.fill", tint: Brand.greenInk)
         }
-        .padding(.horizontal, 24)
-        .padding(.bottom, 12)
-    }
-
-    @ViewBuilder
-    private var alertStatus: some View {
-        HStack(spacing: 12) {
-            if viewModel.recipients.isEmpty {
-                Image(systemName: "person.crop.circle.badge.exclamationmark")
-                Text("No family contacts yet. Add them in Profile so we can reach them next time.")
-            } else if viewModel.isAlerting {
-                ProgressView().tint(.white)
-                Text("Alerting \(contactSummary)…")
-            } else if let delivery = viewModel.alertDelivery {
-                Image(systemName: delivery == .sent ? "checkmark.message.fill" : "clock.badge.exclamationmark")
-                    .foregroundStyle(delivery == .sent ? .green : .yellow)
-                Text(delivery == .sent
-                     ? "Alert sent to \(contactSummary) (demo)."
-                     : "No signal — alert to \(contactSummary) will send when you reconnect.")
-            }
+        if viewModel.recipients.isEmpty {
+            return RecoveryBanner(text: "No family contacts saved. Call 911 if anyone is hurt.",
+                                  systemImage: "exclamationmark.triangle.fill", tint: Brand.amberInk)
         }
-        .font(.body.weight(.medium))
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white.opacity(0.1), in: RoundedRectangle(cornerRadius: Theme.cornerRadius))
-    }
-
-    private func title(for outcome: CheckInOutcome) -> String {
-        switch outcome {
-        case .ok: "Glad you're OK"
-        case .needsHelp: "Getting you help"
-        case .noResponse: "We didn't hear from you"
+        if viewModel.isAlerting {
+            return RecoveryBanner(text: "Alerting \(contactSummary)…", systemImage: "bell.badge.fill", tint: Brand.amberInk)
         }
-    }
-
-    private func message(for outcome: CheckInOutcome) -> String {
-        switch outcome {
-        case .ok: "Let's go through what to do next, one step at a time."
-        case .needsHelp: "If anyone is hurt, call 911 first. Then the assistant will stay with you."
-        case .noResponse: "Your family contacts are being alerted. If you're hurt, call 911."
+        switch viewModel.alertDelivery {
+        case .sent:
+            return RecoveryBanner(text: "\(contactSummary) got your location (demo).", systemImage: "checkmark.message.fill",
+                                  tint: Brand.greenInk)
+        case .queued:
+            return RecoveryBanner(text: "No signal — your alert to \(contactSummary) will send when you reconnect.",
+                                  systemImage: "clock.badge.exclamationmark", tint: Brand.amberInk)
+        case nil:
+            return RecoveryBanner(text: "Alerting \(contactSummary)…", systemImage: "bell.badge.fill", tint: Brand.amberInk)
         }
     }
 }
 
 #Preview("Countdown") {
     let env = PreviewData.environment()
-    CheckInView(viewModel: CheckInViewModel(
+    CheckInView(user: PreviewData.user, viewModel: CheckInViewModel(
         event: CrashEvent(date: .now, peakG: 6, speedDropMPH: 35, isSimulated: true),
         recipients: [AlertRecipient(name: "Maria", phone: "555-0100"), AlertRecipient(name: "Leo", phone: "555-0199")],
         alerts: MockEmergencyAlertService(),
         isOnline: { true }
     ))
     .environment(env)
+    .modelContainer(PreviewData.container())
 }

@@ -6,15 +6,18 @@ struct HomeView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(\.modelContext) private var context
     @State private var viewModel: HomeViewModel
+    @State private var talk: PressToTalkViewModel
     @State private var showingTripPicker = false
+    @State private var showingNearbyHelp = false
 
     @Query private var trips: [Trip]
     @Query private var checkIns: [CheckInRecord]
     @Query private var profiles: [Profile]
 
-    init(user: AuthUser, viewModel: HomeViewModel) {
+    init(user: AuthUser, viewModel: HomeViewModel, talk: PressToTalkViewModel) {
         self.user = user
         _viewModel = State(initialValue: viewModel)
+        _talk = State(initialValue: talk)
         let id = user.id
         _trips = Query(filter: #Predicate<Trip> { $0.ownerID == id }, sort: \Trip.startDate)
         var latest = FetchDescriptor<CheckInRecord>(
@@ -26,159 +29,235 @@ struct HomeView: View {
         _profiles = Query(filter: #Predicate<Profile> { $0.ownerID == id })
     }
 
+    private var profile: Profile? { profiles.first }
     private var activeTrip: Trip? { trips.first(where: \.isActive) }
     private var upcomingTrips: [Trip] { trips.filter { !$0.isActive && $0.endDate >= .now } }
     private var currentTrip: Trip? { activeTrip ?? upcomingTrips.first }
-    private var carType: CarType { profiles.first?.carType ?? .sedan }
+    private var isNight: Bool { env.driving.scenario?.isNight ?? env.conditions.isNight }
+    private var advice: DrivingAdvice { DrivingAdvice.make(weather: env.conditions.weather, isNight: isNight) }
+    private var isDriving: Bool { env.driving.isActive }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    statusHeader
-                    tripButton
-                    currentTripCard
-                    lastCheckInCard
-                    debugSection
+                VStack(alignment: .leading, spacing: Space.md + 4) {
+                    header.fadeUp()
+
+                    PressToTalkCard(viewModel: talk) { env.router.selectedTab = .assistant }
+                        .fadeUp(delay: 0.05)
+
+                    ConditionsCard(
+                        placeName: env.location.placeName,
+                        weather: env.conditions.weather,
+                        isNight: isNight,
+                        advice: advice,
+                        isLoading: env.conditions.isLoading || (env.location.isAuthorized && env.location.location == nil),
+                        locationDenied: !env.location.isAuthorized,
+                        demoTitle: env.driving.scenario.map { "Demo · \($0.title)" },
+                        onEnableLocation: enableLocation
+                    )
+                    .fadeUp(delay: 0.1)
+
+                    DrivingComparisonCard(
+                        snapshot: env.driving.snapshot,
+                        comparison: DrivingComparison.make(snapshot: env.driving.snapshot, advice: advice, isDriving: isDriving),
+                        isDriving: isDriving,
+                        scenario: env.driving.scenario,
+                        onDemo: { viewModel.startDemo($0) },
+                        onStopDemo: { Task { await viewModel.stopDemo(location: env.location) } }
+                    )
+                    .fadeUp(delay: 0.15)
+
+                    tripCard.fadeUp(delay: 0.2)
+                    quickActions.fadeUp(delay: 0.25)
+                    lastCheckIn.fadeUp(delay: 0.3)
                 }
-                .padding()
+                .padding(.horizontal, Space.md)
+                .padding(.bottom, Space.lg)
+                .frame(maxWidth: 680)
+                .frame(maxWidth: .infinity)
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Hi, \(firstName)")
+            .background(BrandBackground())
+            .statusBarScrim()
+            .toolbar(.hidden, for: .navigationBar)
+            .refreshable { await env.conditions.refresh(for: env.location.location, force: true) }
             .confirmationDialog("Start a trip", isPresented: $showingTripPicker, titleVisibility: .visible) {
                 ForEach(upcomingTrips.prefix(3)) { trip in
-                    Button(trip.routeLabel) {
-                        viewModel.start(trip, among: trips, carType: carType)
-                    }
+                    Button(trip.routeLabel) { viewModel.start(trip, among: trips, profile: profile) }
                 }
                 Button("Quick drive (no route)") {
-                    viewModel.startQuickTrip(among: trips, carType: carType, in: context)
+                    viewModel.startQuickTrip(among: trips, profile: profile, in: context)
                 }
                 Button("Plan a new trip") { env.router.selectedTab = .trips }
             } message: {
-                Text("Crash detection runs while a trip is active.")
+                Text("Crash detection and coaching run while a trip is active.")
+            }
+            .fullScreenCover(isPresented: $showingNearbyHelp) {
+                RecoveryView(user: user, outcome: nil)
             }
             .onAppear {
-                viewModel.resumeMonitoringIfNeeded(activeTrip: activeTrip, carType: carType)
+                viewModel.resumeIfNeeded(activeTrip: activeTrip, profile: profile)
+                env.location.requestPermission()
+            }
+            .task(id: env.location.location.map { Int($0.coordinate.latitude * 100) }) {
+                guard env.driving.scenario == nil else { return }
+                await env.conditions.refresh(for: env.location.location)
             }
         }
     }
 
-    private var firstName: String {
-        user.name.split(separator: " ").first.map(String.init) ?? "there"
+    // MARK: Sections
+
+    private var header: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(greeting)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Brand.textSecondary)
+                Text(user.firstName)
+                    .font(.system(size: 34, weight: .bold))
+                    .foregroundStyle(Brand.textPrimary)
+            }
+            Spacer()
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(viewModel.isMonitoring || isDriving ? Brand.greenInk : Brand.textSecondary.opacity(0.6))
+                    .frame(width: 8, height: 8)
+                Text(viewModel.isMonitoring || isDriving ? "Protected" : "Not driving")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Brand.textPrimary)
+            }
+            .padding(.horizontal, 12)
+            .frame(minHeight: 34)
+            .background(Brand.surface, in: Capsule())
+            .overlay(Capsule().strokeBorder(Brand.stroke))
+            .accessibilityElement(children: .combine)
+        }
+        .padding(.top, Space.sm)
     }
 
-    // MARK: - Sections
-
-    private var statusHeader: some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(viewModel.isMonitoring ? Color.green : Color.secondary)
-                .frame(width: 10, height: 10)
-            Text(viewModel.isMonitoring ? "Crash detection on" : "Crash detection off")
-                .font(.subheadline.weight(.semibold))
-            Spacer()
-            Label(env.connectivity.isOnline ? "Online" : "Offline",
-                  systemImage: env.connectivity.isOnline ? "wifi" : "wifi.slash")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+    private var greeting: String {
+        switch Calendar.current.component(.hour, from: .now) {
+        case 5..<12: "Good morning"
+        case 12..<17: "Good afternoon"
+        default: "Good evening"
         }
-        .accessibilityElement(children: .combine)
+    }
+
+    private var tripCard: some View {
+        VStack(alignment: .leading, spacing: Space.md) {
+            HStack {
+                Text(activeTrip != nil ? "Current trip" : "Next trip")
+                    .font(.headline)
+                    .foregroundStyle(Brand.textPrimary)
+                Spacer()
+                if let trip = currentTrip {
+                    StatusChip(text: trip.tripPackStatus == .ready ? "Offline ready" : "No trip pack",
+                               systemImage: trip.tripPackStatus == .ready ? "checkmark.icloud.fill" : "icloud.slash",
+                               tint: trip.tripPackStatus == .ready ? Brand.greenInk : Brand.textSecondary)
+                }
+            }
+            if let trip = currentTrip {
+                HStack(spacing: 14) {
+                    IconBadge(systemName: trip.isActive ? "car.fill" : "map.fill", tint: Brand.blue, size: 44)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(trip.routeLabel)
+                            .font(.headline)
+                            .foregroundStyle(Brand.textPrimary)
+                            .lineLimit(1)
+                        Text(trip.isActive
+                             ? "Started \((trip.startedAt ?? .now).formatted(date: .omitted, time: .shortened))"
+                             : trip.routeSummary ?? trip.startDate.formatted(date: .abbreviated, time: .shortened))
+                            .font(.subheadline)
+                            .foregroundStyle(Brand.textSecondary)
+                    }
+                }
+            } else {
+                Text("Plan a trip so we can save tow companies and hospitals along your route for offline use.")
+                    .font(.subheadline)
+                    .foregroundStyle(Brand.textSecondary)
+            }
+            if let activeTrip {
+                Button {
+                    withAnimation { viewModel.end(activeTrip) }
+                } label: {
+                    Label("End trip", systemImage: "stop.fill")
+                }
+                .buttonStyle(.secondary)
+            } else {
+                Button {
+                    showingTripPicker = true
+                } label: {
+                    Label("Start a trip", systemImage: "car.fill")
+                }
+                .buttonStyle(.primary)
+            }
+        }
+        .card(padding: Space.md + 4)
+    }
+
+    private var quickActions: some View {
+        HStack(spacing: 12) {
+            QuickAction(title: "CarPlay", systemImage: "car.rear.fill", tint: Brand.indigo) {
+                env.router.showingCarPlay = true
+            }
+            QuickAction(title: "Nearby help", systemImage: "cross.case.fill", tint: Brand.green) {
+                showingNearbyHelp = true
+            }
+            QuickAction(title: "Test crash", systemImage: "car.side.rear.and.collision.and.car.side.front", tint: Brand.red) {
+                viewModel.simulateCrash()
+            }
+        }
     }
 
     @ViewBuilder
-    private var tripButton: some View {
-        if let activeTrip {
-            Button {
-                withAnimation { viewModel.end(activeTrip) }
-            } label: {
-                Label("End trip", systemImage: "stop.circle.fill")
-                    .frame(minHeight: 72)
+    private var lastCheckIn: some View {
+        if let last = checkIns.first {
+            HStack(spacing: 12) {
+                Image(systemName: last.outcome.systemImage)
+                    .foregroundStyle(last.outcome == .ok ? Brand.greenInk : Brand.redInk)
+                Text("Last check-in · \(last.outcome.shortLabel)")
+                    .foregroundStyle(Brand.textPrimary)
+                    .lineLimit(1)
+                Spacer()
+                Text(last.date.formatted(.relative(presentation: .named)))
+                    .foregroundStyle(Brand.textSecondary)
             }
-            .buttonStyle(.primary(tint: Color(.systemGray)))
+            .font(.footnote)
+            .padding(.horizontal, Space.xs)
+        }
+    }
+
+    private func enableLocation() {
+        if env.location.isDenied, let url = URL(string: "app-settings:") {
+            UIApplication.shared.open(url)
         } else {
-            Button {
-                showingTripPicker = true
-            } label: {
-                Label("Start a trip", systemImage: "car.fill")
-                    .font(.title2.weight(.bold))
-                    .frame(minHeight: 72)
-            }
-            .buttonStyle(.primary)
+            env.location.requestPermission()
         }
-    }
-
-    private var currentTripCard: some View {
-        Card {
-            Text(activeTrip != nil ? "Current trip" : "Next trip")
-                .font(.headline)
-            if let trip = currentTrip {
-                StatusRow(systemImage: "point.topleft.down.to.point.bottomright.curvepath.fill",
-                          title: trip.isActive ? "In progress" : "Planned",
-                          value: trip.routeLabel,
-                          tint: Theme.accent)
-                StatusRow(systemImage: "calendar",
-                          title: trip.isActive ? "Started" : "Dates",
-                          value: trip.isActive
-                            ? (trip.startedAt ?? .now).formatted(date: .omitted, time: .shortened)
-                            : "\(trip.startDate.formatted(date: .abbreviated, time: .omitted)) – \(trip.endDate.formatted(date: .abbreviated, time: .omitted))")
-                StatusRow(systemImage: trip.tripPackStatus == .ready ? "arrow.down.circle.fill" : "arrow.down.circle",
-                          title: "Trip pack",
-                          value: trip.tripPackStatus.label,
-                          tint: trip.tripPackStatus == .ready ? .green : .secondary)
-            } else {
-                Text("No trips planned yet. Plan one so we can save tow companies and hospitals along your route for offline use.")
-                    .foregroundStyle(.secondary)
-                Button("Plan a trip") { env.router.selectedTab = .trips }
-                    .font(.headline)
-                    .frame(minHeight: 44)
-            }
-        }
-    }
-
-    private var lastCheckInCard: some View {
-        Card {
-            Text("Last check-in").font(.headline)
-            if let last = checkIns.first {
-                StatusRow(systemImage: last.outcome.systemImage,
-                          title: last.date.formatted(.relative(presentation: .named)) + (last.wasSimulated ? " · simulated" : ""),
-                          value: last.outcome.label,
-                          tint: last.outcome == .ok ? .green : Theme.danger)
-            } else {
-                StatusRow(systemImage: "checkmark.seal", title: "Status", value: "No check-ins yet")
-            }
-        }
-    }
-
-    private var debugSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("DEBUG")
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.secondary)
-            Button {
-                viewModel.simulateCrash()
-            } label: {
-                Label("Simulate crash", systemImage: "car.side.rear.and.collision.and.car.side.front")
-            }
-            .buttonStyle(.secondary(tint: Theme.danger))
-            Text("Shows the \"Are you OK?\" check-in exactly as a real detection would.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.top, 8)
     }
 }
 
-#Preview("Active trip") {
-    let env = PreviewData.environment()
-    HomeView(user: PreviewData.user, viewModel: HomeViewModel(detector: env.crashDetector, userID: PreviewData.user.id))
-        .environment(env)
-        .modelContainer(PreviewData.container())
-}
+struct QuickAction: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
+    let action: () -> Void
 
-#Preview("Empty") {
-    let env = PreviewData.environment()
-    HomeView(user: PreviewData.user, viewModel: HomeViewModel(detector: env.crashDetector, userID: PreviewData.user.id))
-        .environment(env)
-        .modelContainer(PreviewData.container(empty: true))
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                IconBadge(systemName: systemImage, tint: tint, size: 44)
+                Text(title)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Brand.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(Brand.surface, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
+        }
+        .buttonStyle(.pressable)
+    }
 }
