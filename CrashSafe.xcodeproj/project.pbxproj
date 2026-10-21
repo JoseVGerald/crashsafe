@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		038A4434D278882551D4D92B /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCBBE80EC490BE199FD311F /* AppEnvironment.swift */; };
+		04C60359CA58380CB3DE33A4 /* TripViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99425B6F031FBEB982BEAFBA /* TripViewModels.swift */; };
 		1D1B2D27658CC7D2F38F9A89 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93586F6E4AC1D4296DB0C62 /* SplashView.swift */; };
 		21C83BBE5DF8B21B052B22E6 /* AuthViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A825ADD0BC035D33E0EB527 /* AuthViewModels.swift */; };
 		2694948830F1DC93DBD498B5 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2BB3CCF6B5D3ADF307DCB3D /* ForgotPasswordView.swift */; };
 		2A2A535A29138FACCE93DA3E /* ConnectivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */; };
 		31A7D014C173178BA64025B7 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */; };
+		3DAD74871A8FF82E756C26BE /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624251F4B57EC28C6496B1FB /* TripDetailView.swift */; };
 		46B871AD5B8C10E6CDA10D4A /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE36EDF82C3CAF0D8414C1F /* PreviewData.swift */; };
 		55A55DAC0CB9B359929814D1 /* AppleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFA5890472A7B9B28E195B4 /* AppleSignInCoordinator.swift */; };
 		56050C65464DF9912461523B /* CrashDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */; };
@@ -24,6 +26,7 @@
 		7EF3059F9D40766BB2ED67E8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CD44FEA8F13BE11BFE94E3 /* RootView.swift */; };
 		822190EF9F092B05903A86CE /* EmergencyAlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C715BF1EBD35BFF54F5D12C8 /* EmergencyAlertService.swift */; };
 		896D4F2EE50E6046B8FE26BC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF795C2A223A6118B37AF937 /* Models.swift */; };
+		A93F7EE05F70358A9B46BB55 /* TripPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04923700719FF91F325A050F /* TripPlannerView.swift */; };
 		B236D2665FB2BC2B11E5ED97 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */; };
 		BE896A2B2E5512B88A53E925 /* CrashSafeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */; };
 		C5D165A1C5E401B63933232A /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA3CDA3D3AA0D68A5D496B1 /* SignUpView.swift */; };
@@ -49,6 +52,7 @@
 /* Begin PBXFileReference section */
 		021A0634FE7084DD4E29B67E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		02F2C62CDA8D455F5F3207F8 /* TripPackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPackService.swift; sourceTree = "<group>"; };
+		04923700719FF91F325A050F /* TripPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPlannerView.swift; sourceTree = "<group>"; };
 		1EE36EDF82C3CAF0D8414C1F /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthService.swift; sourceTree = "<group>"; };
 		25CD44FEA8F13BE11BFE94E3 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -57,10 +61,12 @@
 		4A6AD8E09B52B378D34374AF /* AssistantService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantService.swift; sourceTree = "<group>"; };
 		5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashDetector.swift; sourceTree = "<group>"; };
 		5A1E48EE439DFC19A3CC4506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		624251F4B57EC28C6496B1FB /* TripDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailView.swift; sourceTree = "<group>"; };
 		6A825ADD0BC035D33E0EB527 /* AuthViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModels.swift; sourceTree = "<group>"; };
 		7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		745678632AB543D6B3D12855 /* CrashSafeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CrashSafeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityMonitor.swift; sourceTree = "<group>"; };
+		99425B6F031FBEB982BEAFBA /* TripViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripViewModels.swift; sourceTree = "<group>"; };
 		9B8D3A594A6C685B6609E0B6 /* CrashSafe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CrashSafe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashSafeApp.swift; sourceTree = "<group>"; };
 		AF795C2A223A6118B37AF937 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -215,6 +221,7 @@
 				8504F30C3600B90BF7283C9B /* Auth */,
 				3A23E40A37E218015B4E57BA /* Home */,
 				4DD6B933F49405A21F847F2C /* Launch */,
+				D7A8F9520B612D64509729B4 /* Trips */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -239,6 +246,16 @@
 				247F6F7272FF745B756CE275 /* Services */,
 			);
 			path = CrashSafe;
+			sourceTree = "<group>";
+		};
+		D7A8F9520B612D64509729B4 /* Trips */ = {
+			isa = PBXGroup;
+			children = (
+				624251F4B57EC28C6496B1FB /* TripDetailView.swift */,
+				04923700719FF91F325A050F /* TripPlannerView.swift */,
+				99425B6F031FBEB982BEAFBA /* TripViewModels.swift */,
+			);
+			path = Trips;
 			sourceTree = "<group>";
 		};
 		E2DD3B8A62E66360E7577196 /* CrashDetection */ = {
@@ -382,7 +399,10 @@
 				C5D165A1C5E401B63933232A /* SignUpView.swift in Sources */,
 				1D1B2D27658CC7D2F38F9A89 /* SplashView.swift in Sources */,
 				F825194BB088553D363AB9D8 /* Theme.swift in Sources */,
+				3DAD74871A8FF82E756C26BE /* TripDetailView.swift in Sources */,
 				71212FE673D931F02CD3E524 /* TripPackService.swift in Sources */,
+				A93F7EE05F70358A9B46BB55 /* TripPlannerView.swift in Sources */,
+				04C60359CA58380CB3DE33A4 /* TripViewModels.swift in Sources */,
 				FE1F61E82DEE1339B84BA02F /* VoiceInputService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
