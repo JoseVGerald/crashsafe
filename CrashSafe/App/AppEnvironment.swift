@@ -106,6 +106,11 @@ final class SessionStore {
         phase = .signedOut
     }
 
+    func deleteAccount() async throws {
+        try await auth.deleteAccount()
+        phase = .signedOut
+    }
+
     /// For previews/tests.
     func forceSignIn(_ user: AuthUser) {
         phase = .signedIn(user)

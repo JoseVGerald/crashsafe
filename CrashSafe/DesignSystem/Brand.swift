@@ -41,10 +41,6 @@ enum Brand {
     /// 4.9:1 on `background` in light mode (Apple's #86868b is only 3.5:1).
     static let textSecondary = Color(light: 0x6E6E73, dark: 0xA1A7B5)
 
-    // MARK: Gradients
-    static let heroGradient = LinearGradient(colors: [blue, teal], startPoint: .topLeading, endPoint: .bottomTrailing)
-    static let dangerGradient = LinearGradient(colors: [Color(hex: 0xEF4444), Color(hex: 0xB91C1C)],
-                                               startPoint: .topLeading, endPoint: .bottomTrailing)
 }
 
 /// Spacing rhythm from the design system (4 / 8 / 16 / 24 / 48).

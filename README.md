@@ -113,6 +113,25 @@ Coaching runs whenever a drive is active (not only on the CarPlay screen). With 
 - Dynamic Type, SF Symbols, dark mode and VoiceOver labels throughout.
 - Insurance wording is facts-only ("report promptly, don't guess or admit fault", "not legal advice").
 
+## Apple standards checklist
+
+**In place**
+- Human Interface Guidelines: system fonts, SF Symbols, Dynamic Type (layouts restack at accessibility sizes), dark mode, 44pt+ tap targets, ≥ 4.5:1 text contrast, VoiceOver labels, haptics.
+- Sign in with Apple uses Apple's own `ASAuthorizationAppleIDButton` (guideline 4.8).
+- In-app **Delete account** removes the account and all on-device data (5.1.1(v)).
+- `PrivacyInfo.xcprivacy`: no tracking; approximate location (~1 km) sent to Open-Meteo for weather; UserDefaults reason CA92.1.
+- Purpose strings for location, background location and motion.
+- Safety notice: not an emergency service, doesn't replace 911 / Crash Detection (1.4.1).
+- Data attribution: Apple Maps logo + Legal stay visible; "Weather data: Open-Meteo" (CC BY 4.0).
+
+**Before an App Store submission** (not needed for CAC)
+- Replace mocks (crash detection, AI, alerts) and the demo-only UI ("Test crash", demo drives, "(demo)" labels) — 2.1 completeness.
+- Real auth backend (Firebase) — the mock stores accounts on-device.
+- Be ready to justify `location` (always) + `audio` background modes in review notes (2.5.4).
+- CarPlay Driving Task entitlement from Apple; keep phone CarPlay mode voice-first while moving.
+- App Store privacy "nutrition label" matching the privacy manifest; a privacy policy URL.
+- Final app icon (current one is a placeholder).
+
 ## AI use disclosure
 
 Several CAC districts require disclosing AI use. Keep a running list here. Starting entry: the app shell (project setup, screens, mocks, tests and this README) was generated with Claude Code from the team's build prompt, then reviewed and tested by the team.

@@ -227,3 +227,23 @@ struct CarPlayTests {
         #expect(template.actions.map(\.title) == ["Mute Pulse", "I need help"])
     }
 }
+
+@MainActor
+struct AccountDeletionTests {
+    @Test func deletingAccountRemovesItAndSignsOut() async throws {
+        let suite = "tests-\(UUID().uuidString)"
+        let auth = MockAuthService(defaults: UserDefaults(suiteName: suite)!, latency: .zero)
+        _ = try await auth.signUp(name: "Jose", email: "jose@example.com", password: "password1")
+        try await auth.deleteAccount()
+        #expect(await auth.restoreSession() == nil)
+        await #expect(throws: AuthError.userNotFound) {
+            try await auth.signIn(email: "jose@example.com", password: "password1")
+        }
+    }
+
+    @Test func privacyManifestShipsWithApp() throws {
+        let url = try #require(Bundle.main.url(forResource: "PrivacyInfo", withExtension: "xcprivacy"))
+        let plist = try #require(NSDictionary(contentsOf: url))
+        #expect(plist["NSPrivacyTracking"] as? Bool == false)
+    }
+}

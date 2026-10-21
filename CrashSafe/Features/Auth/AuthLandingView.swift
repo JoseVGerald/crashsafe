@@ -43,15 +43,14 @@ struct AuthLandingView: View {
                     .font(.system(size: 54, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(width: 112, height: 112)
-                    .background(Brand.heroGradient, in: Circle())
-                    .shadow(color: Brand.blue.opacity(0.4), radius: 24, y: 10)
+                    .background(Brand.blue, in: Circle())
             }
             .frame(height: 200)
             .fadeUp()
 
             VStack(spacing: Space.sm) {
                 Text("CrashSafe")
-                    .font(.system(size: 40, weight: .bold))
+                    .font(.largeTitle.bold())
                     .foregroundStyle(Brand.textPrimary)
                 Text("Help for what happens next.")
                     .font(.title3)
@@ -82,18 +81,12 @@ struct AuthLandingView: View {
                 }
                 .buttonStyle(.primary)
 
-                Button {
+                SystemAppleButton {
                     let viewModel = SignInViewModel(session: env.session)
                     appleViewModel = viewModel
                     Task { await viewModel.signInWithApple() }
-                } label: {
-                    if appleViewModel?.isLoading == true {
-                        ProgressView()
-                    } else {
-                        Label("Continue with Apple", systemImage: "apple.logo")
-                    }
                 }
-                .buttonStyle(.pill(.dark))
+                .disabled(appleViewModel?.isLoading == true)
 
                 NavigationLink(value: AuthRoute.signIn) {
                     Text("I already have an account")

@@ -69,6 +69,15 @@ final class FirebaseAuthService: AuthService {
         try Auth.auth().signOut()
     }
 
+    func deleteAccount() async throws {
+        do {
+            try await Auth.auth().currentUser?.delete()
+        } catch {
+            // Firebase requires a recent sign-in; the UI asks the user to sign in again.
+            throw Self.map(error)
+        }
+    }
+
     private static func makeUser(_ user: User) -> AuthUser {
         AuthUser(id: user.uid, name: user.displayName ?? "", email: user.email ?? "")
     }

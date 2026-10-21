@@ -158,7 +158,7 @@ struct AssistantView: View {
             } label: {
                 ZStack {
                     PulseRings(color: Brand.blue, count: 2, active: viewModel.isListening)
-                    Circle().fill(viewModel.isListening ? AnyShapeStyle(Brand.red) : AnyShapeStyle(Brand.heroGradient))
+                    Circle().fill(viewModel.isListening ? AnyShapeStyle(Brand.red) : AnyShapeStyle(Brand.blue))
                     if viewModel.isListening {
                         WaveformBars().foregroundStyle(.white).frame(width: 24, height: 20)
                     } else {
@@ -191,7 +191,7 @@ struct AssistantView: View {
                         .font(.headline)
                         .foregroundStyle(.white)
                         .frame(width: 52, height: 52)
-                        .background(Brand.heroGradient, in: Circle())
+                        .background(Brand.blue, in: Circle())
                 }
                 .accessibilityLabel("Send")
                 .transition(.scale.combined(with: .opacity))
@@ -211,7 +211,7 @@ struct PulseAvatar: View {
     var body: some View {
         ZStack {
             PulseRings(color: Brand.blue, count: 2, active: active)
-            Circle().fill(Brand.heroGradient)
+            Circle().fill(Brand.blue)
             Image(systemName: "sparkles")
                 .font(.system(size: size * 0.45, weight: .semibold))
                 .foregroundStyle(.white)
@@ -237,7 +237,7 @@ struct MessageBubble: View {
                 .padding(.vertical, 12)
                 .foregroundStyle(message.role == .user ? .white : Brand.textPrimary)
                 .background(
-                    message.role == .user ? AnyShapeStyle(Brand.heroGradient) : AnyShapeStyle(Brand.surface),
+                    message.role == .user ? AnyShapeStyle(Brand.blue) : AnyShapeStyle(Brand.surface),
                     in: UnevenRoundedRectangle(
                         topLeadingRadius: 22,
                         bottomLeadingRadius: message.role == .user ? 22 : 6,

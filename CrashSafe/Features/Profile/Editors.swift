@@ -160,7 +160,7 @@ struct ChoiceTile: View {
             .foregroundStyle(isSelected ? .white : Brand.textPrimary)
             .background(
                 RoundedRectangle(cornerRadius: Radius.small, style: .continuous)
-                    .fill(isSelected ? AnyShapeStyle(Brand.heroGradient) : AnyShapeStyle(Brand.fieldFill))
+                    .fill(isSelected ? AnyShapeStyle(Brand.blue) : AnyShapeStyle(Brand.fieldFill))
             )
         }
         .buttonStyle(.pressable)
@@ -265,7 +265,7 @@ struct ContactRow: View {
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(width: 44, height: 44)
-                .background(Brand.teal.gradient, in: Circle())
+                .background(Brand.teal, in: Circle())
             VStack(alignment: .leading, spacing: 3) {
                 Text(contact.name).font(.headline).foregroundStyle(Brand.textPrimary)
                 Text([contact.relationship, PhoneFormat.display(contact.phone)].filter { !$0.isEmpty }.joined(separator: " · "))

@@ -107,8 +107,9 @@ final class OpenMeteoWeatherService: WeatherService {
     func current(at coordinate: CLLocationCoordinate2D) async throws -> WeatherSnapshot {
         var components = URLComponents(string: "https://api.open-meteo.com/v1/forecast")!
         components.queryItems = [
-            URLQueryItem(name: "latitude", value: String(format: "%.4f", coordinate.latitude)),
-            URLQueryItem(name: "longitude", value: String(format: "%.4f", coordinate.longitude)),
+            // Rounded to ~1 km: weather doesn't need more, and less precise location leaves the phone.
+            URLQueryItem(name: "latitude", value: String(format: "%.2f", coordinate.latitude)),
+            URLQueryItem(name: "longitude", value: String(format: "%.2f", coordinate.longitude)),
             URLQueryItem(name: "current", value: "temperature_2m,is_day,weather_code,wind_speed_10m,visibility"),
             URLQueryItem(name: "temperature_unit", value: "fahrenheit"),
             URLQueryItem(name: "wind_speed_unit", value: "mph"),

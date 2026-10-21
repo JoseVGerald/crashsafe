@@ -37,6 +37,8 @@ private struct ProfileContent: View {
     @State private var editingVehicle: Vehicle?
     @State private var addingContact = false
     @State private var confirmingSignOut = false
+    @State private var confirmingDelete = false
+    @State private var deleteError: String?
     @FocusState private var focus: Field?
     @FocusState private var notesFocused: Bool
 
@@ -170,12 +172,28 @@ private struct ProfileContent: View {
                 }
                 .fadeUp(delay: 0.24)
 
-                Button(role: .destructive) {
-                    confirmingSignOut = true
-                } label: {
-                    Text("Sign out").foregroundStyle(Brand.redInk)
+                SafetyNotice()
+                    .padding(.horizontal, Space.xs)
+
+                VStack(spacing: 4) {
+                    Button(role: .destructive) {
+                        confirmingSignOut = true
+                    } label: {
+                        Text("Sign out").foregroundStyle(Brand.redInk)
+                    }
+                    .buttonStyle(.pill(.ghost, height: 48))
+
+                    Button(role: .destructive) {
+                        confirmingDelete = true
+                    } label: {
+                        Text("Delete account").font(.subheadline).foregroundStyle(Brand.textSecondary)
+                    }
+                    .frame(minHeight: 44)
+
+                    if let deleteError {
+                        Text(deleteError).font(.footnote).foregroundStyle(Brand.redInk)
+                    }
                 }
-                .buttonStyle(.pill(.ghost, height: 48))
             }
             .padding(.horizontal, Space.md)
             .padding(.bottom, Space.lg)
@@ -186,6 +204,13 @@ private struct ProfileContent: View {
         .sheet(isPresented: $addingVehicle) { VehicleEditorView(profile: profile) }
         .sheet(item: $editingVehicle) { VehicleEditorView(profile: profile, vehicle: $0) }
         .sheet(isPresented: $addingContact) { ContactEditorView(profile: profile) }
+        .confirmationDialog("Delete your account?", isPresented: $confirmingDelete, titleVisibility: .visible) {
+            Button("Delete account and data", role: .destructive) {
+                Task { await deleteAccount() }
+            }
+        } message: {
+            Text("This permanently deletes your account, profile, vehicles, contacts, trips and check-ins from this phone.")
+        }
         .confirmationDialog("Sign out of CrashSafe?", isPresented: $confirmingSignOut, titleVisibility: .visible) {
             Button("Sign out", role: .destructive) { env.session.signOut() }
         } message: {
@@ -199,7 +224,7 @@ private struct ProfileContent: View {
                 .font(.title.weight(.semibold))
                 .foregroundStyle(.white)
                 .frame(width: 68, height: 68)
-                .background(Brand.heroGradient, in: Circle())
+                .background(Brand.blue, in: Circle())
             VStack(alignment: .leading, spacing: 4) {
                 Text(user.name.isEmpty ? "Your profile" : user.name)
                     .font(.title2.bold())
@@ -239,6 +264,20 @@ private struct ProfileContent: View {
             .card(padding: Space.md)
         }
         .buttonStyle(.pressable)
+    }
+
+    private func deleteAccount() async {
+        let id = user.id
+        do {
+            try await env.session.deleteAccount()
+        } catch {
+            deleteError = error.localizedDescription
+            return
+        }
+        try? context.delete(model: Trip.self, where: #Predicate { $0.ownerID == id })
+        try? context.delete(model: CheckInRecord.self, where: #Predicate { $0.ownerID == id })
+        try? context.delete(model: Profile.self, where: #Predicate { $0.ownerID == id })
+        try? context.save()
     }
 
     private func remove(_ vehicle: Vehicle) {

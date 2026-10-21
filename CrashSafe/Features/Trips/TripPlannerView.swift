@@ -21,7 +21,7 @@ struct TripPlannerView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.md + 4) {
                     Text("Plan a trip")
-                        .font(.system(size: 34, weight: .bold))
+                        .font(.largeTitle.bold())
                         .foregroundStyle(Brand.textPrimary)
                         .padding(.top, Space.sm)
                         .fadeUp()
