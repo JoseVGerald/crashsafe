@@ -177,7 +177,8 @@ struct RecoveryView: View {
     }
 
     private var mapCard: some View {
-        ZStack(alignment: .bottomLeading) {
+        // Overlay sits top-left so Apple's Maps logo and Legal link (bottom-left) stay visible.
+        ZStack(alignment: .topLeading) {
             Map(position: $position) {
                 UserAnnotation()
                 if let here, outcome != nil {
@@ -187,6 +188,7 @@ struct RecoveryView: View {
                             .foregroundStyle(.white, Brand.red)
                             .shadow(radius: 4)
                     }
+                    .annotationTitles(.hidden) // the overlay card names the spot
                 }
                 ForEach(visiblePlaces) { place in
                     Marker(place.name, systemImage: place.category.systemImage, coordinate: place.coordinate)
@@ -265,7 +267,8 @@ struct RecoveryView: View {
                     Text(place.name)
                         .font(.headline)
                         .foregroundStyle(Brand.textPrimary)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                     Text(distanceText(place))
                         .font(.subheadline)
                         .foregroundStyle(Brand.textSecondary)

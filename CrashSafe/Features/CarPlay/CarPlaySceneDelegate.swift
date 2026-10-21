@@ -38,7 +38,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     // MARK: Templates
 
-    private func makeDashboard() -> CPInformationTemplate {
+    func makeDashboard() -> CPInformationTemplate {
         CPInformationTemplate(title: "CrashSafe", layout: .twoColumn, items: items(), actions: actions())
     }
 
