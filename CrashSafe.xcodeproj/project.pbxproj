@@ -7,10 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		038A4434D278882551D4D92B /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCBBE80EC490BE199FD311F /* AppEnvironment.swift */; };
+		2A2A535A29138FACCE93DA3E /* ConnectivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */; };
+		31A7D014C173178BA64025B7 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */; };
+		46B871AD5B8C10E6CDA10D4A /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE36EDF82C3CAF0D8414C1F /* PreviewData.swift */; };
+		55A55DAC0CB9B359929814D1 /* AppleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFA5890472A7B9B28E195B4 /* AppleSignInCoordinator.swift */; };
+		56050C65464DF9912461523B /* CrashDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */; };
+		603242792CD34CC3469E0E26 /* AssistantService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6AD8E09B52B378D34374AF /* AssistantService.swift */; };
 		67752455C962B4425EA3C1F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B72CB6962C609F45E13E0AAA /* Preview Assets.xcassets */; };
 		6FD8242CD6D22D8956A9AC78 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A1E48EE439DFC19A3CC4506 /* Assets.xcassets */; };
+		71212FE673D931F02CD3E524 /* TripPackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F2C62CDA8D455F5F3207F8 /* TripPackService.swift */; };
+		822190EF9F092B05903A86CE /* EmergencyAlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C715BF1EBD35BFF54F5D12C8 /* EmergencyAlertService.swift */; };
+		896D4F2EE50E6046B8FE26BC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF795C2A223A6118B37AF937 /* Models.swift */; };
+		B236D2665FB2BC2B11E5ED97 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */; };
 		BE896A2B2E5512B88A53E925 /* CrashSafeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */; };
+		E3CF0BEE1398F1C3218A5D20 /* MockAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */; };
 		F825194BB088553D363AB9D8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62C2C0A4F964592CCAA018C /* Theme.swift */; };
+		FE1F61E82DEE1339B84BA02F /* VoiceInputService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B804117D146681B2ED056995 /* VoiceInputService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,12 +37,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		02F2C62CDA8D455F5F3207F8 /* TripPackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPackService.swift; sourceTree = "<group>"; };
+		1EE36EDF82C3CAF0D8414C1F /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthService.swift; sourceTree = "<group>"; };
+		402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		4A6AD8E09B52B378D34374AF /* AssistantService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantService.swift; sourceTree = "<group>"; };
+		5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashDetector.swift; sourceTree = "<group>"; };
 		5A1E48EE439DFC19A3CC4506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		745678632AB543D6B3D12855 /* CrashSafeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CrashSafeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityMonitor.swift; sourceTree = "<group>"; };
 		9B8D3A594A6C685B6609E0B6 /* CrashSafe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CrashSafe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashSafeApp.swift; sourceTree = "<group>"; };
+		AF795C2A223A6118B37AF937 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		B72CB6962C609F45E13E0AAA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B804117D146681B2ED056995 /* VoiceInputService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputService.swift; sourceTree = "<group>"; };
 		C62C2C0A4F964592CCAA018C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		C715BF1EBD35BFF54F5D12C8 /* EmergencyAlertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyAlertService.swift; sourceTree = "<group>"; };
+		CBFA5890472A7B9B28E195B4 /* AppleSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInCoordinator.swift; sourceTree = "<group>"; };
+		FCCBBE80EC490BE199FD311F /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -53,16 +79,42 @@
 		247F6F7272FF745B756CE275 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				9E9FBBBCA4470C48F0A99675 /* Alerts */,
+				F8714A151FE2641603B73098 /* Assistant */,
+				7C806DAD748815D5CBFDE664 /* Auth */,
+				CE3CA149AD65DB0B4CD6D057 /* Connectivity */,
+				E2DD3B8A62E66360E7577196 /* CrashDetection */,
+				296C318A0EB18B262CA5B837 /* TripPack */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		296C318A0EB18B262CA5B837 /* TripPack */ = {
+			isa = PBXGroup;
+			children = (
+				02F2C62CDA8D455F5F3207F8 /* TripPackService.swift */,
+			);
+			path = TripPack;
 			sourceTree = "<group>";
 		};
 		76C94728CE42B00DA32AD367 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
 				B72CB6962C609F45E13E0AAA /* Preview Assets.xcassets */,
+				1EE36EDF82C3CAF0D8414C1F /* PreviewData.swift */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		7C806DAD748815D5CBFDE664 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				CBFA5890472A7B9B28E195B4 /* AppleSignInCoordinator.swift */,
+				7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */,
+				402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */,
+				1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		9547EC2F3B9C729514DC17CE /* Resources */ = {
@@ -71,6 +123,14 @@
 				5A1E48EE439DFC19A3CC4506 /* Assets.xcassets */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		9E9FBBBCA4470C48F0A99675 /* Alerts */ = {
+			isa = PBXGroup;
+			children = (
+				C715BF1EBD35BFF54F5D12C8 /* EmergencyAlertService.swift */,
+			);
+			path = Alerts;
 			sourceTree = "<group>";
 		};
 		A3090A555764D042C38D2511 /* Products */ = {
@@ -92,6 +152,7 @@
 		BACE073DFE9B0AB0C9265118 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				FCCBBE80EC490BE199FD311F /* AppEnvironment.swift */,
 				A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */,
 			);
 			path = App;
@@ -104,17 +165,51 @@
 			path = Features;
 			sourceTree = "<group>";
 		};
+		CE3CA149AD65DB0B4CD6D057 /* Connectivity */ = {
+			isa = PBXGroup;
+			children = (
+				93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */,
+			);
+			path = Connectivity;
+			sourceTree = "<group>";
+		};
 		D095BDFE26D1D5D4068EBF0B /* CrashSafe */ = {
 			isa = PBXGroup;
 			children = (
 				BACE073DFE9B0AB0C9265118 /* App */,
 				0E28E4E8D2EBCA5454942629 /* DesignSystem */,
 				BC7F5C42A6E79C30D97DB394 /* Features */,
+				FEA272FFA13CD217B1FA6B65 /* Models */,
 				76C94728CE42B00DA32AD367 /* Preview Content */,
 				9547EC2F3B9C729514DC17CE /* Resources */,
 				247F6F7272FF745B756CE275 /* Services */,
 			);
 			path = CrashSafe;
+			sourceTree = "<group>";
+		};
+		E2DD3B8A62E66360E7577196 /* CrashDetection */ = {
+			isa = PBXGroup;
+			children = (
+				5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */,
+			);
+			path = CrashDetection;
+			sourceTree = "<group>";
+		};
+		F8714A151FE2641603B73098 /* Assistant */ = {
+			isa = PBXGroup;
+			children = (
+				4A6AD8E09B52B378D34374AF /* AssistantService.swift */,
+				B804117D146681B2ED056995 /* VoiceInputService.swift */,
+			);
+			path = Assistant;
+			sourceTree = "<group>";
+		};
+		FEA272FFA13CD217B1FA6B65 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AF795C2A223A6118B37AF937 /* Models.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,8 +305,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				038A4434D278882551D4D92B /* AppEnvironment.swift in Sources */,
+				55A55DAC0CB9B359929814D1 /* AppleSignInCoordinator.swift in Sources */,
+				603242792CD34CC3469E0E26 /* AssistantService.swift in Sources */,
+				B236D2665FB2BC2B11E5ED97 /* AuthService.swift in Sources */,
+				2A2A535A29138FACCE93DA3E /* ConnectivityMonitor.swift in Sources */,
+				56050C65464DF9912461523B /* CrashDetector.swift in Sources */,
 				BE896A2B2E5512B88A53E925 /* CrashSafeApp.swift in Sources */,
+				822190EF9F092B05903A86CE /* EmergencyAlertService.swift in Sources */,
+				31A7D014C173178BA64025B7 /* FirebaseAuthService.swift in Sources */,
+				E3CF0BEE1398F1C3218A5D20 /* MockAuthService.swift in Sources */,
+				896D4F2EE50E6046B8FE26BC /* Models.swift in Sources */,
+				46B871AD5B8C10E6CDA10D4A /* PreviewData.swift in Sources */,
 				F825194BB088553D363AB9D8 /* Theme.swift in Sources */,
+				71212FE673D931F02CD3E524 /* TripPackService.swift in Sources */,
+				FE1F61E82DEE1339B84BA02F /* VoiceInputService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
