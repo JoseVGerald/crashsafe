@@ -1,0 +1,15 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+.swiftpm/
+
+# Secrets — never commit these
+GoogleService-Info.plist
+*.xcconfig.local
+.env
+
+# macOS
+.DS_Store
