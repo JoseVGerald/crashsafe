@@ -70,6 +70,12 @@ final class MockAuthService: AuthService {
         defaults.removeObject(forKey: sessionKey)
     }
 
+    func deleteAccount() async throws {
+        guard let id = defaults.string(forKey: sessionKey) else { return }
+        save(accounts().filter { $0.value.user.id != id })
+        defaults.removeObject(forKey: sessionKey)
+    }
+
     // MARK: - Storage
 
     private func accounts() -> [String: StoredAccount] {

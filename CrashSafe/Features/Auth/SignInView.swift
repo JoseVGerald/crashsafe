@@ -69,13 +69,10 @@ struct SignInView: View {
                     }
                     .accessibilityHidden(true)
 
-                    Button {
+                    SystemAppleButton {
                         focus = nil
                         Task { await viewModel.signInWithApple() }
-                    } label: {
-                        Label("Continue with Apple", systemImage: "apple.logo")
                     }
-                    .buttonStyle(.pill(.dark))
                     .disabled(viewModel.isLoading)
                 }
                 .fadeUp(delay: 0.16)

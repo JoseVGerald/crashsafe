@@ -65,12 +65,8 @@ struct CarPlayModeView: View {
     // MARK: Panels
 
     private var background: some View {
-        ZStack {
-            Color(hex: 0x05080F)
-            RadialGradient(colors: [statusColor.opacity(0.28), .clear], center: .topLeading, startRadius: 0, endRadius: 520)
-                .animation(.easeInOut(duration: 0.8), value: comparison.status)
-        }
-        .ignoresSafeArea()
+        Color(hex: 0x05080F)
+            .ignoresSafeArea()
     }
 
     private var topBar: some View {
@@ -129,7 +125,6 @@ struct CarPlayModeView: View {
                     .stroke(statusColor, style: StrokeStyle(lineWidth: 18, lineCap: .round))
                     .rotationEffect(.degrees(135))
                     .animation(.spring(response: 0.6), value: snapshot.speedMPH)
-                    .shadow(color: statusColor.opacity(0.6), radius: 12)
                 VStack(spacing: 0) {
                     Text("\(Int(snapshot.speedMPH))")
                         .font(.system(size: 84, weight: .bold, design: .rounded))

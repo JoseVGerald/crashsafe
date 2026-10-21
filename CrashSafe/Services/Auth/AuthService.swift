@@ -10,6 +10,8 @@ protocol AuthService: AnyObject {
     func signInWithApple() async throws -> AuthUser
     func sendPasswordReset(email: String) async throws
     func signOut() throws
+    /// Permanently deletes the signed-in account (App Store guideline 5.1.1(v)).
+    func deleteAccount() async throws
 }
 
 enum AuthError: LocalizedError, Equatable {

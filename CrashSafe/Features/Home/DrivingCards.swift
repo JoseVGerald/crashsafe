@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Weather where you are + how to drive in it.
 struct ConditionsCard: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let placeName: String?
     let weather: WeatherSnapshot?
     let isNight: Bool
@@ -54,17 +55,18 @@ struct ConditionsCard: View {
                     .buttonStyle(.secondary)
             } else {
                 Divider().overlay(Brand.stroke)
-                HStack(spacing: 8) {
+                AdaptiveStack(spacing: 8) {
                     Text(advice.headline)
                         .font(.headline)
                         .foregroundStyle(Brand.textPrimary)
-                    Spacer()
+                    Spacer(minLength: 0)
                     if isNight { StatusChip(text: "Night", systemImage: "moon.fill", tint: Brand.blueInk) }
                     if let wind = weather?.windMph, wind >= 15 {
                         StatusChip(text: "\(Int(wind)) mph", systemImage: "wind", tint: Brand.amberInk)
                     }
                 }
-                LazyVGrid(columns: [GridItem(.flexible(), alignment: .topLeading), GridItem(.flexible(), alignment: .topLeading)],
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), alignment: .topLeading),
+                                         count: typeSize.isAccessibilitySize ? 1 : 2),
                           alignment: .leading, spacing: 12) {
                     ForEach(advice.tips) { tip in
                         Label {
@@ -78,6 +80,14 @@ struct ConditionsCard: View {
                         }
                     }
                 }
+            }
+
+            if weather != nil, demoTitle == nil {
+                // Required attribution for Open-Meteo data (CC BY 4.0).
+                Link("Weather data: Open-Meteo", destination: URL(string: "https://open-meteo.com/")!)
+                    .font(.caption2)
+                    .foregroundStyle(Brand.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
         .card(padding: Space.md + 4)
@@ -96,17 +106,17 @@ struct DrivingComparisonCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.md) {
-            HStack {
+            AdaptiveStack(spacing: Space.sm) {
                 Text("You vs. conditions")
                     .font(.headline)
                     .foregroundStyle(Brand.textPrimary)
-                Spacer()
+                Spacer(minLength: 0)
                 StatusChip(text: comparison.status.label, systemImage: statusIcon, tint: statusTint)
                     .contentTransition(.opacity)
             }
 
             if isDriving {
-                HStack(spacing: Space.lg) {
+                AdaptiveStack(spacing: Space.lg) {
                     SpeedGauge(speed: snapshot.speedMPH, recommended: comparison.recommendedMaxMPH,
                                limit: snapshot.speedLimitMPH, tint: statusTint)
                         .frame(width: 128, height: 128)
@@ -115,7 +125,7 @@ struct DrivingComparisonCard: View {
                             .font(.subheadline)
                             .foregroundStyle(Brand.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
-                        HStack(spacing: Space.md) {
+                        AdaptiveStack(spacing: Space.md) {
                             stat("\(Int(snapshot.averageSpeedMPH))", "avg mph")
                             stat("\(snapshot.hardBrakes)", "hard brakes")
                             stat(String(format: "%.1f", snapshot.peakG), "peak g")
