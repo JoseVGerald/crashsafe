@@ -71,6 +71,7 @@ struct SignUpView: View {
         .scrollDismissesKeyboard(.interactively)
         .background(BrandBackground())
         .navigationBarTitleDisplayMode(.inline)
+        .softTopEdge()
         .animation(.easeOut(duration: 0.2), value: viewModel.errorMessage)
         .onChange(of: focus) { old, _ in
             // Validate a field once the user leaves it.

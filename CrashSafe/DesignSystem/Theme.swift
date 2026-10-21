@@ -378,3 +378,15 @@ enum PhoneFormat {
         return "(\(String(d[0..<3]))) \(String(d[3..<6]))-\(String(d[6..<10]))"
     }
 }
+
+extension View {
+    /// Content scrolling under the nav bar blurs out instead of colliding with the back button.
+    @ViewBuilder
+    func softTopEdge() -> some View {
+        if #available(iOS 26, *) {
+            self.scrollEdgeEffectStyle(.hard, for: .top)
+        } else {
+            self.toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        }
+    }
+}
