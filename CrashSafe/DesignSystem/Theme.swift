@@ -5,6 +5,9 @@ import SwiftUI
 enum Theme {
     static let accent = Color.accentColor
     static let danger = Color("Danger")
+    /// Fixed fills for emergency buttons: dark enough for white text (≥ 4.5:1) in both modes.
+    static let emergencyFill = Color(red: 0.75, green: 0.09, blue: 0.09)
+    static let safeFill = Color(red: 0.05, green: 0.47, blue: 0.20)
 
     /// Minimum height for primary actions (well above Apple's 44pt minimum).
     static let bigTapTarget: CGFloat = 60
