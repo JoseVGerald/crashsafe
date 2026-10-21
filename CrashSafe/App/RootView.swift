@@ -14,11 +14,12 @@ struct RootView: View {
                 AuthFlowView()
                     .transition(.opacity)
             case .signedIn(let user):
-                MainTabView(user: user)
+                SignedInRoot(user: user)
                     .id(user.id) // fresh state per account
                     .transition(.opacity)
             }
         }
+        .tint(Brand.blueInk)
         .animation(.easeInOut(duration: 0.35), value: env.session.phase)
         .task { await env.session.restore() }
         .task { await listenForCrashes() }

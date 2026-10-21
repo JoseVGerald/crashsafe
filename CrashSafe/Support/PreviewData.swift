@@ -13,6 +13,7 @@ enum PreviewData {
             voiceInput: MockVoiceInputService(),
             tripPacks: MockTripPackService(),
             alerts: MockEmergencyAlertService(),
+            weather: MockWeatherService(),
             connectivity: ConnectivityMonitor(start: false)
         )
         if signedIn { env.session.forceSignIn(user) }
@@ -28,9 +29,14 @@ enum PreviewData {
 
         let profile = Profile(ownerID: user.id,
                               medicalNotes: "Allergic to penicillin. Asthma — inhaler in glovebox.",
-                              carMake: "Toyota", carModel: "Camry", carType: .sedan,
                               insurer: "State Farm", policyNumber: "SF-123-456")
+        profile.bloodType = "O+"
+        profile.onboardingCompleted = true
         context.insert(profile)
+        profile.vehicles.append(contentsOf: [
+            Vehicle(make: "Toyota", model: "Camry", year: 2019, type: .sedan, colorName: "Silver", plate: "CDX1234", isPrimary: true),
+            Vehicle(make: "Honda", model: "CR-V", year: 2021, type: .suv, colorName: "Blue"),
+        ])
         let mom = FamilyContact(name: "Maria Gerald", phone: "555-0100", relationship: "Mom")
         let bro = FamilyContact(name: "Leo Gerald", phone: "555-0199", relationship: "Brother")
         profile.familyContacts.append(contentsOf: [mom, bro])

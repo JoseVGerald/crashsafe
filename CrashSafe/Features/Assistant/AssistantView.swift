@@ -11,7 +11,12 @@ struct AssistantView: View {
     @Query private var profiles: [Profile]
     @Query private var trips: [Trip]
 
-    private let suggestions = ["I need a tow", "What do I tell insurance?", "What photos should I take?", "I'm shaking"]
+    private let suggestions = [
+        ("car.side.fill", "I need a tow"),
+        ("doc.text.fill", "What do I tell insurance?"),
+        ("camera.fill", "What photos should I take?"),
+        ("heart.fill", "I'm shaking"),
+    ]
 
     init(user: AuthUser, viewModel: AssistantViewModel) {
         self.user = user
@@ -24,18 +29,15 @@ struct AssistantView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                header
                 if viewModel.isAfterCrash {
                     emergencyBar
                 }
                 messageList
                 inputBar
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Assistant")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) { brainBadge }
-            }
+            .background(BrandBackground())
+            .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
             viewModel.contextProvider = makeContext
@@ -53,30 +55,30 @@ struct AssistantView: View {
     }
 
     private func makeContext() -> AssistantContext {
-        let profile = profiles.first
-        let car = [profile?.carMake, profile?.carModel].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " ")
-        return AssistantContext(
-            userName: user.name,
-            isOnline: env.connectivity.isOnline,
-            scenario: viewModel.scenario,
-            carDescription: car.isEmpty ? (profile?.carType.label ?? "") : "\(car) (\(profile?.carType.label ?? ""))",
-            insurer: profile?.insurer ?? "",
-            medicalNotes: profile?.medicalNotes ?? "",
-            familyContactNames: profile?.sortedContacts.map(\.name) ?? [],
-            currentTrip: trips.first?.routeLabel
-        )
+        AssistantContext.make(user: user, profile: profiles.first, activeTrip: trips.first,
+                              isOnline: env.connectivity.isOnline, scenario: viewModel.scenario)
     }
 
-    // MARK: - Pieces
+    // MARK: Pieces
 
-    private var brainBadge: some View {
-        Label(env.connectivity.isOnline ? "Online" : "Offline",
-              systemImage: env.connectivity.isOnline ? "cloud.fill" : "iphone")
-            .font(.caption.weight(.semibold))
-            .labelStyle(.titleAndIcon)
-            .padding(.horizontal, 10).padding(.vertical, 5)
-            .background(Color(.tertiarySystemFill), in: Capsule())
-            .accessibilityLabel(env.connectivity.isOnline ? "Using the online assistant" : "Using the offline assistant")
+    private var header: some View {
+        HStack(spacing: 12) {
+            PulseAvatar(size: 44, active: viewModel.isThinking || viewModel.isListening)
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Pulse").font(.title3.bold()).foregroundStyle(Brand.textPrimary)
+                Text(viewModel.isThinking ? "Thinking…" : (env.connectivity.isOnline ? "Online assistant" : "Offline · using your trip pack"))
+                    .font(.footnote)
+                    .foregroundStyle(Brand.textSecondary)
+                    .contentTransition(.opacity)
+            }
+            Spacer()
+            StatusChip(text: env.connectivity.isOnline ? "Online" : "Offline",
+                       systemImage: env.connectivity.isOnline ? "cloud.fill" : "iphone",
+                       tint: env.connectivity.isOnline ? Brand.greenInk : Brand.amberInk)
+        }
+        .padding(.horizontal, Space.md)
+        .padding(.vertical, 10)
+        .animation(.easeOut, value: viewModel.isThinking)
     }
 
     private var emergencyBar: some View {
@@ -84,14 +86,11 @@ struct AssistantView: View {
             if let url = URL(string: "tel://911") { openURL(url) }
         } label: {
             Label("Anyone hurt? Call 911", systemImage: "phone.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity, minHeight: 52)
-                .foregroundStyle(.white)
-                .background(Theme.emergencyFill, in: RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
         }
-        .buttonStyle(.plain)
-        .padding(.horizontal)
-        .padding(.top, 8)
+        .buttonStyle(.pill(.danger, height: 50))
+        .padding(.horizontal, Space.md)
+        .padding(.bottom, 6)
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
 
     private var messageList: some View {
@@ -101,18 +100,23 @@ struct AssistantView: View {
                     ForEach(viewModel.messages) { message in
                         MessageBubble(message: message)
                             .id(message.id)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.96, anchor: message.role == .user ? .bottomTrailing : .bottomLeading)),
+                                removal: .opacity))
                     }
                     if viewModel.isThinking {
-                        TypingIndicator().id("typing")
+                        TypingIndicator().id("typing").transition(.opacity)
                     }
                     if let error = viewModel.errorMessage {
                         ErrorBanner(message: error)
                     }
                     if viewModel.messages.count <= 1 {
-                        suggestionChips
+                        suggestionChips.padding(.top, 4)
                     }
                 }
-                .padding()
+                .padding(Space.md)
+                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: viewModel.messages.count)
+                .animation(.easeOut, value: viewModel.isThinking)
             }
             .scrollDismissesKeyboard(.interactively)
             .onChange(of: viewModel.messages.count) {
@@ -126,16 +130,24 @@ struct AssistantView: View {
 
     private var suggestionChips: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(suggestions, id: \.self) { text in
-                Button(text) { Task { await viewModel.send(text) } }
-                    .font(.callout.weight(.semibold))
-                    .padding(.horizontal, 14)
-                    .frame(minHeight: 44)
-                    .background(Theme.accent.opacity(0.12), in: Capsule())
-                    .foregroundStyle(Theme.accent)
+            Text("Try asking")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Brand.textSecondary)
+            ForEach(suggestions, id: \.1) { icon, text in
+                Button {
+                    Task { await viewModel.send(text) }
+                } label: {
+                    Label(text, systemImage: icon)
+                        .font(.callout.weight(.semibold))
+                        .padding(.horizontal, 16)
+                        .frame(minHeight: 44)
+                        .foregroundStyle(Brand.blueInk)
+                        .background(Brand.surface, in: Capsule())
+                        .overlay(Capsule().strokeBorder(Brand.blueInk.opacity(0.25)))
+                }
+                .buttonStyle(.pressable)
             }
         }
-        .padding(.top, 4)
     }
 
     private var inputBar: some View {
@@ -144,39 +156,68 @@ struct AssistantView: View {
                 inputFocused = false
                 Task { await viewModel.listen() }
             } label: {
-                Image(systemName: viewModel.isListening ? "waveform" : "mic.fill")
-                    .font(.title2.weight(.semibold))
-                    .symbolEffect(.variableColor.iterative, isActive: viewModel.isListening)
-                    .frame(width: 56, height: 56)
-                    .foregroundStyle(.white)
-                    .background(viewModel.isListening ? Theme.emergencyFill : Theme.accent, in: Circle())
+                ZStack {
+                    PulseRings(color: Brand.blue, count: 2, active: viewModel.isListening)
+                    Circle().fill(viewModel.isListening ? AnyShapeStyle(Brand.red) : AnyShapeStyle(Brand.heroGradient))
+                    if viewModel.isListening {
+                        WaveformBars().foregroundStyle(.white).frame(width: 24, height: 20)
+                    } else {
+                        Image(systemName: "mic.fill").font(.title3.weight(.semibold)).foregroundStyle(.white)
+                    }
+                }
+                .frame(width: 52, height: 52)
             }
-            .accessibilityLabel(viewModel.isListening ? "Listening" : "Speak to the assistant")
+            .accessibilityLabel(viewModel.isListening ? "Listening" : "Speak to Pulse")
             .disabled(viewModel.isThinking)
 
-            TextField(viewModel.isListening ? "Listening…" : "Ask anything", text: $viewModel.draft, axis: .vertical)
+            TextField("", text: $viewModel.draft,
+                      prompt: Text(viewModel.isListening ? "Listening…" : "Message Pulse").foregroundStyle(Brand.textSecondary),
+                      axis: .vertical)
                 .lineLimit(1...4)
                 .focused($inputFocused)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
-                .frame(minHeight: 56)
-                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 22))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .frame(minHeight: 52)
+                .background(Brand.surface, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous).strokeBorder(Brand.stroke))
                 .submitLabel(.send)
                 .onSubmit { Task { await viewModel.send() } }
 
-            Button {
-                Task { await viewModel.send() }
-            } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 44))
-                    .frame(width: 56, height: 56)
+            if viewModel.canSend {
+                Button {
+                    Task { await viewModel.send() }
+                } label: {
+                    Image(systemName: "arrow.up")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(width: 52, height: 52)
+                        .background(Brand.heroGradient, in: Circle())
+                }
+                .accessibilityLabel("Send")
+                .transition(.scale.combined(with: .opacity))
             }
-            .disabled(!viewModel.canSend)
-            .accessibilityLabel("Send")
         }
-        .padding(.horizontal)
+        .padding(.horizontal, Space.md)
         .padding(.vertical, 10)
-        .background(.bar)
+        .animation(.spring(response: 0.3), value: viewModel.canSend)
+    }
+}
+
+/// Pulse's avatar: gradient orb with a sparkle, softly pulsing while it works.
+struct PulseAvatar: View {
+    var size: CGFloat = 32
+    var active = false
+
+    var body: some View {
+        ZStack {
+            PulseRings(color: Brand.blue, count: 2, active: active)
+            Circle().fill(Brand.heroGradient)
+            Image(systemName: "sparkles")
+                .font(.system(size: size * 0.45, weight: .semibold))
+                .foregroundStyle(.white)
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
     }
 }
 
@@ -184,43 +225,59 @@ struct MessageBubble: View {
     let message: ChatMessage
 
     var body: some View {
-        HStack {
-            if message.role == .user { Spacer(minLength: 48) }
+        HStack(alignment: .bottom, spacing: 8) {
+            if message.role == .user {
+                Spacer(minLength: 48)
+            } else {
+                PulseAvatar(size: 28)
+            }
             Text(message.text)
                 .font(.body)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .foregroundStyle(message.role == .user ? .white : .primary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .foregroundStyle(message.role == .user ? .white : Brand.textPrimary)
                 .background(
-                    message.role == .user ? Theme.accent : Color(.secondarySystemGroupedBackground),
-                    in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    message.role == .user ? AnyShapeStyle(Brand.heroGradient) : AnyShapeStyle(Brand.surface),
+                    in: UnevenRoundedRectangle(
+                        topLeadingRadius: 22,
+                        bottomLeadingRadius: message.role == .user ? 22 : 6,
+                        bottomTrailingRadius: message.role == .user ? 6 : 22,
+                        topTrailingRadius: 22,
+                        style: .continuous)
                 )
+                .overlay {
+                    if message.role == .assistant {
+                        UnevenRoundedRectangle(topLeadingRadius: 22, bottomLeadingRadius: 6, bottomTrailingRadius: 22,
+                                               topTrailingRadius: 22, style: .continuous)
+                            .strokeBorder(Brand.stroke)
+                    }
+                }
                 .textSelection(.enabled)
-            if message.role == .assistant { Spacer(minLength: 48) }
+            if message.role == .assistant { Spacer(minLength: 32) }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel((message.role == .user ? "You: " : "Assistant: ") + message.text)
+        .accessibilityLabel((message.role == .user ? "You: " : "Pulse: ") + message.text)
     }
 }
 
 private struct TypingIndicator: View {
-    @State private var phase = 0.0
-
     var body: some View {
-        HStack(spacing: 5) {
-            ForEach(0..<3) { index in
-                Circle()
-                    .frame(width: 8, height: 8)
-                    .opacity(0.3 + 0.7 * abs(sin(phase + Double(index) * 0.6)))
+        HStack(alignment: .bottom, spacing: 8) {
+            PulseAvatar(size: 28, active: true)
+            HStack(spacing: 5) {
+                ForEach(0..<3) { index in
+                    Circle()
+                        .frame(width: 8, height: 8)
+                        .phaseAnimator([0.3, 1]) { content, phase in
+                            content.opacity(phase).scaleEffect(phase)
+                        } animation: { _ in .easeInOut(duration: 0.5).delay(Double(index) * 0.15) }
+                }
             }
+            .foregroundStyle(Brand.textSecondary)
+            .padding(.horizontal, 16).padding(.vertical, 16)
+            .background(Brand.surface, in: Capsule())
         }
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 16).padding(.vertical, 14)
-        .background(Color(.secondarySystemGroupedBackground), in: Capsule())
-        .onAppear {
-            withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) { phase = .pi }
-        }
-        .accessibilityLabel("Assistant is typing")
+        .accessibilityLabel("Pulse is typing")
     }
 }
 
@@ -228,19 +285,7 @@ private struct TypingIndicator: View {
     let env = PreviewData.environment()
     AssistantView(user: PreviewData.user, viewModel: AssistantViewModel(
         service: env.assistant, voice: env.voiceInput,
-        contextProvider: { AssistantContext(userName: "Jose", isOnline: true, scenario: .general, carDescription: "",
-                                            insurer: "", medicalNotes: "", familyContactNames: []) }))
-        .environment(env)
-        .modelContainer(PreviewData.container())
-}
-
-#Preview("After crash") {
-    let env = PreviewData.environment()
-    env.router.pendingAssistantScenario = .afterCrash(.ok)
-    return AssistantView(user: PreviewData.user, viewModel: AssistantViewModel(
-        service: env.assistant, voice: env.voiceInput,
-        contextProvider: { AssistantContext(userName: "Jose", isOnline: true, scenario: .general, carDescription: "",
-                                            insurer: "", medicalNotes: "", familyContactNames: []) }))
+        contextProvider: { AssistantContext.make(user: PreviewData.user, profile: nil, activeTrip: nil, isOnline: true) }))
         .environment(env)
         .modelContainer(PreviewData.container())
 }
