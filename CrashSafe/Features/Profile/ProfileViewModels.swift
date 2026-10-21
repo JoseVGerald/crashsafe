@@ -22,7 +22,7 @@ final class AddContactViewModel {
         submitAttempted = true
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty, Validation.phone(phone) == nil else { return false }
         let contact = FamilyContact(name: name.trimmingCharacters(in: .whitespaces),
-                                    phone: phone.trimmingCharacters(in: .whitespaces),
+                                    phone: PhoneFormat.display(phone.trimmingCharacters(in: .whitespaces)),
                                     relationship: relationship.trimmingCharacters(in: .whitespaces))
         profile.modelContext?.insert(contact)
         profile.familyContacts.append(contact)
