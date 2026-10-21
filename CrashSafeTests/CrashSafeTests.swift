@@ -134,3 +134,65 @@ private func makeAuth() -> MockAuthService {
     let suite = "tests-\(UUID().uuidString)"
     return MockAuthService(defaults: UserDefaults(suiteName: suite)!, latency: .zero)
 }
+
+@MainActor
+struct DrivingIntelligenceTests {
+    private func snapshot(speed: Double, limit: Double?, environment: RoadEnvironment = .forest) -> DrivingSnapshot {
+        var s = DrivingSnapshot()
+        s.speedMPH = speed
+        s.speedLimitMPH = limit
+        s.environment = environment
+        return s
+    }
+
+    @Test func adviceSlowsDownForRainAtNight() {
+        let rain = WeatherSnapshot(temperatureF: 45, condition: .rain, windMph: 5, visibilityMiles: 5, isDay: false)
+        let advice = DrivingAdvice.make(weather: rain, isNight: true)
+        #expect(advice.speedReductionPercent == 20)
+        #expect(advice.followingSeconds == 6)
+        #expect(advice.tips.contains { $0.text == "Headlights on" })
+    }
+
+    @Test func comparisonHasToleranceBuffers() {
+        let advice = DrivingAdvice.make(weather: nil, isNight: false) // clear day, factor 1.0
+        #expect(DrivingComparison.make(snapshot: snapshot(speed: 31, limit: 30), advice: advice, isDriving: true).status == .onTrack)
+        #expect(DrivingComparison.make(snapshot: snapshot(speed: 34, limit: 30), advice: advice, isDriving: true).status == .caution)
+        #expect(DrivingComparison.make(snapshot: snapshot(speed: 40, limit: 30), advice: advice, isDriving: true).status == .tooFast)
+        #expect(DrivingComparison.make(snapshot: snapshot(speed: 0, limit: 30), advice: advice, isDriving: false).status == .noData)
+    }
+
+    @Test func coachingMatchesDriverStyle() {
+        let drizzle = WeatherSnapshot(temperatureF: 41, condition: .drizzle, windMph: 6, visibilityMiles: 3, isDay: false)
+        let advice = DrivingAdvice.make(weather: drizzle, isNight: true)
+        var input = CoachingEngine.Input(snapshot: snapshot(speed: 58, limit: 50), advice: advice, weather: drizzle,
+                                         isNight: true, style: .logical, experience: .newDriver, lovedOne: "your mom")
+        let logical = CoachingEngine.message(for: input)
+        #expect(logical.severity == .warning)
+        #expect(logical.body.contains("ft to stop"))
+        #expect(logical.body.contains("wooded"))
+
+        input.style = .emotional
+        let emotional = CoachingEngine.message(for: input)
+        #expect(emotional.body.hasPrefix("Your mom"))
+        #expect(emotional.body.contains("deer"))
+    }
+
+    @Test func stoppingDistanceGrowsOnWetRoads() {
+        #expect(CoachingEngine.stoppingDistanceFeet(mph: 60, friction: 0.45) > CoachingEngine.stoppingDistanceFeet(mph: 60, friction: 0.7))
+        #expect(CoachingEngine.stoppingDistanceFeet(mph: 58, friction: 0.55) == 330)
+        #expect(CoachingEngine.stoppingDistanceFeet(mph: 45, friction: 0.55) == 220)
+    }
+
+    @Test func phoneNumbersFormatForDisplay() {
+        #expect(PhoneFormat.display("2065550100") == "(206) 555-0100")
+        #expect(PhoneFormat.display("+1 206 555 0100") == "(206) 555-0100")
+        #expect(PhoneFormat.display("555") == "555")
+    }
+
+    @Test func weatherCodesMapToConditions() {
+        #expect(WeatherCondition(wmoCode: 0) == .clear)
+        #expect(WeatherCondition(wmoCode: 63) == .rain)
+        #expect(WeatherCondition(wmoCode: 75) == .snow)
+        #expect(WeatherCondition(wmoCode: 95) == .thunderstorm)
+    }
+}

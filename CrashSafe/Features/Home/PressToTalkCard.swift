@@ -103,7 +103,7 @@ struct PressToTalkCard: View {
         .padding(Space.md + 4)
         .background {
             ZStack {
-                LinearGradient(colors: [Color(hex: 0x1E3A8A), Brand.blue, Brand.indigo],
+                LinearGradient(colors: [Color(hex: 0x0B2A6B), Brand.blue, Brand.teal],
                                startPoint: .topLeading, endPoint: .bottomTrailing)
                 RadialGradient(colors: [.white.opacity(0.18), .clear], center: .topTrailing, startRadius: 0, endRadius: 260)
             }

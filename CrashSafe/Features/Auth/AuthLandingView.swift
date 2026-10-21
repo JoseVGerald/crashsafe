@@ -28,7 +28,7 @@ struct AuthLandingView: View {
 
     private let features: [(icon: String, tint: Color, title: String, detail: String)] = [
         ("waveform.path.ecg", Brand.red, "Checks on you after a crash", "If you don't answer, your family is alerted."),
-        ("sparkles", Brand.indigo, "Pulse talks you through it", "Calm, step-by-step help — by voice."),
+        ("sparkles", Brand.teal, "Pulse talks you through it", "Calm, step-by-step help — by voice."),
         ("antenna.radiowaves.left.and.right.slash", Brand.green, "Works with no signal", "Tow, hospitals and guides saved for your route."),
     ]
 

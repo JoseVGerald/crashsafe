@@ -85,11 +85,12 @@ struct DrivingComparison: Equatable {
                                      message: "Start a trip to compare your driving with today's conditions.")
         }
         let recommended = snapshot.speedLimitMPH.map { (($0 * advice.speedFactor) / 5).rounded() * 5 }
-        if let recommended, snapshot.speedMPH > recommended + 5 {
+        // Small buffers so normal speedometer wobble doesn't trigger a nag.
+        if let recommended, snapshot.speedMPH > recommended + 7 {
             return DrivingComparison(status: .tooFast, recommendedMaxMPH: recommended,
                                      message: "You're at \(Int(snapshot.speedMPH)) mph. In these conditions, aim for \(Int(recommended)) or less.")
         }
-        if let recommended, snapshot.speedMPH > recommended {
+        if let recommended, snapshot.speedMPH > recommended + 2 {
             return DrivingComparison(status: .caution, recommendedMaxMPH: recommended,
                                      message: "A little over the \(Int(recommended)) mph we'd suggest right now.")
         }

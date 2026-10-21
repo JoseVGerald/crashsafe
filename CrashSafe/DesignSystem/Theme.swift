@@ -137,8 +137,11 @@ struct BrandBackground: View {
         ZStack(alignment: .top) {
             Brand.background
             if colorScheme == .dark {
-                RadialGradient(colors: [Brand.blue.opacity(0.22), .clear], center: .top, startRadius: 0, endRadius: 420)
+                RadialGradient(colors: [Brand.blue.opacity(0.24), .clear], center: .top, startRadius: 0, endRadius: 420)
                     .frame(height: 420)
+                RadialGradient(colors: [Brand.teal.opacity(0.14), .clear], center: .bottomTrailing, startRadius: 0, endRadius: 460)
+            } else {
+                RadialGradient(colors: [Brand.teal.opacity(0.06), .clear], center: .topTrailing, startRadius: 0, endRadius: 380)
             }
         }
         .ignoresSafeArea()

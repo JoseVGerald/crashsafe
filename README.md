@@ -2,7 +2,10 @@
 
 Congressional App Challenge 2026 project. Other apps detect crashes; this one guides the driver through **what happens next**, even with no signal.
 
-This repo is the **iOS app shell**: launch, auth, and every client screen, with all AI, detection, maps and alerting behind protocols with mock implementations so each team can plug in the real thing without touching the UI.
+This repo is the iOS app: onboarding, a live Home dashboard, a map trip planner, the crash check-in and post-crash help hub, the Pulse assistant, and a CarPlay driving coach. AI, crash detection and family alerts are still behind protocols with mock implementations so each team can plug in the real thing without touching the UI.
+
+**Real today:** location, live weather (Open-Meteo, no key), Apple Maps search/routing, nearby hospitals/police/tow search, offline trip packs, speed + accelerometer monitoring, rules-based coaching with spoken prompts.
+**Mocked today:** crash detection (use *Test crash*), the AI replies and voice input, family alert delivery, auth (offline mock unless Firebase is set up).
 
 ## Run it
 
@@ -29,10 +32,13 @@ xcodegen
 
 ## Demo script
 
-1. Sign up → **Profile**: add medical notes, car, insurer and at least one family contact.
-2. **Trips**: plan Seattle → Spokane, save, open it, **Download trip pack**.
-3. **Home**: **Start a trip** (crash detection turns on), then **Debug → Simulate crash**.
-4. Check-in: tap **I'm OK** → **Talk to the assistant** (try the mic button), or let the 30s countdown run out to show the unconscious path (family alert).
+In the simulator, set a location first: **Features → Location → Custom Location** (e.g. 47.6101, -122.2015 for Bellevue).
+
+1. **Create account** → onboarding: pick a coaching style (Facts or Heart), add one or more vehicles, medical info, insurance, a family contact, allow permissions.
+2. **Home**: hold the Pulse mic to talk (proof of concept), see live weather and how to drive in it, then **Try a demo drive** to see "You vs. conditions".
+3. **Trips**: From uses your current location; for To, search Apple Maps or **Choose on map** to drop a pin. Save — the route and offline trip pack (real hospitals, police, tow along the route) download automatically.
+4. **Home → Test crash**: answer **I need help** or **I'm OK** (or let the 30 s countdown run out) to open the help hub — 911, Pulse, crash location, nearby help with call buttons, share location, responder card, family, scene checklist, insurance.
+5. **Home → CarPlay**: the driving coach. Switch demo scenarios (forest at night, city rush hour, highway in rain) and switch Profile → Facts/Heart to hear the two coaching styles.
 
 ## Project layout
 
@@ -44,12 +50,15 @@ CrashSafe/
   Services/         Protocols + mocks (see table below)
   Features/
     Launch/         Animated splash
-    Auth/           Sign in, sign up, forgot password, validation
-    Home/           Start/end trip, current trip, last check-in, Debug → Simulate crash
-    Trips/          Trip planner, saved trips, trip detail + trip pack download
-    CheckIn/        Full-screen "Are you OK?" countdown and the three outcome paths
-    Assistant/      Chat UI, mic button, suggestions
-    Profile/        Medical, vehicle, insurance, family contacts, sign out
+    Auth/           Landing, sign up (strength meter), sign in, forgot password
+    Onboarding/     6-step safety profile setup
+    Home/           Pulse hold-to-talk, conditions + driving advice, speed gauge, trips, quick actions
+    Trips/          Map planner (current location, search, drop a pin, route), trip detail + trip pack
+    CheckIn/        Full-screen "Are you OK?" countdown
+    Recovery/       Post-crash help hub (also Home → Nearby help)
+    Assistant/      Pulse chat, mic button, suggestions
+    Profile/        Coaching style, vehicles, medical, insurance, family, drive monitoring
+    CarPlay/        Phone CarPlay mode + native CarPlay scene (templates)
   Support/          PreviewData (mock data for SwiftUI previews)
   Resources/        Assets (placeholder app icon, AccentColor, Danger)
 CrashSafeTests/     Swift Testing unit tests
@@ -69,6 +78,8 @@ Every service is swapped in one place: `AppEnvironment.live()` in [`CrashSafe/Ap
 | Maps | `TripPackService` — `Services/TripPack/TripPackService.swift` | `MockTripPackService` (fake tow companies/hospitals) | `MKLocalSearch` along the route; persist packs to disk for airplane mode. |
 | Backend | `EmergencyAlertService` — `Services/Alerts/EmergencyAlertService.swift` | `MockEmergencyAlertService` (`.sent` online, `.queued` offline) | Push/SMS via our backend; persist a queue when offline. 911 stays with Apple's built-in Crash Detection. |
 | — | `ConnectivityMonitor` — `Services/Connectivity/` | Real (`NWPathMonitor`) | — |
+| — | `WeatherService` — `Services/Weather/` | Real (`OpenMeteoWeatherService`) | — |
+| Detection / AI | `DrivingMonitor`, `DrivingAdvice`, `CoachingEngine`, `DriveCoach` — `Services/Driving/` | Real sensors + rules-based coaching; speed limits only in demo scenarios | Speed-limit data source; swap `CoachingEngine.message` for a model (same inputs/outputs). |
 
 ## Switching from mock auth to Firebase
 
@@ -82,9 +93,22 @@ The `FirebaseAuthService` (email/password + Sign in with Apple) is already writt
 
 Using Supabase instead? Write a `SupabaseAuthService: AuthService` and return it from `AppEnvironment.makeAuthService()`. Nothing else changes.
 
+## CarPlay
+
+There are two pieces:
+
+- **CarPlay mode (phone)** — `Features/CarPlay/CarPlayModeView.swift`. A full-screen driving dashboard on the phone: speed gauge, limit vs. "safe now" speed, Pulse's advice, g-force, hard brakes, road type. Works anywhere, no approval needed.
+- **Native CarPlay** — `Features/CarPlay/CarPlaySceneDelegate.swift`. A real CarPlay scene using Apple's templates (an information screen + alert pop-ups for warnings), driven by the same `DriveCoach`. CarPlay apps can't draw custom UI, so it's simpler than the phone version.
+  - **Simulator:** run the app, then in Simulator choose **I/O → External Displays → CarPlay**. The entitlement is applied to simulator builds only.
+  - **Real car / App Store:** request the **CarPlay Driving Task** entitlement from Apple (developer.apple.com/carplay). After approval, add `com.apple.developer.carplay-driving-task` to the device entitlements and provisioning profile.
+
+Coaching runs whenever a drive is active (not only on the CarPlay screen). With **Profile → Watch every drive** on, Core Motion's automotive activity starts live monitoring automatically, and the `location` + `audio` background modes keep spoken coaching going with the phone locked.
+
 ## Design notes
 
-- Calm, high-contrast UI: one accent color, emergency buttons use fixed dark fills so white text stays readable (≥ 4.5:1) in light and dark mode.
+- Brand palette: **night blue** (`#2563EB`) with a **signal teal** accent (`#0E7C86`), dark navy canvas with a soft blue/teal glow in dark mode. All defined in `DesignSystem/Brand.swift`.
+- Apple-style layout: pill buttons, 20pt rounded cards, 4/8/16/24/48 spacing, fade-up entrances, spring press feedback, haptics.
+- High contrast: emergency buttons use fixed dark fills so white text stays readable (≥ 4.5:1) in light and dark mode.
 - Primary actions are ≥ 60pt tall; the check-in's answers sit in the bottom half of the screen with **I'm OK** as the biggest target, so it works one-handed.
 - Dynamic Type, SF Symbols, dark mode and VoiceOver labels throughout.
 - Insurance wording is facts-only ("report promptly, don't guess or admit fault", "not legal advice").
