@@ -1,11 +1,15 @@
+import SwiftData
 import SwiftUI
 
 @main
 struct CrashSafeApp: App {
+    @State private var env = AppEnvironment.live()
+
     var body: some Scene {
         WindowGroup {
-            Text("CrashSafe")
-                .font(.largeTitle.bold())
+            RootView()
+                .environment(env)
         }
+        .modelContainer(for: AppSchema.models)
     }
 }
