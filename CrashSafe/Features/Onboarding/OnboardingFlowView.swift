@@ -374,6 +374,9 @@ private struct InsuranceStep: View {
                           contentType: .telephoneNumber, keyboard: .phonePad, focus: $focus, field: .phone)
             }
         }
+        .onChange(of: focus) { old, _ in
+            if old == .phone { profile.insurerPhone = PhoneFormat.display(profile.insurerPhone) }
+        }
     }
 }
 

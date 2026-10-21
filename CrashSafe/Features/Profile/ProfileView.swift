@@ -152,7 +152,7 @@ private struct ProfileContent: View {
                         env.router.showingCarPlay = true
                     } label: {
                         HStack {
-                            Label("CarPlay mode", systemImage: "car.rear.fill").foregroundStyle(Brand.textPrimary)
+                            RowLabel(title: "CarPlay mode", systemImage: "car.rear.fill")
                             Spacer()
                             Image(systemName: "chevron.right").foregroundStyle(Brand.textSecondary)
                         }
@@ -163,7 +163,7 @@ private struct ProfileContent: View {
                         profile.onboardingCompleted = false
                     } label: {
                         HStack {
-                            Label("Redo setup", systemImage: "arrow.counterclockwise").foregroundStyle(Brand.textPrimary)
+                            RowLabel(title: "Redo setup", systemImage: "arrow.counterclockwise")
                             Spacer()
                             Image(systemName: "chevron.right").foregroundStyle(Brand.textSecondary)
                         }
@@ -201,6 +201,15 @@ private struct ProfileContent: View {
             .frame(maxWidth: .infinity)
         }
         .scrollDismissesKeyboard(.interactively)
+        .onAppear {
+            // Tidy numbers saved before formatting existed.
+            let tidy = PhoneFormat.display(profile.insurerPhone)
+            if tidy != profile.insurerPhone { profile.insurerPhone = tidy }
+        }
+        .onChange(of: focus) { old, _ in
+            // Tidy the claims number once the user leaves the field.
+            if old == .phone { profile.insurerPhone = PhoneFormat.display(profile.insurerPhone) }
+        }
         .sheet(isPresented: $addingVehicle) { VehicleEditorView(profile: profile) }
         .sheet(item: $editingVehicle) { VehicleEditorView(profile: profile, vehicle: $0) }
         .sheet(isPresented: $addingContact) { ContactEditorView(profile: profile) }
