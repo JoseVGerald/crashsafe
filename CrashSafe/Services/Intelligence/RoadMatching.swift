@@ -39,8 +39,148 @@ nonisolated struct SpeedLimitReading: Codable, Equatable, Sendable {
     var highway: String
     var wayID: Int64
     var distanceMeters: Double
+    /// What kind of road this is, in finer detail (residential, arterial, ramp, gravel…).
+    var segment: RoadSegment? = nil
+    /// Road features worth a word of caution.
+    var features: RoadFeatures = []
 
     var environment: RoadKind { RoadKind(highway: highway, mph: mph) }
+    /// The finest description available.
+    var resolvedSegment: RoadSegment { segment ?? RoadSegment.classify(highway: highway, mph: mph) }
+}
+
+/// Things about the road the car is on that change how carefully to drive.
+nonisolated struct RoadFeatures: OptionSet, Codable, Hashable, Sendable {
+    let rawValue: Int
+    init(rawValue: Int) { self.rawValue = rawValue }
+    static let bridge = RoadFeatures(rawValue: 1)
+    static let tunnel = RoadFeatures(rawValue: 2)
+    static let unpaved = RoadFeatures(rawValue: 4)
+    static let roundabout = RoadFeatures(rawValue: 8)
+    static let singleLane = RoadFeatures(rawValue: 16)
+
+    var labels: [String] {
+        [(Self.bridge, "bridge"), (.tunnel, "tunnel"), (.unpaved, "gravel"), (.roundabout, "roundabout"), (.singleLane, "one lane")]
+            .compactMap { contains($0.0) ? $0.1 : nil }
+    }
+}
+
+/// Finer road types than city / highway / rural, each with how careful to be and why.
+nonisolated enum RoadSegment: String, Codable, CaseIterable, Sendable {
+    case interstate, ramp, expressway, arterial, collector, localConnector, downtown, residential
+    case livingStreet, alley, parkingLot, ruralRoad, gravelRoad
+
+    nonisolated enum Caution: Int, Comparable, Sendable {
+        case normal, elevated, high
+        static func < (a: Caution, b: Caution) -> Bool { a.rawValue < b.rawValue }
+    }
+
+    var title: String {
+        switch self {
+        case .interstate: "Interstate / freeway"
+        case .ramp: "Highway ramp"
+        case .expressway: "Expressway"
+        case .arterial: "Arterial road"
+        case .collector: "Collector street"
+        case .localConnector: "Neighborhood connector"
+        case .downtown: "Downtown street"
+        case .residential: "Residential street"
+        case .livingStreet: "Shared street"
+        case .alley: "Alley / service road"
+        case .parkingLot: "Parking lot"
+        case .ruralRoad: "Rural road"
+        case .gravelRoad: "Gravel road"
+        }
+    }
+
+    var caution: Caution {
+        switch self {
+        case .residential, .livingStreet, .alley, .parkingLot, .gravelRoad, .downtown: .high
+        case .ramp, .arterial, .collector, .localConnector, .ruralRoad: .elevated
+        case .interstate, .expressway: .normal
+        }
+    }
+
+    /// One line of advice, said when the car enters this kind of road.
+    var advice: String {
+        switch self {
+        case .residential: "Kids, pets and cars backing out of driveways can appear between parked cars. Go slow and cover the brake."
+        case .livingStreet: "Shared street: people walk in the road here. Go at walking pace."
+        case .alley: "Alley: blind corners and garages. Creep through."
+        case .parkingLot: "Parking lot: cars back out without seeing you and people walk between them."
+        case .downtown: "Downtown: crosswalks, cyclists and car doors opening. Cover the brake."
+        case .gravelRoad: "Gravel road: stopping takes much longer. Slow down before curves."
+        case .ruralRoad: "Rural road: sharp curves, no shoulder, and deer at dusk."
+        case .ramp: "Ramp: match the curve's speed and check your blind spot before merging."
+        case .arterial: "Busy arterial: watch for cars turning across your lane."
+        case .collector: "Collector street: driveways and bus stops. Watch for pedestrians."
+        case .localConnector: "Neighborhood road: crosswalks and bikes. Keep it easy."
+        case .interstate: "Freeway: keep three seconds of space and merge smoothly."
+        case .expressway: "Expressway: watch for cross traffic at intersections."
+        }
+    }
+
+    /// The `default_speeds.json` categories to look for, most specific first.
+    var defaultCategories: [String] {
+        switch self {
+        case .interstate: ["motorway", "expressway", "rural", "default"]
+        case .expressway: ["expressway", "rural", "default"]
+        case .residential: ["residential", "urban"]
+        case .livingStreet: ["livingStreet", "residential", "urban"]
+        case .alley, .parkingLot: ["alley", "residential", "urban"]
+        case .downtown: ["business", "urban"]
+        case .ruralRoad, .gravelRoad: ["rural", "default"]
+        case .ramp: []
+        case .arterial, .collector, .localConnector: ["urban"]
+        }
+    }
+
+    /// From the OpenStreetMap road class, how built-up the area is (Valhalla's 0–15 density, when
+    /// known), surface, and the limit.
+    static func classify(highway: String, mph: Double?, density: Int? = nil, unpaved: Bool = false) -> RoadSegment {
+        let rural = density.map { $0 <= 3 }
+        if unpaved && !highway.hasPrefix("motorway") && !highway.hasPrefix("trunk") { return .gravelRoad }
+        switch highway {
+        case "motorway": return .interstate
+        case let h where h.hasSuffix("_link"): return .ramp
+        case "trunk": return rural == false || (mph ?? 0) >= 50 ? .expressway : .arterial
+        case "primary": return rural == true ? .ruralRoad : .arterial
+        case "secondary": return rural == true ? .ruralRoad : ((density ?? 0) >= 14 && (mph ?? 99) <= 25 ? .downtown : .collector)
+        case "tertiary": return rural == true ? .ruralRoad : ((density ?? 0) >= 14 && (mph ?? 99) <= 25 ? .downtown : .localConnector)
+        case "unclassified": return rural == true || (mph ?? 0) >= 40 ? .ruralRoad : .localConnector
+        case "residential": return rural == true && (mph ?? 0) >= 35 ? .ruralRoad : .residential
+        case "living_street": return .livingStreet
+        case "service": return .alley
+        case "parking_aisle": return .parkingLot
+        default: return .localConnector
+        }
+    }
+}
+
+/// Legal default speed limits by region (`default_speeds.json`, built from osm-legal-default-speeds):
+/// the limit for an untagged road where the car actually is, e.g. 25 mph on an Oregon residential street.
+nonisolated struct RoadDefaults: Sendable {
+    let regions: [String: [String: Double]]
+
+    init(json: Data) throws {
+        struct File: Decodable { var regions: [String: [String: Double]] }
+        regions = try JSONDecoder().decode(File.self, from: json).regions
+    }
+
+    init(regions: [String: [String: Double]]) { self.regions = regions }
+
+    /// `region` like "US-OR" (falls back to the country, "US").
+    func typicalMPH(for segment: RoadSegment, region: String?) -> Double? {
+        guard let region else { return nil }
+        let codes = [region, String(region.prefix { $0 != "-" })]
+        for code in codes {
+            guard let row = regions[code] else { continue }
+            for category in segment.defaultCategories {
+                if let mph = row[category] { return mph }
+            }
+        }
+        return nil
+    }
 }
 
 /// What kind of road this is, for coaching ("city street", "highway", "rural road").
@@ -178,6 +318,12 @@ nonisolated enum RoadMatcher {
                 var way_id: Int64?
                 var road_class: String?
                 var use: String?
+                var density: Int?
+                var lane_count: Int?
+                var bridge: Bool?
+                var tunnel: Bool?
+                var unpaved: Bool?
+                var roundabout: Bool?
             }
             struct Matched: Decodable {
                 var type: String?
@@ -198,9 +344,19 @@ nonisolated enum RoadMatcher {
         // 255 means "no limit" in Valhalla; 0 or missing means none posted.
         let posted = edge.speed_limit.flatMap { $0 > 0 && $0 < 250 ? ($0 * 0.621371).rounded() : nil }
         // No posted limit on a service road or parking aisle: don't guess one.
-        guard let mph = posted ?? highway.flatMap(typicalLimitMPH(for:)) else { return nil }
+        let lot = ["parking_aisle", "driveway", "alley", "drive_through"].contains(edge.use ?? "")
+        guard let mph = posted ?? highway.flatMap(typicalLimitMPH(for:)) ?? (lot ? 10 : nil) else { return nil }
+        var features: RoadFeatures = []
+        if edge.bridge == true { features.insert(.bridge) }
+        if edge.tunnel == true { features.insert(.tunnel) }
+        if edge.unpaved == true { features.insert(.unpaved) }
+        if edge.roundabout == true { features.insert(.roundabout) }
+        if edge.lane_count == 1, highway.map({ !["residential", "service", "living_street"].contains($0) }) ?? false { features.insert(.singleLane) }
+        let segment: RoadSegment = edge.use == "parking_aisle" || edge.use == "driveway" ? .parkingLot
+            : edge.use == "alley" ? .alley
+            : RoadSegment.classify(highway: highway ?? "service", mph: mph, density: edge.density, unpaved: edge.unpaved == true)
         return SpeedLimitReading(mph: mph, isPosted: posted != nil, roadName: edge.names?.first, highway: highway ?? "service",
-                                 wayID: edge.way_id ?? 0, distanceMeters: distance)
+                                 wayID: edge.way_id ?? 0, distanceMeters: distance, segment: segment, features: features)
     }
 
     /// Parses an Overpass JSON response (`out tags geom`).

@@ -40,8 +40,10 @@
 		56050C65464DF9912461523B /* CrashDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */; };
 		56711EDC3A29FE475AE642D9 /* checkin-tap-ok.m4a in Resources */ = {isa = PBXBuildFile; fileRef = FC8DB5ED46BD44F967A50D2D /* checkin-tap-ok.m4a */; };
 		581F3BFE029500195B6B73A1 /* CrashNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE113AF115BCE3121B7CD9C2 /* CrashNotifier.swift */; };
+		58FAA845232C6E6F2809A3F2 /* default_speeds_LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = A7C793FE85C71F277C299A95 /* default_speeds_LICENSE.txt */; };
 		6026CD2D1BB2BDF5144440A2 /* SystemAppleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8C41BA3E27C5E23C55EC1D /* SystemAppleButton.swift */; };
 		603242792CD34CC3469E0E26 /* AssistantService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6AD8E09B52B378D34374AF /* AssistantService.swift */; };
+		63BF09D4F3872440FDB48951 /* default_speeds.json in Resources */ = {isa = PBXBuildFile; fileRef = 5415EC154322A2DF1C91318A /* default_speeds.json */; };
 		64CC9809B8261DAF2DBE0F11 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E4A25228460CB9A1418814 /* HomeView.swift */; };
 		67752455C962B4425EA3C1F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B72CB6962C609F45E13E0AAA /* Preview Assets.xcassets */; };
 		6A63C98B61D8D9D1C047C93F /* HarshEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CAF0C8F39FA5F82EA550A3 /* HarshEvents.swift */; };
@@ -151,6 +153,7 @@
 		5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashDetector.swift; sourceTree = "<group>"; };
 		52CAF0C8F39FA5F82EA550A3 /* HarshEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarshEvents.swift; sourceTree = "<group>"; };
 		52CF1AB3252565C7FB0D084A /* RoadMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadMatching.swift; sourceTree = "<group>"; };
+		5415EC154322A2DF1C91318A /* default_speeds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_speeds.json; sourceTree = "<group>"; };
 		5A1E48EE439DFC19A3CC4506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5DE315D274E296DBA2B98662 /* CrashEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashEvidence.swift; sourceTree = "<group>"; };
 		5DF1AE864AAFA72DFCFF80FE /* MotionIntelligence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionIntelligence.swift; sourceTree = "<group>"; };
@@ -182,6 +185,7 @@
 		9B8D3A594A6C685B6609E0B6 /* CrashSafe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CrashSafe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A496163788970D463B5B7975 /* CarPlayModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlayModeView.swift; sourceTree = "<group>"; };
 		A75141A7A1C30CE16419327E /* SpeedLimitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedLimitService.swift; sourceTree = "<group>"; };
+		A7C793FE85C71F277C299A95 /* default_speeds_LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = default_speeds_LICENSE.txt; sourceTree = "<group>"; };
 		A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashSafeApp.swift; sourceTree = "<group>"; };
 		A97A0114DCD7AE59F689BB9B /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		ABABF2E0ECF19FDB56618778 /* motionsense-walking.csv */ = {isa = PBXFileReference; path = "motionsense-walking.csv"; sourceTree = "<group>"; };
@@ -386,6 +390,15 @@
 			path = Clips;
 			sourceTree = "<group>";
 		};
+		70F499F1C2578FA56CB32141 /* Roads */ = {
+			isa = PBXGroup;
+			children = (
+				A7C793FE85C71F277C299A95 /* default_speeds_LICENSE.txt */,
+				5415EC154322A2DF1C91318A /* default_speeds.json */,
+			);
+			path = Roads;
+			sourceTree = "<group>";
+		};
 		76C94728CE42B00DA32AD367 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
@@ -448,6 +461,7 @@
 				5A1E48EE439DFC19A3CC4506 /* Assets.xcassets */,
 				6502E9B8772EC93C22CA1444 /* PrivacyInfo.xcprivacy */,
 				6D19C6415F5D9B164C8B7674 /* Clips */,
+				70F499F1C2578FA56CB32141 /* Roads */,
 				8590FF49194E946DBD6878AC /* Voice */,
 			);
 			path = Resources;
@@ -725,6 +739,8 @@
 				55C72785F1BDCE9DCF5CCA87 /* checkin-glad.m4a in Resources */,
 				D75D43E93814F82C1D92241B /* checkin-help.m4a in Resources */,
 				56711EDC3A29FE475AE642D9 /* checkin-tap-ok.m4a in Resources */,
+				63BF09D4F3872440FDB48951 /* default_speeds.json in Resources */,
+				58FAA845232C6E6F2809A3F2 /* default_speeds_LICENSE.txt in Resources */,
 				B7808DC0B089AF7500BDC907 /* motionsense-jogging.csv in Resources */,
 				90ED1C62AE00C6D5DD59EF58 /* motionsense-walking.csv in Resources */,
 			);

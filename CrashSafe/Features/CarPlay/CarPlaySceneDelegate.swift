@@ -55,6 +55,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             // The road's limit from OpenStreetMap ("typical" when the road has no posted limit).
             CPInformationItem(title: snapshot.speedLimitIsPosted ? "Limit" : "Typical limit",
                               detail: snapshot.speedLimitMPH.map { "\(Int($0)) mph" + (snapshot.roadName.map { " · \($0)" } ?? "") } ?? "—"),
+            CPInformationItem(title: "Road", detail: snapshot.roadSegment?.title ?? "—"),
             CPInformationItem(title: "Safe now", detail: comparison.recommendedMaxMPH.map { "\(Int($0)) mph" } ?? "—"),
             CPInformationItem(title: "Status", detail: comparison.status.label),
         ]
