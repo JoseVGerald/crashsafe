@@ -27,6 +27,7 @@
 		310AC052113F88DFD4543358 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6502E9B8772EC93C22CA1444 /* PrivacyInfo.xcprivacy */; };
 		31A7D014C173178BA64025B7 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */; };
 		33B23883222FD27A58FBD394 /* SensorLabModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02574A6C9BFCA1C489B9B67B /* SensorLabModel.swift */; };
+		33B42DF4D5419F8D6B9DBCCF /* PulseConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFB0EAAFF309AB615DEB01A /* PulseConversationTests.swift */; };
 		33F827FA9FB4F0706118FE16 /* CrashAlarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACDD4E53251477FB417FA68 /* CrashAlarm.swift */; };
 		371FF31014CA54C06D6F2EB3 /* AuthLandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F2488D9CE775D06EA66B /* AuthLandingView.swift */; };
 		3DAD74871A8FF82E756C26BE /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624251F4B57EC28C6496B1FB /* TripDetailView.swift */; };
@@ -94,6 +95,7 @@
 		D75D43E93814F82C1D92241B /* checkin-help.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F8663F9D6BD0AF562A550358 /* checkin-help.m4a */; };
 		D7628D8D7C31AD8F0EEBD2D4 /* CrashEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE315D274E296DBA2B98662 /* CrashEvidence.swift */; };
 		D8291034CB9D7CB7A6B302BF /* ContactPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBECFC0CC0EBA2654A113684 /* ContactPicker.swift */; };
+		D98869A5474A967C5F5D4C72 /* PulseSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9C240B6B1C3C016190C18E /* PulseSpeaker.swift */; };
 		DA5E411A050FE4FC5D682283 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5D3C84C6C02A2E4E9A6E1A /* ProfileView.swift */; };
 		DC1D7A746C10719C5FEC29B8 /* CrashPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB925E09CEE2D2AD19FE146D /* CrashPipeline.swift */; };
 		DC6C9908F0808E00EA66E68D /* AssistantContext+Make.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C971714785C165C7EAB4CD /* AssistantContext+Make.swift */; };
@@ -176,6 +178,7 @@
 		85E4F73668117E9C4EB05E07 /* SensorLabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorLabTests.swift; sourceTree = "<group>"; };
 		8964FF768E716765240E0FB5 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		8B3A02D2109887A77D8BA0BB /* CarPlaySceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift; sourceTree = "<group>"; };
+		8E9C240B6B1C3C016190C18E /* PulseSpeaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseSpeaker.swift; sourceTree = "<group>"; };
 		9092BFB990AF8BE0C42C0440 /* BackgroundSensorLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSensorLog.swift; sourceTree = "<group>"; };
 		910E89ED7542C6F5CC1F4140 /* LiveCrashDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCrashDetectorTests.swift; sourceTree = "<group>"; };
 		92A41A9E33E4ED4398A48CCA /* SignedInRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignedInRoot.swift; sourceTree = "<group>"; };
@@ -199,6 +202,7 @@
 		B8E4A25228460CB9A1418814 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BAFC0302F9B65F983E111596 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BE113AF115BCE3121B7CD9C2 /* CrashNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashNotifier.swift; sourceTree = "<group>"; };
+		BEFB0EAAFF309AB615DEB01A /* PulseConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseConversationTests.swift; sourceTree = "<group>"; };
 		C0450F413DDEBAB2C86C78C9 /* checkin-glad.m4a */ = {isa = PBXFileReference; path = "checkin-glad.m4a"; sourceTree = "<group>"; };
 		C47BE0F8143DE54326A7F098 /* DrivingCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrivingCards.swift; sourceTree = "<group>"; };
 		C62C2C0A4F964592CCAA018C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -502,6 +506,7 @@
 				910E89ED7542C6F5CC1F4140 /* LiveCrashDetectorTests.swift */,
 				AFA9B99B848E5737315AA5EB /* MotionAndEscalationTests.swift */,
 				79A80EFF07644E2749DE1FAF /* OnDeviceSensorTests.swift */,
+				BEFB0EAAFF309AB615DEB01A /* PulseConversationTests.swift */,
 				661E5B9E2AD3531C38123DE5 /* RedrawTests.swift */,
 				E2772272FC0E6E39BF337C54 /* SensorHubTests.swift */,
 				85E4F73668117E9C4EB05E07 /* SensorLabTests.swift */,
@@ -623,6 +628,7 @@
 			isa = PBXGroup;
 			children = (
 				4A6AD8E09B52B378D34374AF /* AssistantService.swift */,
+				8E9C240B6B1C3C016190C18E /* PulseSpeaker.swift */,
 				1DD25929C2B1DC2E2D4FA025 /* PulseVoice.swift */,
 				B804117D146681B2ED056995 /* VoiceInputService.swift */,
 			);
@@ -807,6 +813,7 @@
 				7DCB5ED18902313F0EBF3579 /* PreviewData.swift in Sources */,
 				DA5E411A050FE4FC5D682283 /* ProfileView.swift in Sources */,
 				C4A44E4EB8266ACB6EA5E0B5 /* ProfileViewModels.swift in Sources */,
+				D98869A5474A967C5F5D4C72 /* PulseSpeaker.swift in Sources */,
 				B2B761BEBE5575A8312F8DE9 /* PulseVoice.swift in Sources */,
 				FCA27DC1D86DAC1DF95197B4 /* PulseVoiceCard.swift in Sources */,
 				A97811D94D3200A010138747 /* RealCrashPulse.swift in Sources */,
@@ -846,6 +853,7 @@
 				72B564875DEF400041872A93 /* LiveCrashDetectorTests.swift in Sources */,
 				C4B93D7552D470FB99E65DF6 /* MotionAndEscalationTests.swift in Sources */,
 				71DCC07A5C25F02B6363AFE1 /* OnDeviceSensorTests.swift in Sources */,
+				33B42DF4D5419F8D6B9DBCCF /* PulseConversationTests.swift in Sources */,
 				EAA429F34A7C46294DAB53F4 /* RedrawTests.swift in Sources */,
 				7AD1EECEC32A8E37B1523832 /* SensorHubTests.swift in Sources */,
 				7DD246268E858464FE7DEEE9 /* SensorLabTests.swift in Sources */,
