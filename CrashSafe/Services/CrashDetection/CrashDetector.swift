@@ -7,15 +7,23 @@ struct CrashEvent: Identifiable, Equatable, Sendable {
     let date: Date
     /// Peak acceleration in g. Real detectors read this from Core Motion.
     let peakG: Double
-    /// Drop in GPS speed around the impact, in mph.
-    let speedDropMPH: Double
+    /// Drop in GPS speed around the impact, in mph; nil when reliable GPS is missing.
+    let speedDropMPH: Double?
     let isSimulated: Bool
+    let assessment: CrashAssessment?
+
+    init(date: Date, peakG: Double, speedDropMPH: Double?, isSimulated: Bool, assessment: CrashAssessment? = nil) {
+        self.date = date
+        self.peakG = peakG
+        self.speedDropMPH = speedDropMPH
+        self.isSimulated = isSimulated
+        self.assessment = assessment
+    }
 }
 
 /// Watches sensors during an active trip and emits `CrashEvent`s.
 ///
-/// DETECTION TEAM: implement a `CoreMotionCrashDetector` that conforms to this
-/// (motion + GPS speed drop, tuned by `carType`) and swap it in `AppEnvironment.live()`.
+/// The live implementation shares acquisition with the dashboard and evaluates candidates offline.
 protocol CrashDetector: AnyObject {
     var isMonitoring: Bool { get }
     /// Single stream of detected crashes for the lifetime of the app.
@@ -24,6 +32,87 @@ protocol CrashDetector: AnyObject {
     func stopMonitoring()
     /// Demo hook: emits a fake event so the check-in flow can be shown without crashing a car.
     func simulateCrash()
+}
+
+/// Step 5 integration. Only suspected crashes enter the existing check-in flow.
+/// All assessments remain inspectable; inconclusive events do not claim that the user is safe.
+@MainActor
+@Observable
+final class CoreMotionCrashDetector: CrashDetector {
+    private(set) var isMonitoring = false
+    private(set) var lastAssessment: CrashAssessment?
+    @ObservationIgnored let events: AsyncStream<CrashEvent>
+    @ObservationIgnored private let continuation: AsyncStream<CrashEvent>.Continuation
+    @ObservationIgnored private let sensors: SensorHub
+    @ObservationIgnored private let configuration: CrashEvaluationConfiguration
+    @ObservationIgnored private let automaticCandidates: Bool
+    @ObservationIgnored private let useWatchdog: Bool
+    @ObservationIgnored private let owner = UUID()
+    @ObservationIgnored private var observer: UUID?
+    @ObservationIgnored private var timer: Task<Void, Never>?
+    @ObservationIgnored private var pipeline: CrashPipeline
+
+    init(sensors: SensorHub, configuration: CrashEvaluationConfiguration = .init(),
+         automaticCandidates: Bool = true, useWatchdog: Bool = true) {
+        self.sensors = sensors
+        self.configuration = configuration
+        self.automaticCandidates = automaticCandidates
+        self.useWatchdog = useWatchdog
+        pipeline = CrashPipeline(configuration: configuration, automaticCandidates: automaticCandidates)
+        (events, continuation) = AsyncStream.makeStream(of: CrashEvent.self, bufferingPolicy: .bufferingNewest(1))
+    }
+
+    func startMonitoring(carType: CarType) {
+        guard !isMonitoring else { return }
+        let mode: TransportationMode = carType == .motorcycle ? .motorcycle : (carType == .other ? .unknown : .car)
+        pipeline = CrashPipeline(configuration: configuration, transportationMode: mode, automaticCandidates: automaticCandidates)
+        lastAssessment = nil
+        isMonitoring = true
+        observer = sensors.addObserver { [weak self] reading in
+            guard let self, self.isMonitoring else { return }
+            self.publish(self.pipeline.ingest(reading))
+        }
+        sensors.acquire(owner: owner, background: true)
+        if useWatchdog {
+            timer = Task { [weak self] in
+                while !Task.isCancelled {
+                    do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+                    guard let self, self.isMonitoring else { return }
+                    self.publish(self.pipeline.advance(to: ProcessInfo.processInfo.systemUptime))
+                }
+            }
+        }
+    }
+
+    /// Integration point for step 4. Candidate timestamps use the shared monotonic sensor clock.
+    @discardableResult
+    func submitCandidate(_ candidate: CrashCandidate) -> Bool {
+        guard isMonitoring else { return false }
+        return pipeline.submit(candidate)
+    }
+
+    func stopMonitoring() {
+        isMonitoring = false
+        timer?.cancel()
+        timer = nil
+        if let observer { sensors.removeObserver(observer) }
+        observer = nil
+        sensors.release(owner: owner)
+        pipeline = CrashPipeline(configuration: configuration, automaticCandidates: automaticCandidates)
+    }
+
+    func simulateCrash() {
+        continuation.yield(CrashEvent(date: .now, peakG: 6.2, speedDropMPH: 38, isSimulated: true))
+    }
+
+    private func publish(_ assessment: CrashAssessment?) {
+        guard let assessment else { return }
+        lastAssessment = assessment
+        guard assessment.decision == .suspectedCrash else { return }
+        continuation.yield(CrashEvent(date: assessment.candidate.date, peakG: assessment.peakG,
+                                     speedDropMPH: assessment.speedDropMPS.map { $0 * 2.23694 },
+                                     isSimulated: false, assessment: assessment))
+    }
 }
 
 /// Never detects anything on its own; only `simulateCrash()` emits events.
