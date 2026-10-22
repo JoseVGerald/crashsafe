@@ -11,6 +11,8 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationSample
     private(set) var location: CLLocation?
     private(set) var placeName: String?
     private(set) var streetName: String?
+    /// "US-OR", "DE"…: picks the legal default speed limits for untagged roads.
+    @ObservationIgnored private(set) var regionCode: String?
 
     @ObservationIgnored private var sampleObservers: [UUID: (LocationSample) -> Void] = [:]
     @ObservationIgnored private let manager = CLLocationManager()
@@ -154,6 +156,11 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationSample
     private func geocode(_ location: CLLocation) async {
         guard let placemark = try? await geocoder.reverseGeocodeLocation(location).first else { return }
         placeName = Self.shortName(for: placemark)
+        if let country = placemark.isoCountryCode {
+            // US states come back as two-letter codes ("OR"); elsewhere the country alone is used.
+            let state = placemark.administrativeArea.flatMap { $0.count == 2 ? $0.uppercased() : nil }
+            regionCode = state.map { "\(country)-\($0)" } ?? country
+        }
         streetName = placemark.thoroughfare.map { street in
             placemark.subThoroughfare.map { "\($0) \(street)" } ?? street
         }

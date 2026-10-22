@@ -107,3 +107,17 @@ struct SpeedLimitServiceTests {
         #expect(try await RacingRoadSource(sources: [empty, broken]).roads(nearLat: 45.5, lon: -122.6, radiusMeters: 500).isEmpty)
     }
 }
+
+@MainActor
+struct AreaCoachingTests {
+    @Test func residentialStreetsGetASpokenExtraCareWarning() {
+        var snapshot = DrivingSnapshot(speedLimitMPH: 25, environment: .city)
+        snapshot.speedMPH = 22
+        snapshot.roadSegment = .residential
+        let message = CoachingEngine.areaCaution(snapshot)
+        #expect(message?.title == "Residential area: be extra careful")
+        #expect(message?.speaksAloud == true && message?.repeatAfter == 300)
+        snapshot.roadSegment = .interstate
+        #expect(CoachingEngine.areaCaution(snapshot) == nil)
+    }
+}

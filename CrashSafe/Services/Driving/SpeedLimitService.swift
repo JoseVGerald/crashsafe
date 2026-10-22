@@ -123,6 +123,7 @@ nonisolated struct ValhallaSpeedLimitSource: QuickSpeedLimitSource {
         request.httpBody = try JSONSerialization.data(withJSONObject: [
             "shape": shape, "costing": "auto", "shape_match": "map_snap",
             "filters": ["attributes": ["edge.speed_limit", "edge.names", "edge.way_id", "edge.road_class", "edge.use",
+                                       "edge.density", "edge.lane_count", "edge.bridge", "edge.tunnel", "edge.unpaved", "edge.roundabout",
                                        "matched.edge_index", "matched.type", "matched.distance_from_trace_point"],
                         "action": "include"],
         ] as [String: Any])
@@ -253,6 +254,10 @@ final class SpeedLimitService {
     @ObservationIgnored private var quickInFlight = false
     @ObservationIgnored private var quickAfter: Date = .distantPast
     @ObservationIgnored private var firstFixAt: Date?
+    /// "US-OR"-style region of the car, for that region's legal default limits on untagged roads.
+    @ObservationIgnored var regionCode: () -> String? = { nil }
+    @ObservationIgnored private let defaults: RoadDefaults? = Bundle.main.url(forResource: "default_speeds", withExtension: "json")
+        .flatMap { try? Data(contentsOf: $0) }.flatMap { try? RoadDefaults(json: $0) }
 
     static let log = Logger(subsystem: "org.cac.crashsafe", category: "speed-limits")
     /// Area fetched around the car; refetched when it gets within `refetchMargin` of the edge.
@@ -350,6 +355,13 @@ final class SpeedLimitService {
     }
 
     private func show(_ reading: SpeedLimitReading, basis: String) {
+        var reading = reading
+        if reading.segment == nil { reading.segment = RoadSegment.classify(highway: reading.highway, mph: reading.isPosted ? reading.mph : nil) }
+        // An untagged road gets the legal default where the car is (e.g. 25 mph on an Oregon residential street).
+        if !reading.isPosted, let segment = reading.segment,
+           let regional = defaults?.typicalMPH(for: segment, region: regionCode()) {
+            reading.mph = regional
+        }
         current = reading
         if status != .ready { status = .ready }
         if firstLimit == nil, let firstFixAt {

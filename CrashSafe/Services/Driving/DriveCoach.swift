@@ -21,7 +21,7 @@ final class DriveCoach {
     @ObservationIgnored private let conditions: ConditionsStore
     @ObservationIgnored private let synthesizer = AVSpeechSynthesizer()
     @ObservationIgnored private var loop: Task<Void, Never>?
-    @ObservationIgnored private var lastSpoken: (title: String, at: Date)?
+    @ObservationIgnored private var spokenAt: [String: Date] = [:]
 
     init(driving: DrivingMonitor, conditions: ConditionsStore) {
         self.driving = driving
@@ -72,8 +72,8 @@ final class DriveCoach {
         // Only when over the speed limit; other advice stays on screen.
         guard speaks, message.speaksAloud else { return }
         // Don't nag: the same warning at most once a minute.
-        if let last = lastSpoken, last.title == message.title, Date.now.timeIntervalSince(last.at) < 60 { return }
-        lastSpoken = (message.title, .now)
+        if let last = spokenAt[message.title], Date.now.timeIntervalSince(last) < message.repeatAfter { return }
+        spokenAt[message.title] = .now
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .voicePrompt, options: [.duckOthers])
         try? AVAudioSession.sharedInstance().setActive(true)
         let utterance = AVSpeechUtterance(string: "\(message.title). \(message.body)")

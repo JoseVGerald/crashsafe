@@ -103,6 +103,10 @@ struct CarPlayModeView: View {
 
     /// Where the live data is coming from, in plain words.
     private var liveStatus: String {
+        if let segment = snapshot.roadSegment {
+            let extras = snapshot.roadFeatures.labels.map { " · \($0)" }.joined()
+            return "Live · \(segment.title)" + (snapshot.roadName.map { " · \($0)" } ?? "") + extras
+        }
         if let road = snapshot.roadName { return "Live · \(road)" }
         return env.sensors.hasMotionHardware ? "Live · GPS + motion sensors" : "Live · GPS"
     }
@@ -210,7 +214,7 @@ struct CarPlayModeView: View {
                 EmptyView()
             }
             sensorTile(icon: environmentIcon, title: "Road",
-                       value: snapshot.environment == .forest ? "Wooded" : snapshot.environment.label.capitalized) {
+                       value: snapshot.roadSegment?.title ?? (snapshot.environment == .forest ? "Wooded" : snapshot.environment.label.capitalized)) {
                 EmptyView()
             }
         }

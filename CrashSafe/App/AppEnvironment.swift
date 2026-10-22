@@ -59,6 +59,7 @@ final class AppEnvironment {
         self.sensors = sensors
         replay?.onFinish = { [weak sensors] in sensors?.motionSourceChanged() }
         self.sensorLab = SensorLabModel(sensors: sensors, replay: replay, speedLimits: speedLimits)
+        speedLimits?.regionCode = { [weak location] in location?.regionCode }
         let driving = DrivingMonitor(sensors: sensors, speedLimits: speedLimits)
         self.conditions = conditions
         self.driving = driving

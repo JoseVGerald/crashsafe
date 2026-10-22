@@ -221,11 +221,11 @@ struct CarPlayTests {
 
         let template = CarPlaySceneDelegate().makeDashboard()
         let titles = template.items.map(\.title)
-        #expect(titles.prefix(4) == ["Speed", "Limit", "Safe now", "Status"])
+        #expect(titles.prefix(5) == ["Speed", "Limit", "Road", "Safe now", "Status"])
         #expect(titles.contains("Conditions"))
         #expect(template.items.first?.detail?.hasSuffix("mph") == true)
         #expect(template.items[1].detail?.hasPrefix("65 mph") == true) // the road's posted limit
-        #expect(template.items[2].detail == "50 mph") // 65 limit × heavy rain 0.75 → 50
+        #expect(template.items[3].detail == "50 mph") // 65 limit × heavy rain 0.75 → 50
         #expect(template.actions.map(\.title) == ["Mute Pulse", "I need help"])
     }
 }

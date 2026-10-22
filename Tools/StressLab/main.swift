@@ -230,6 +230,8 @@ for dir in trialsDirs where dir.hasDirectoryPath {
 
 // MARK: 4. Real driving (Android phone, earth frame, m/s²)
 
+struct BrakeStats { var brakes = 0, brakesHit = 0, longitudinal = 0, longitudinalHit = 0, turns = 0, turnFalse = 0, gentle = 0, gentleFalse = 0, otherFalse = 0, events = 0 }
+var brakes = BrakeStats()
 struct DriveStats {
     var seconds = 0.0, candidates = 0, alerts = 0, inconclusive = 0, maxG = 0.0, samples = 0
     var windows = 0
@@ -253,6 +255,8 @@ for trip in ((try? FileManager.default.contentsOfDirectory(at: driveRoot, includ
     let gyro = load("giroscopio_terra.csv")
     guard let t0 = linear.first?.0, !gyro.isEmpty else { continue }
     var pipeline = CrashPipeline()
+    var brakeDetector = LongitudinalEventDetector()
+    var brakeTimes: [Double] = []
     var history = SensorHistory()
     var lastWindow = -Double.infinity
     var recentProbabilities: [[Double]] = []
@@ -266,6 +270,7 @@ for trip in ((try? FileManager.default.contentsOfDirectory(at: driveRoot, includ
                                   accelerationG: a * (-1 / SensorVector.standardGravity),
                                   gravityG: SensorVector(x: 0, y: 0, z: -1), rotationRate: gyro[j].1)
         drive.samples += 1
+        if brakeDetector.add(sample) != nil { brakeTimes.append(t - t0) }
         drive.maxG = max(drive.maxG, sample.accelerationG.magnitude)
         history.append(.motion(sample))
         if sample.uptime - lastWindow >= 2.5, let w = history.window(endingAt: sample.uptime, duration: 5) {
@@ -298,6 +303,26 @@ for trip in ((try? FileManager.default.contentsOfDirectory(at: driveRoot, includ
         }
     }
     drive.seconds += last - t0
+    // Score against the trip's labels: brakes/accelerations should be caught, turns and gentle driving not.
+    let labels = ((try? String(contentsOf: trip.appendingPathComponent("groundTruth.csv"), encoding: .utf8)) ?? "")
+        .split(whereSeparator: \.isNewline).dropFirst().compactMap { line -> (String, Double, Double)? in
+            let c = line.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+            guard c.count >= 3, let a = Double(c[1]), let b = Double(c[2]) else { return nil }
+            return (c[0], a, b)
+        }
+    brakes.events += brakeTimes.count
+    for (kind, a, b) in labels {
+        let hit = brakeTimes.contains { $0 >= a - 1 && $0 <= b + 1 }
+        if kind == "freada_agressiva" { brakes.brakes += 1; if hit { brakes.brakesHit += 1 } }
+        if kind == "freada_agressiva" || kind == "aceleracao_agressiva" {
+            brakes.longitudinal += 1; if hit { brakes.longitudinalHit += 1 }
+        } else if kind.hasPrefix("curva") || kind.hasPrefix("troca") {
+            brakes.turns += 1; if hit { brakes.turnFalse += 1 }
+        } else {
+            brakes.gentle += 1; if hit { brakes.gentleFalse += 1 }
+        }
+    }
+    brakes.otherFalse += brakeTimes.filter { t in !labels.contains { t >= $0.1 - 1 && t <= $0.2 + 1 } }.count
 }
 
 if printFeatures {
@@ -387,6 +412,7 @@ line("| Transport model on held-out people (still / walking / running, incl. sta
 let carOnFoot = (drive.predicted["Walking"] ?? 0) + (drive.predicted["Running"] ?? 0)
 line("| Real car trips mistaken for walking or running (motion only, no GPS) | \(pct(carOnFoot, drive.windows)) of \(drive.windows) windows; held-out trips \(pct(drive.heldOutOnFoot, drive.heldOutWindows)), called a car there \(pct(drive.heldOutCar, drive.heldOutWindows)) |")
 line("| … as the app shows it (averaged over 3 windows, ~7.5 s) | \(pct(drive.smoothedOnFoot, drive.smoothedWindows)) mistaken for walking or running |")
+line("| Hard brakes caught (real labeled drives, motion detector) | \(pct(brakes.brakesHit, brakes.brakes)) (\(brakes.brakesHit)/\(brakes.brakes)); false on turns \(brakes.turnFalse)/\(brakes.turns), elsewhere \(brakes.otherFalse) |")
 line("| Real driving with aggressive braking and turns (\(String(format: "%.0f", drive.seconds / 60)) min) | \(drive.alerts) false check-ins, \(drive.candidates) events examined, max \(String(format: "%.2f", drive.maxG)) g |")
 line("| Corrupted input (\(fuzzRuns) runs of NaN/∞/out-of-order/gaps) | \(fuzzAlerts) check-ins, no crashes (\(fuzzSeconds) s) |")
 line("| One-sample 40 g glitch during a drive (500 runs) | \(glitchAlerts) check-ins |")
@@ -448,6 +474,7 @@ line("Android phone fixed in a car, ~50 Hz, four trips with labeled aggressive b
 line()
 line("- \(String(format: "%.0f", drive.seconds / 60)) min, \(drive.samples) samples, strongest reading \(String(format: "%.2f", drive.maxG)) g")
 line("- Events examined: \(drive.candidates); check-ins: \(drive.alerts); inconclusive: \(drive.inconclusive)")
+line("- Hard brake/acceleration detector (motion, any phone position): caught \(brakes.longitudinalHit) of \(brakes.longitudinal) labeled aggressive brakes and accelerations; fired on \(brakes.turnFalse) of \(brakes.turns) aggressive turns/lane changes, \(brakes.gentleFalse) of \(brakes.gentle) gentle maneuvers, and \(brakes.otherFalse) times elsewhere in \(String(format: "%.0f", drive.seconds / 60)) min.")
 let onFoot = (drive.predicted["Walking"] ?? 0) + (drive.predicted["Running"] ?? 0)
 line("- Transport model, motion only (the dataset has no GPS, which is what tells car from bus or train): \(drive.windows) windows; mistaken for walking or running: \(pct(onFoot, drive.windows)). Answers: \(drive.predicted.sorted { $0.value > $1.value }.map { "\($0.key) \(pct($0.value, drive.windows))" }.joined(separator: ", "))")
 line()
