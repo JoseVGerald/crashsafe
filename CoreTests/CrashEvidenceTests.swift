@@ -94,16 +94,20 @@ struct CrashEvidenceTests {
             for fix in gps where abs(fix.uptime - sample.uptime) < 0.001 { _ = pipeline.ingest(.location(fix)) }
             if let result = pipeline.ingest(.motion(sample)) { results.append(result) }
             if abs(sample.uptime - 12) < 0.001 {
-                #expect(pipeline.submit(candidate))
-                #expect(!pipeline.submit(candidate))
+                let accepted = pipeline.submit(candidate)
+                let duplicate = pipeline.submit(candidate)
+                #expect(accepted)
+                #expect(!duplicate)
             }
         }
         if let result = pipeline.advance(to: 15.5) { results.append(result) }
         #expect(results.count == 1)
         #expect(results.first?.decision == .suspectedCrash)
-        #expect(pipeline.advance(to: 20) == nil)
+        let duplicateResult = pipeline.advance(to: 20)
+        #expect(duplicateResult == nil)
         _ = pipeline.ingest(.motion(sample(18, g: 8)))
-        #expect(!pipeline.submit(CrashCandidate(uptime: 18, date: Date(), transportationMode: .car)))
+        let duringCooldown = pipeline.submit(CrashCandidate(uptime: 18, date: Date(), transportationMode: .car))
+        #expect(!duringCooldown)
     }
 
     @Test func watchdogFinalizesMissingPostImpactDataAsInconclusive() {
