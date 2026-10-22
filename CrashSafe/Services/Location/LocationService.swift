@@ -5,14 +5,13 @@ import Observation
 /// Current location + a short place name ("Bellevue, WA"). Shared by Home, the trip planner,
 /// the post-crash help hub and the driving monitor.
 @Observable
-final class LocationService: NSObject, CLLocationManagerDelegate {
+final class LocationService: NSObject, CLLocationManagerDelegate, LocationSampleSource {
     private(set) var authorization: CLAuthorizationStatus
     private(set) var location: CLLocation?
     private(set) var placeName: String?
     private(set) var streetName: String?
 
-    /// Raw updates for the driving monitor (one listener).
-    @ObservationIgnored var onUpdate: ((CLLocation) -> Void)?
+    @ObservationIgnored private var sampleObservers: [UUID: (LocationSample) -> Void] = [:]
     @ObservationIgnored private let manager = CLLocationManager()
     @ObservationIgnored private var lastGeocoded: CLLocation?
     @ObservationIgnored private let geocoder = CLGeocoder()
@@ -56,6 +55,14 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         manager.stopUpdatingLocation()
     }
 
+    func addSampleObserver(_ receive: @escaping (LocationSample) -> Void) -> UUID {
+        let id = UUID()
+        sampleObservers[id] = receive
+        return id
+    }
+
+    func removeSampleObserver(_ id: UUID) { sampleObservers[id] = nil }
+
     /// Keeps updates flowing while the app is in the background (requires the `location` background mode).
     func setBackgroundUpdates(_ enabled: Bool) {
         let modes = Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String] ?? []
@@ -74,7 +81,16 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latest = locations.last else { return }
         location = latest
-        onUpdate?(latest)
+        // Preserve measurement timestamps, including batched fixes. Never re-stamp old GPS as fresh.
+        let now = Date()
+        let uptime = ProcessInfo.processInfo.systemUptime
+        for fix in locations.sorted(by: { $0.timestamp < $1.timestamp }) {
+            let sample = LocationSample(uptime: uptime + fix.timestamp.timeIntervalSince(now), date: fix.timestamp,
+                                        latitude: fix.coordinate.latitude, longitude: fix.coordinate.longitude,
+                                        horizontalAccuracy: fix.horizontalAccuracy,
+                                        speedMPS: fix.speed, speedAccuracy: fix.speedAccuracy)
+            for receive in Array(sampleObservers.values) { receive(sample) }
+        }
         if lastGeocoded.map({ $0.distance(from: latest) > 400 }) ?? true {
             lastGeocoded = latest
             Task { await geocode(latest) }
