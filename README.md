@@ -4,8 +4,8 @@ Congressional App Challenge 2026 project. Other apps detect crashes; this one gu
 
 This repo is the iOS app: onboarding, a live Home dashboard, a map trip planner, the crash check-in and post-crash help hub, the Pulse assistant, and a CarPlay driving coach. It now includes shared sensor acquisition and an experimental offline crash-evidence evaluator. AI and family alerts remain behind protocols with mock implementations.
 
-**Real today:** location, live weather (Open-Meteo, no key), Apple Maps search/routing, nearby hospitals/police/tow search, offline trip packs, shared timestamped acceleration/rotation/GPS acquisition, experimental crash evidence evaluation during active trips, rules-based coaching with spoken prompts.
-**Mocked today:** the AI replies and voice input, family alert delivery, auth (offline mock unless Firebase is set up). *Test crash* still demonstrates the check-in without a physical impact.
+**Real today:** source-linked offline assistant cards, optional RAG backend integration, location, live weather (Open-Meteo, no key), Apple Maps search/routing, nearby hospitals/police/tow search, offline trip packs, shared timestamped acceleration/rotation/GPS acquisition, experimental crash evidence evaluation during active trips, rules-based coaching with spoken prompts.
+**Mocked today:** voice input, family alert delivery, auth (offline mock unless Firebase is set up). *Test crash* still demonstrates the check-in without a physical impact.
 
 Crash thresholds are experimental and have not been validated against real crashes. Background monitoring and battery use require device testing. See [sensor acquisition and crash evaluation](docs/crash-detection.md) for architecture, defaults, tests, step 4 integration, and remaining work.
 
@@ -75,7 +75,7 @@ Every service is swapped in one place: `AppEnvironment.live()` in [`CrashSafe/Ap
 | Team | Protocol | Mock today | What to build |
 |---|---|---|---|
 | Detection | `CrashDetector` — `Services/CrashDetection/CrashDetector.swift` | `CoreMotionCrashDetector`: shared sensor acquisition, bounded history, experimental evidence evaluation; mocks remain in previews | Validate/calibrate rules and integrate the transportation classifier and team's step 4 candidate detector. See [implementation notes](docs/crash-detection.md). |
-| AI | `AssistantService` — `Services/Assistant/AssistantService.swift` | `MockAssistantService` (keyword canned replies) | Cloud assistant (calls **our server**; never ship API keys in the app) + on-device assistant (Apple Foundation Models + trip pack). Pick based on `ConnectivityMonitor.isOnline`. `AssistantContext` already carries profile, trip and scenario. |
+| AI | `AssistantService` — `Services/Assistant/AssistantService.swift` | `RAGAssistantService` (local source cards and optional RAG backend) | Cloud assistant (calls **our server**; never ship API keys in the app) + on-device assistant (Apple Foundation Models + trip pack). Pick based on `ConnectivityMonitor.isOnline`. `AssistantContext` already carries profile, trip and scenario. |
 | AI | `VoiceInputService` — `Services/Assistant/VoiceInputService.swift` | `MockVoiceInputService` (canned phrases) | On-device speech-to-text. Add mic + speech usage descriptions to the Info.plist settings in `project.yml`. |
 | Maps | `TripPackService` — `Services/TripPack/TripPackService.swift` | `MockTripPackService` (fake tow companies/hospitals) | `MKLocalSearch` along the route; persist packs to disk for airplane mode. |
 | Backend | `EmergencyAlertService` — `Services/Alerts/EmergencyAlertService.swift` | `MockEmergencyAlertService` (`.sent` online, `.queued` offline) | Push/SMS via our backend; persist a queue when offline. 911 stays with Apple's built-in Crash Detection. |
@@ -139,3 +139,10 @@ Coaching runs whenever a drive is active (not only on the CarPlay screen). With 
 Several CAC districts require disclosing AI use. Keep a running list here. Starting entry: the app shell (project setup, screens, mocks, tests and this README) was generated with Claude Code from the team's build prompt, then reviewed and tested by the team.
 
 Shared sensor acquisition and experimental crash-evidence evaluation, their tests, the macOS/iOS verification workflow, and implementation notes were developed with OpenAI Codex. Automated core and iPhone simulator tests were run through GitHub Actions. Real-device and crash-dataset validation remain to be done by the team.
+
+
+## Source-backed assistant integration
+
+Pulse now uses RAGAssistantService with local evidence fallback. See [integration details](docs/rag-integration.md) for backend startup, incident provenance, profile mapping and remaining validation. The detector still uses experimental rules; no new crash accuracy is claimed. The transport checkpoint is not activated without its missing preprocessing metadata.
+
+The Python backend is included under [Backend/rag](Backend/rag). Run its tests and start the local server there. Repository documentation is indexed separately from driver safety guidance.

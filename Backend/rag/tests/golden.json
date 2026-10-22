@@ -1,0 +1,72 @@
+[
+  {
+    "query": "When do I file the report in Washington?",
+    "jurisdiction": "WA",
+    "expected": "WA_REPORT"
+  },
+  {
+    "query": "Do I have to give a recorded statement to my insurer?",
+    "jurisdiction": "WA",
+    "expected": "STATEMENT"
+  },
+  {
+    "query": "Can I get out if my neck hurts?",
+    "jurisdiction": "WA",
+    "expected": "MOVEMENT"
+  },
+  {
+    "query": "Does my baby car seat need replacing?",
+    "jurisdiction": "WA",
+    "expected": "CAR_SEAT"
+  },
+  {
+    "query": "I am scared and overwhelmed",
+    "jurisdiction": "UNKNOWN",
+    "expected": "CALM_SUPPORT"
+  },
+  {
+    "query": "How can I tow my electric car?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "EV"
+  },
+  {
+    "query": "What photographs and witness details should I collect?",
+    "jurisdiction": "WA",
+    "expected": "DOCUMENT"
+  },
+  {
+    "query": "My headache is getting worse and I am vomiting",
+    "jurisdiction": "UNKNOWN",
+    "expected": "HEAD_INJURY"
+  },
+  {
+    "query": "Insurance offered an unfair settlement",
+    "jurisdiction": "WA",
+    "expected": "DISPUTE"
+  },
+  {
+    "query": "Does my policy cover a rental?",
+    "jurisdiction": "WA",
+    "expected": "COVERAGE"
+  },
+  {
+    "query": "Can I text 911 if I am deaf?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "TEXT_911"
+  },
+  {
+    "query": "Nightmares and flashbacks after the crash",
+    "jurisdiction": "UNKNOWN",
+    "expected": "FOLLOWUP_EMOTION"
+  },
+  {
+    "query": "What if I do not remember my speed?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "TRUTHFUL"
+  },
+  {
+    "query": "What to tell the emergency dispatcher about my location?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "CALL_911"
+  }
+]

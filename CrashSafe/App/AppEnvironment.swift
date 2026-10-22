@@ -51,7 +51,7 @@ final class AppEnvironment {
         AppEnvironment(
             auth: makeAuthService(),
             crashDetector: nil,                       // Live shared sensors + experimental evidence rules
-            assistant: MockAssistantService(),        // AI TEAM: Cloud / on-device assistant
+            assistant: RAGAssistantService.configured(),        // AI TEAM: Cloud / on-device assistant
             voiceInput: MockVoiceInputService(),      // AI TEAM: speech recognizer
             tripPacks: MapKitTripPackService(),       // Apple Maps search (mock fallback without coordinates)
             alerts: MockEmergencyAlertService(),      // Backend push/SMS
@@ -129,7 +129,12 @@ final class AppRouter {
 
     var selectedTab: Tab = .home
     /// Non-nil while the full-screen "Are you OK?" check-in is showing.
-    var activeCrash: CrashEvent?
+    var activeCrash: CrashEvent? {
+        didSet {
+            if let event = activeCrash { assistantIncident = AssistantIncident.make(event: event) }
+        }
+    }
+    var assistantIncident: AssistantIncident?
     /// Set when the check-in hands off to the assistant; consumed by the assistant screen.
     var pendingAssistantScenario: AssistantScenario?
     /// Full-screen CarPlay-style driving mode.

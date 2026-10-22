@@ -1,0 +1,2 @@
+# Only needed for the optional transport adapters; the RAG server is standard-library only.
+numpy>=1.26

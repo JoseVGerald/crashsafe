@@ -22,6 +22,11 @@
 	<string>During trips, CrashSafe keeps watching your drive in the background so it can coach you and check on you after a crash.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>CrashSafe uses your location to show road conditions, find help nearby, and tell responders where you are.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSMotionUsageDescription</key>
 	<string>CrashSafe uses motion data to notice hard braking and possible crashes.</string>
 	<key>UIApplicationSceneManifest</key>
