@@ -26,6 +26,7 @@ final class HomeViewModel {
         }
         trip.isActive = true
         trip.startedAt = .now
+        driving.speedLimits?.setOfflineRoads(trip.tripPack?.roads ?? [])
         detector.startMonitoring(carType: profile?.carType ?? .sedan)
         if driving.scenario == nil {
             driving.startLive(background: profile?.autoDetectDrives ?? true)
@@ -38,6 +39,13 @@ final class HomeViewModel {
                         startDate: .now, endDate: .now.addingTimeInterval(12 * 3_600))
         context.insert(trip)
         start(trip, among: trips, profile: profile)
+    }
+
+    /// Switching cars mid-drive re-tunes crash detection to the new vehicle type.
+    func changeVehicle(profile: Profile?) {
+        guard detector.isMonitoring else { return }
+        detector.stopMonitoring()
+        detector.startMonitoring(carType: profile?.carType ?? .sedan)
     }
 
     func end(_ trip: Trip) {

@@ -50,7 +50,7 @@ struct CarPlayModeView: View {
                         coachPanel
                         sensorsPanel
                         Spacer(minLength: 0)
-                        scenarioBar
+                        if env.driving.scenario != nil { scenarioBar }
                     }
                 }
                 .padding(16)
@@ -65,7 +65,7 @@ struct CarPlayModeView: View {
     // MARK: Panels
 
     private var background: some View {
-        Color(hex: 0x05080F)
+        Brand.background
             .ignoresSafeArea()
     }
 
@@ -83,7 +83,7 @@ struct CarPlayModeView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("CarPlay").font(.headline)
-                Text(env.driving.scenario.map { "Demo · \($0.title)" } ?? (env.driving.mode == .live ? "Live sensors" : "Starting…"))
+                Text(env.driving.scenario.map { "Demo · \($0.title)" } ?? (env.driving.mode == .live ? liveStatus : "Starting…"))
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.65))
             }
@@ -99,6 +99,20 @@ struct CarPlayModeView: View {
             .accessibilityLabel(env.coach.speaks ? "Mute Pulse" : "Unmute Pulse")
         }
         .foregroundStyle(.white)
+    }
+
+    /// Where the live data is coming from, in plain words.
+    private var liveStatus: String {
+        if let road = snapshot.roadName { return "Live · \(road)" }
+        return env.sensors.hasMotionHardware ? "Live · GPS + motion sensors" : "Live · GPS"
+    }
+
+    private var speedLimitStatus: String {
+        switch env.driving.speedLimits?.status {
+        case .loading: "FINDING"
+        case .failed: "NO DATA"
+        default: "LIMIT"
+        }
     }
 
     private var conditionsRow: some View {
@@ -139,7 +153,9 @@ struct CarPlayModeView: View {
 
             HStack(spacing: 10) {
                 if let limit = snapshot.speedLimitMPH {
-                    SpeedSign(value: Int(limit), label: "LIMIT")
+                    SpeedSign(value: Int(limit), label: snapshot.speedLimitIsPosted ? "LIMIT" : "TYPICAL")
+                } else if env.driving.mode == .live {
+                    SpeedSign(value: nil, label: speedLimitStatus)
                 }
                 if let recommended = comparison.recommendedMaxMPH {
                     SpeedSign(value: Int(recommended), label: "SAFE NOW", tint: statusColor)
@@ -281,15 +297,11 @@ struct CarPlayModeView: View {
 
     private func start() {
         UIApplication.shared.isIdleTimerDisabled = true
+        // Always real data: GPS speed, the posted limit for the road (OpenStreetMap) and live weather.
+        // Demo drives only run if one was started from Profile → Testing.
         if !env.driving.isActive {
-            // Live sensors on a device; the forest-at-night demo in the simulator (no real motion there).
-            #if targetEnvironment(simulator)
-            env.driving.startDemo(.forestNight)
-            env.conditions.override(with: DriveScenario.forestNight.weather)
-            #else
             env.driving.startLive(background: profile?.autoDetectDrives ?? true)
             startedLive = true
-            #endif
         }
     }
 
@@ -301,14 +313,15 @@ struct CarPlayModeView: View {
 
 /// US-style speed sign.
 private struct SpeedSign: View {
-    let value: Int
+    /// nil while the limit is being looked up.
+    let value: Int?
     let label: String
     var tint: Color = .white
 
     var body: some View {
         VStack(spacing: 0) {
             Text(label).font(.system(size: 10, weight: .heavy)).tracking(0.5)
-            Text("\(value)").font(.system(size: 28, weight: .heavy, design: .rounded)).contentTransition(.numericText())
+            Text(value.map(String.init) ?? "–").font(.system(size: 28, weight: .heavy, design: .rounded)).contentTransition(.numericText())
         }
         .foregroundStyle(.black)
         .frame(width: 78, height: 64)

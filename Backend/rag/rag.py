@@ -233,26 +233,49 @@ def make_server(engine,port=8787,developer_engine=None):
             self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
             self.send_header("X-Content-Type-Options","nosniff"); self.end_headers(); self.wfile.write(raw)
         def do_GET(self):
+            if self.path.startswith("/v1/roads?"):
+                # Speed-limit road data (cached OpenStreetMap tiles). Nothing about the request is logged.
+                from urllib.parse import urlsplit, parse_qs
+                from roads import RoadTiles
+                try:
+                    q={k:float(v[0]) for k,v in parse_qs(urlsplit(self.path).query).items() if k in ("lat","lon","radius")}
+                    tiles=RoadTiles(ROOT/"data"/"road_tiles")
+                    return self.reply(200,tiles.near(q["lat"],q["lon"],q.get("radius",700)))
+                except (KeyError,ValueError): return self.reply(400,{"error":"lat, lon and radius required"})
+                except RuntimeError: return self.reply(504,{"error":"Road data unavailable right now"})
             if self.path=="/health":
                 self.reply(200,{"status":"ok","mode":"production" if engine.production else "prototype",
                     "indexed_cards":len(engine.cards),"embedding_model":engine.meta["embedding_model"] or None,
                     "generation_model_configured":bool(engine.llm_model),"professional_review":"pending"})
             else: self.reply(404,{"error":"Not found"})
         def do_POST(self):
-            if self.path not in ("/v1/retrieve","/v1/answer","/v1/assist","/v1/developer/retrieve"): return self.reply(404,{"error":"Not found"})
+            if self.path not in ("/v1/retrieve","/v1/answer","/v1/assist","/v1/developer/retrieve","/v1/analyze-window","/v1/alerts","/v1/roads/route"): return self.reply(404,{"error":"Not found"})
             # Loopback only. Reject browser cross-origin requests; no permissive CORS.
             origin=self.headers.get("Origin")
             if origin and origin not in (f"http://127.0.0.1:{self.server.server_port}",f"http://localhost:{self.server.server_port}"):
                 return self.reply(403,{"error":"Cross-origin requests disabled"})
             try:
                 size=int(self.headers.get("Content-Length","0"))
-                if not 1<=size<=16384: return self.reply(413,{"error":"Request must be 1-16384 bytes"})
+                # An exported sensor window (opt-in developer analysis) is larger than a question.
+                limit=600_000 if self.path in ("/v1/analyze-window","/v1/roads/route") else 16384
+                if not 1<=size<=limit: return self.reply(413,{"error":f"Request must be 1-{limit} bytes"})
                 payload=json.loads(self.rfile.read(size))
                 if not isinstance(payload,dict): raise ValueError("Expected JSON object")
                 if self.path=="/v1/retrieve": result=engine.retrieve(**payload)
                 elif self.path=="/v1/assist":
                     from incident_context import assist
                     result=assist(engine,**payload)
+                elif self.path=="/v1/roads/route":
+                    from roads import RoadTiles
+                    if set(payload)-{"path","radius"}: raise ValueError("Unsupported fields")
+                    try: result=RoadTiles(ROOT/"data"/"road_tiles").along(payload.get("path"),payload.get("radius",150))
+                    except RuntimeError: return self.reply(504,{"error":"Road data unavailable right now"})
+                elif self.path=="/v1/alerts":
+                    from alerts import send_alert
+                    result=send_alert(payload)
+                elif self.path=="/v1/analyze-window":
+                    from motion_intel import analyze_window
+                    result=analyze_window(payload)
                 elif self.path=="/v1/developer/retrieve":
                     if developer_engine is None: return self.reply(503,{"error":"Developer index not built"})
                     result=developer_engine.retrieve(**payload)
@@ -279,8 +302,14 @@ def main():
     s=sub.add_parser("serve"); s.add_argument("--port",type=int,default=8787)
     s.add_argument("--production",action="store_true")
     b=sub.add_parser("benchmark"); b.add_argument("--runs",type=int,default=200)
+    pr=sub.add_parser("prefetch-roads",help="Cache OpenStreetMap speed-limit tiles for a region")
+    pr.add_argument("--bbox",required=True,help="south,west,north,east")
     args=p.parse_args()
     if args.command=="ingest": print(json.dumps(ingest(args.corpus,args.db,args.embedding_model),indent=2)); return
+    if args.command=="prefetch-roads":
+        from roads import RoadTiles
+        bbox=tuple(float(x) for x in args.bbox.split(","))
+        print(f"cached {RoadTiles(ROOT/'data'/'road_tiles').prefetch(bbox)} new tiles"); return
     engine=Engine(args.db,production=getattr(args,"production",False),llm_model=os.getenv("CRASH_RAG_LLM_MODEL",""))
     try:
         if args.command=="ask": print(json.dumps(engine.answer(args.query,args.jurisdiction,args.stage,args.persona),indent=2))

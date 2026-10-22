@@ -75,6 +75,26 @@ struct SensorHubTests {
         hub.release(owner: owner)
     }
 
+    @Test func deniedMotionRestartsAfterReturningFromSettings() {
+        let motion = TestMotionSource()
+        let hub = SensorHub(motion: motion, location: TestLocationSource(), now: { 10 }, useWatchdog: false)
+        let owner = UUID()
+        hub.acquire(owner: owner, background: true)
+        motion.receive?(nil, true)
+        #expect(hub.health.state == .permissionDenied)
+        hub.refreshAfterForeground()
+        #expect(motion.starts == 2 && motion.stops == 1)
+        #expect(hub.health.state == .starting)
+        motion.emit(sample(10))
+        #expect(hub.health.state == .active)
+        // A healthy stream is left alone.
+        hub.refreshAfterForeground()
+        #expect(motion.starts == 2)
+        hub.release(owner: owner)
+        hub.refreshAfterForeground()
+        #expect(motion.starts == 2 && !hub.isRunning)
+    }
+
     @Test func gpsFixesRetainQualityAndFanOut() {
         let location = TestLocationSource()
         let hub = SensorHub(motion: TestMotionSource(), location: location, now: { 10 }, useWatchdog: false)

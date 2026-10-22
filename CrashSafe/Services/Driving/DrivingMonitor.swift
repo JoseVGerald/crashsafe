@@ -94,6 +94,9 @@ enum DriveScenario: String, CaseIterable, Identifiable, Sendable {
 struct DrivingSnapshot: Equatable, Sendable {
     var speedMPH: Double = 0
     var speedLimitMPH: Double?
+    /// True for a posted limit (OpenStreetMap `maxspeed` or a demo); false for a typical limit for the road type.
+    var speedLimitIsPosted = true
+    var roadName: String?
     var averageSpeedMPH: Double = 0
     var maxSpeedMPH: Double = 0
     var hardBrakes = 0
@@ -124,6 +127,8 @@ final class DrivingMonitor {
     private(set) var gHistory: [Double] = Array(repeating: 0, count: 40)
 
     @ObservationIgnored private let sensors: SensorHub
+    /// Real speed limits for live drives (OpenStreetMap); nil in tests.
+    @ObservationIgnored let speedLimits: SpeedLimitService?
     @ObservationIgnored private let sensorOwner = UUID()
     @ObservationIgnored private var sensorObserver: UUID?
     @ObservationIgnored private var demoTask: Task<Void, Never>?
@@ -132,8 +137,9 @@ final class DrivingMonitor {
     @ObservationIgnored private var movingSpeedCount = 0
     @ObservationIgnored private var startedAt: Date?
 
-    init(sensors: SensorHub) {
+    init(sensors: SensorHub, speedLimits: SpeedLimitService? = nil) {
         self.sensors = sensors
+        self.speedLimits = speedLimits
     }
 
     var isActive: Bool { mode != .idle }
@@ -155,8 +161,9 @@ final class DrivingMonitor {
             switch reading {
             case .motion(let sample): self?.ingest(g: sample.accelerationG.magnitude)
             case .location(let sample):
-                if sample.hasReliableSpeed(at: ProcessInfo.processInfo.systemUptime) {
-                    self?.ingest(speedMPH: sample.speedMPS * 2.23694, at: sample.date)
+                self?.applySpeedLimit(from: sample)
+                if let mps = Self.displaySpeedMPS(sample, now: ProcessInfo.processInfo.systemUptime) {
+                    self?.ingest(speedMPH: mps * 2.23694, at: sample.date)
                 }
             }
         }
@@ -195,6 +202,32 @@ final class DrivingMonitor {
     }
 
     // MARK: Ingest
+
+    /// Speed for the speedometer and coaching. Crash evidence keeps the strict rule (`hasReliableSpeed`);
+    /// the dashboard also accepts a fresh speed whose accuracy iOS couldn't estimate (speedAccuracy -1, as
+    /// in the simulator) when the position itself is precise.
+    nonisolated static func displaySpeedMPS(_ fix: LocationSample, now: TimeInterval) -> Double? {
+        if fix.hasReliableSpeed(at: now) { return fix.speedMPS }
+        guard fix.isValid, fix.speedMPS >= 0, fix.speedAccuracy < 0,
+              fix.horizontalAccuracy >= 0, fix.horizontalAccuracy <= 20,
+              fix.uptime <= now, now - fix.uptime <= 2 else { return nil }
+        return fix.speedMPS
+    }
+
+    /// The real limit for the road the car is on (refreshed by the service as the car moves).
+    private func applySpeedLimit(from fix: LocationSample) {
+        guard let speedLimits else { return }
+        speedLimits.observe(fix)
+        guard let reading = speedLimits.current else { return }
+        snapshot.speedLimitMPH = reading.mph
+        snapshot.speedLimitIsPosted = reading.isPosted
+        snapshot.roadName = reading.roadName
+        snapshot.environment = switch reading.environment {
+        case .highway: .highway
+        case .rural: .forest
+        case .city: .city
+        }
+    }
 
     private func reset(environment: RoadEnvironment, limit: Double?) {
         snapshot = DrivingSnapshot(speedLimitMPH: limit, environment: environment)

@@ -9,12 +9,14 @@ struct TripPlannerView: View {
     @State private var picking: LocationPickerSheet.Field?
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var packs: TripPackViewModel?
-    @State private var showingDetectionInfo = false
+    @State private var pickingVehicle = false
     @Query private var trips: [Trip]
+    @Query private var profiles: [Profile]
 
     init(userID: String) {
         _viewModel = State(initialValue: TripPlannerViewModel(userID: userID))
         _trips = Query(filter: #Predicate<Trip> { $0.ownerID == userID }, sort: \Trip.startDate)
+        _profiles = Query(filter: #Predicate<Profile> { $0.ownerID == userID })
     }
 
     var body: some View {
@@ -29,7 +31,7 @@ struct TripPlannerView: View {
 
                     VStack(spacing: Space.sm) {
                         mapCard
-                        ScenicRoadArt()
+                        BrandPhotoView(photo: .roadBanner)
                             .frame(height: 84)
                             .frame(maxWidth: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
@@ -70,7 +72,11 @@ struct TripPlannerView: View {
             .navigationDestination(for: Trip.self) { trip in
                 TripDetailView(trip: trip, viewModel: TripPackViewModel(service: env.tripPacks))
             }
-            .sheet(isPresented: $showingDetectionInfo) { CrashDetectionInfoSheet() }
+            .sheet(isPresented: $pickingVehicle) {
+                if let profile = profiles.first {
+                    DriveVehiclePicker(profile: profile, mode: .chooseForTrip)
+                }
+            }
             .sheet(item: $picking) { field in
                 LocationPickerSheet(field: field) { selection in
                     switch field {
@@ -239,7 +245,7 @@ struct TripPlannerView: View {
 
     private var crashDetectionRow: some View {
         Button {
-            showingDetectionInfo = true
+            pickingVehicle = true
         } label: {
             HStack(spacing: 14) {
                 Image(systemName: "shield.lefthalf.filled")
@@ -250,7 +256,8 @@ struct TripPlannerView: View {
                     Text("Crash detection ready")
                         .font(.headline)
                         .foregroundStyle(Brand.textPrimary)
-                    Text("We'll monitor your drive for severe crashes.")
+                    Text(profiles.first?.primaryVehicle.map { "Driving the \($0.displayName) · Tap to change" }
+                         ?? "Pick the car you're driving.")
                         .font(.footnote)
                         .foregroundStyle(Brand.textSecondary)
                 }
@@ -262,7 +269,7 @@ struct TripPlannerView: View {
             .card(padding: Space.md)
         }
         .buttonStyle(.pressable)
-        .accessibilityHint("How crash detection works")
+        .accessibilityHint("Pick which car you're driving")
     }
 
     private var datesCard: some View {
@@ -324,42 +331,32 @@ private nonisolated struct Line: Shape {
 }
 
 /// What "Crash detection ready" means, in plain words.
-private struct CrashDetectionInfoSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
+struct CrashDetectionInfoView: View {
     private let points: [(String, String)] = [
-        ("play.circle.fill", "Turns on when your trip starts and off when it ends."),
+        ("play.circle.fill", "Turns on when your drive starts and off when it ends."),
         ("waveform.path.ecg", "Watches motion and GPS together for a sudden, severe impact."),
+        ("car.fill", "Tuned to the car you pick: an SUV, a sedan and a motorcycle crash differently."),
         ("questionmark.bubble.fill", "Asks if you're okay. If you don't answer, your family contacts get your location."),
-        ("antenna.radiowaves.left.and.right", "Tow, hospital and insurance info for your route is saved for offline use."),
+        ("location.fill", "With “Always” location, Pulse can notice drives that start while the app is closed."),
     ]
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Space.lg) {
-                    ForEach(points, id: \.1) { icon, text in
-                        Label {
-                            Text(text).foregroundStyle(Brand.textPrimary).fixedSize(horizontal: false, vertical: true)
-                        } icon: {
-                            Image(systemName: icon).foregroundStyle(Brand.blueInk).frame(width: 28)
-                        }
+        ScrollView {
+            VStack(alignment: .leading, spacing: Space.lg) {
+                ForEach(points, id: \.1) { icon, text in
+                    Label {
+                        Text(text).foregroundStyle(Brand.textPrimary).fixedSize(horizontal: false, vertical: true)
+                    } icon: {
+                        Image(systemName: icon).foregroundStyle(Brand.blueInk).frame(width: 28)
                     }
-                    SafetyNotice()
                 }
-                .padding(Space.lg)
+                SafetyNotice()
             }
-            .background(BrandBackground())
-            .navigationTitle("Crash detection")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }.fontWeight(.semibold)
-                }
-            }
+            .padding(Space.lg)
         }
-        .presentationDetents([.medium, .large])
-        .presentationCornerRadius(28)
+        .background(BrandBackground())
+        .navigationTitle("How it works")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

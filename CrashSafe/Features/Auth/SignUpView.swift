@@ -12,10 +12,12 @@ struct SignUpView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.sm) {
+                    PulseWordmark()
+                        .padding(.bottom, Space.sm)
                     Text("Create your account")
                         .font(.largeTitle.bold())
                         .foregroundStyle(Brand.textPrimary)
-                    Text("Takes a minute. Next, we'll set up your safety profile.")
+                    Text("Takes a minute. Next, a few quick questions to set up your safety profile.")
                         .foregroundStyle(Brand.textSecondary)
                 }
                 .fadeUp()

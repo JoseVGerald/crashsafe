@@ -11,7 +11,7 @@ Crash thresholds are experimental and have not been validated against real crash
 
 ## Run it
 
-Requirements: Xcode 26+ (iOS 17+ target), [XcodeGen](https://github.com/yonaskolb/XcodeGen) only if you change `project.yml`.
+Requirements: Xcode 26+ (iOS 17+ target), [XcodeGen](https://github.com/yonaskolb/XcodeGen) only if you change `project.yml`. Xcode fetches one Swift package on first build: [ThinkingOrbsKit](https://github.com/Jakubantalik/Libraries.dev) (MIT) for Pulse's animated orb, pinned in `Package.resolved`.
 
 1. Open `CrashSafe.xcodeproj`.
 2. Pick an iPhone simulator and press **Run** (⌘R).
@@ -89,7 +89,7 @@ The `FirebaseAuthService` (email/password + Sign in with Apple) is already writt
 
 1. Create a Firebase project, add an iOS app with bundle ID `org.cac.crashsafe`, and enable **Email/Password** and **Apple** sign-in providers.
 2. Download `GoogleService-Info.plist` into `CrashSafe/`. **Never commit it.** It's already in `.gitignore`.
-3. In `project.yml`, uncomment the `packages:` block and the target `dependencies:` block, then run `xcodegen`.
+3. In `project.yml`, uncomment the `Firebase` entry under `packages:` and the two Firebase lines under the target's `dependencies:`, then run `xcodegen`.
 4. For Sign in with Apple: in Xcode, target → Signing & Capabilities → **+ Sign in with Apple** (needs a paid Apple Developer team).
 5. Run. `AppEnvironment` automatically uses Firebase when the SDK is linked **and** the plist is bundled; otherwise it falls back to the mock.
 

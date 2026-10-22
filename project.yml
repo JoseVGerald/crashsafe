@@ -12,12 +12,17 @@ settings:
     SWIFT_APPROACHABLE_CONCURRENCY: YES
     DEVELOPMENT_TEAM: ""   # set your team ID here (or in Xcode) for device builds
 
-# To enable Firebase auth, uncomment this block and the dependencies below,
-# then run `xcodegen`. See README.md.
-# packages:
-#   Firebase:
-#     url: https://github.com/firebase/firebase-ios-sdk
-#     from: 11.0.0
+packages:
+  # Animated "thinking orb" for Pulse's AI controls (MIT, SwiftUI Canvas only).
+  # Tracks main; Package.resolved pins the exact revision.
+  Libraries.dev:
+    url: https://github.com/Jakubantalik/Libraries.dev
+    branch: main
+  # To enable Firebase auth, uncomment this entry and the Firebase dependencies below,
+  # then run `xcodegen`. See README.md.
+  # Firebase:
+  #   url: https://github.com/firebase/firebase-ios-sdk
+  #   from: 11.0.0
 
 targets:
   CrashSafe:
@@ -50,13 +55,18 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         # CarPlay entitlement only on simulator builds: device builds need Apple's approval first.
         "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": CrashSafe/CrashSafe-CarPlay.entitlements
+        # Apple Weather on devices needs a paid team with the WeatherKit capability. With one, uncomment:
+        # "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": CrashSafe/CrashSafe-Device-WeatherKit.entitlements
+        # Without it (e.g. a free Personal Team) the app falls back to Open-Meteo.
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         DEVELOPMENT_ASSET_PATHS: "\"CrashSafe/Preview Content\""
         ENABLE_PREVIEWS: YES
-    # dependencies:
+    dependencies:
+      - package: Libraries.dev
+        product: ThinkingOrbsKit
     #   - package: Firebase
     #     product: FirebaseAuth
     #   - package: Firebase

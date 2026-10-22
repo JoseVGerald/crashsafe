@@ -1,6 +1,7 @@
 import CoreLocation
 import Foundation
 import Observation
+import WeatherKit
 
 /// Current weather at the driver's location, refreshed when they move or every 15 minutes.
 @Observable
@@ -8,6 +9,11 @@ final class ConditionsStore {
     private(set) var weather: WeatherSnapshot?
     private(set) var isLoading = false
     private(set) var failed = false
+    /// Who supplied `weather` (for the required attribution).
+    private(set) var source: WeatherSource?
+    /// Apple Weather's legal page and mark, when Apple Weather supplied the data.
+    private(set) var appleLegalURL: URL?
+    private(set) var appleMarkURL: URL?
 
     @ObservationIgnored private let service: any WeatherService
     @ObservationIgnored private var lastFetch: (location: CLLocation, date: Date)?
@@ -39,6 +45,13 @@ final class ConditionsStore {
             weather = try await service.current(at: location.coordinate)
             lastFetch = (location, .now)
             failed = false
+            if let apple = service as? AppleWeatherService {
+                source = apple.lastSource
+                appleLegalURL = apple.lastSource == .appleWeather ? apple.attribution?.legalPageURL : nil
+                appleMarkURL = apple.lastSource == .appleWeather ? apple.attribution?.combinedMarkDarkURL : nil
+            } else {
+                source = service is OpenMeteoWeatherService ? .openMeteo : nil
+            }
         } catch {
             failed = weather == nil
         }
