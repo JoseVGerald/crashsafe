@@ -8,6 +8,7 @@ xcuserdata/
 .build/
 *.xcresult/
 xcodebuild.log
+core-tests.log
 
 # Secrets — never commit these
 GoogleService-Info.plist
