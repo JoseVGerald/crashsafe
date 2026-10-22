@@ -33,7 +33,7 @@ class RagTests(unittest.TestCase):
         self.assertNotIn("WA_REPORT",[c["id"] for c in r["cards"]])
     def test_discovery_notes_quarantined(self):
         self.assertNotIn("DRAFT_PIP",self.engine.cards)
-        self.assertEqual(len(self.engine.cards),20)
+        self.assertEqual(set(self.engine.cards), {c["id"] for c in self.corpus["cards"] if c["status"] in ("source_verified", "clinician_approved")})
     def test_production_blocks_unreviewed_content(self):
         e=rag.Engine(self.db,production=True)
         try:
@@ -99,7 +99,7 @@ class RagTests(unittest.TestCase):
                 with self.assertRaises(ValueError): self.engine.retrieve(value)
     def test_fts_injection_safe(self):
         self.engine.retrieve('" OR * DELETE FROM cards; --', "WA")
-        self.assertEqual(len(self.engine.cards),20)
+        self.assertEqual(set(self.engine.cards), {c["id"] for c in self.corpus["cards"] if c["status"] in ("source_verified", "clinician_approved")})
     def test_invalid_stage(self):
         with self.assertRaises(ValueError): self.engine.answer("help",stage="banana")
     def test_invalid_jurisdiction(self):
@@ -124,7 +124,7 @@ class RagTests(unittest.TestCase):
     def test_semantic_vector_fusion(self):
         self.engine.meta["embedding_model"]="test"; self.engine.vectors={"STATEMENT":[1.0,0.0]}
         with patch("rag.embed",return_value=[[1.0,0.0]]):
-            r=self.engine.retrieve("zqx unfamiliar wording","WA")
+            r=self.engine.retrieve("zqx qvzrpn","WA")
         self.assertTrue(r["semantic_used"]); self.assertEqual(r["cards"][0]["id"],"STATEMENT")
     def test_ingestion_failure_preserves_index(self):
         self.corpus["cards"][0]["source_ids"]=["MISSING"]
@@ -154,5 +154,22 @@ class RagTests(unittest.TestCase):
             with self.assertRaises(urllib.error.HTTPError) as e: urllib.request.urlopen(req)
             self.assertEqual(e.exception.code,403); e.exception.close()
         finally: server.shutdown(); server.server_close(); t.join()
+
+    def test_reporting_cards_do_not_cross_state_filters(self):
+        for state, own, others in (
+            ("WA", "WA_REPORT", {"OR_REPORT", "CA_REPORT"}),
+            ("OR", "OR_REPORT", {"WA_REPORT", "CA_REPORT"}),
+            ("CA", "CA_REPORT", {"WA_REPORT", "OR_REPORT"}),
+        ):
+            with self.subTest(state=state):
+                result=self.engine.retrieve("collision DMV report reporting deadline days hours",state,limit=8)
+                ids={c["id"] for c in result["cards"]}
+                self.assertIn(own,ids)
+                self.assertFalse(ids & others)
+
+    def test_followup_coping_excluded_during_active_crash(self):
+        result=self.engine.retrieve("grounding flashback relaxation alcohol child nightmares","UNKNOWN","active",limit=8)
+        excluded={"GROUNDING","OPTIONAL_CALM","AVOID_SELF_MEDICATING","CHILD_FOLLOWUP","CHILD_SUPPORT"}
+        self.assertFalse(excluded & {c["id"] for c in result["cards"]})
 
 if __name__=="__main__": unittest.main()

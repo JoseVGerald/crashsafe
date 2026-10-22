@@ -1,9 +1,9 @@
 name: RAG backend tests
 on:
   push:
-    paths: ['Backend/rag/**', '.github/workflows/rag.yml']
+    paths: ['Backend/rag/**', 'CrashSafe/Services/Assistant/AssistantService.swift', '.github/workflows/rag.yml']
   pull_request:
-    paths: ['Backend/rag/**', '.github/workflows/rag.yml']
+    paths: ['Backend/rag/**', 'CrashSafe/Services/Assistant/AssistantService.swift', '.github/workflows/rag.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,5 +22,7 @@ jobs:
         run: python -m pip install -r requirements-integration.txt
       - name: Build medical index
         run: python rag.py ingest
+      - name: Check generated offline knowledge
+        run: python sync_knowledge.py --check
       - name: Run backend tests
         run: python -m unittest discover -s tests -v
