@@ -169,7 +169,7 @@ class Engine:
         rule=None
         if flags.get("fire") or (current and re.search(r"\b(on fire|burning car|car is burning|smoke (coming|pouring)|flames)\b",text)):
             rule=("fire","Call 911 now. If you can get out, move away from the burning vehicle and traffic. Do not return to the vehicle or try to fight the fire.",["S10"])
-        elif flags.get("unresponsive") or (current and re.search(r"\b(unconscious|unresponsive|not waking up|won't wake( up)?|can't wake|cannot wake|passed out|not breathing|isn't breathing|gasping)\b",response_text)):
+        elif flags.get("unresponsive") or (current and re.search(r"\b(unconscious|unresponsive|(?:not|isn't|is not|aren't|are not) (?:waking|breathing|responding)( up)?|won't (?:wake|respond)( up)?|can't wake|cannot wake|passed out|knocked out|gasping)\b",response_text)):
             rule=("unresponsive","Call 911 now and follow the call-taker's instructions. Tell them if the person is unresponsive or is not breathing normally.",["S01","S03"])
         if rule is None and (flags.get("serious_symptoms") or (current and re.search(r"\b(can't breathe|cannot breathe|trouble breathing|chest hurts|chest pain|severe bleeding|bleeding (heavily|won't stop)|seizure|vomiting repeatedly|headache (is )?getting worse)\b",text))):
             rule=("serious_symptoms","Call 911 now for urgent medical help. Describe the symptoms and follow the call-taker's instructions.",["S01","S03","S08"])
@@ -224,7 +224,14 @@ class Engine:
             "retrieval":result,"warning":generation_warning,"professional_review":"pending",
             "latency_ms":round((time.perf_counter()-start)*1000,3)}
 
-def make_server(engine,port=8787,developer_engine=None):
+def make_server(engine,port=8787,developer_engine=None,voice=None):
+    voices=[voice]
+    def pulse_voice():
+        # Conversational Pulse + Corey speech (pulse_voice.py); built on first use.
+        if voices[0] is None:
+            from pulse_voice import PulseVoice
+            voices[0]=PulseVoice(engine)
+        return voices[0]
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args): pass  # No incident text/request-body logging.
         def reply(self,status,data):
@@ -232,6 +239,10 @@ def make_server(engine,port=8787,developer_engine=None):
             self.send_response(status); self.send_header("Content-Type","application/json; charset=utf-8")
             self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
             self.send_header("X-Content-Type-Options","nosniff"); self.end_headers(); self.wfile.write(raw)
+        def audio(self,raw):
+            self.send_response(200); self.send_header("Content-Type","audio/mpeg")
+            self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
+            self.end_headers(); self.wfile.write(raw)
         def do_GET(self):
             if self.path.startswith("/v1/roads?"):
                 # Speed-limit road data (cached OpenStreetMap tiles). Nothing about the request is logged.
@@ -249,7 +260,7 @@ def make_server(engine,port=8787,developer_engine=None):
                     "generation_model_configured":bool(engine.llm_model),"professional_review":"pending"})
             else: self.reply(404,{"error":"Not found"})
         def do_POST(self):
-            if self.path not in ("/v1/retrieve","/v1/answer","/v1/assist","/v1/developer/retrieve","/v1/analyze-window","/v1/alerts","/v1/roads/route"): return self.reply(404,{"error":"Not found"})
+            if self.path not in ("/v1/retrieve","/v1/answer","/v1/assist","/v1/developer/retrieve","/v1/analyze-window","/v1/alerts","/v1/roads/route","/v1/converse","/v1/tts"): return self.reply(404,{"error":"Not found"})
             # Loopback only. Reject browser cross-origin requests; no permissive CORS.
             origin=self.headers.get("Origin")
             if origin and origin not in (f"http://127.0.0.1:{self.server.server_port}",f"http://localhost:{self.server.server_port}"):
@@ -261,6 +272,14 @@ def make_server(engine,port=8787,developer_engine=None):
                 if not 1<=size<=limit: return self.reply(413,{"error":f"Request must be 1-{limit} bytes"})
                 payload=json.loads(self.rfile.read(size))
                 if not isinstance(payload,dict): raise ValueError("Expected JSON object")
+                if self.path=="/v1/tts":
+                    if set(payload)-{"text"}: raise ValueError("Unsupported fields")
+                    try: return self.audio(pulse_voice().tts(payload.get("text")))
+                    except LookupError: return self.reply(503,{"error":"Speech not configured"})
+                    except OSError: return self.reply(502,{"error":"Speech service unavailable"})
+                if self.path=="/v1/converse":
+                    if set(payload)-{"messages","stage","jurisdiction","incident","activity","flags"}: raise ValueError("Unsupported fields")
+                    return self.reply(200,pulse_voice().converse(**payload))
                 if self.path=="/v1/retrieve": result=engine.retrieve(**payload)
                 elif self.path=="/v1/assist":
                     from incident_context import assist

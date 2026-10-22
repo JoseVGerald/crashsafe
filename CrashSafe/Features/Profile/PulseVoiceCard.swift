@@ -43,7 +43,7 @@ struct PulseVoiceCard: View {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Crash check-in voice").font(.subheadline.weight(.medium)).foregroundStyle(Brand.textPrimary)
-                    Text("\u{201C}Are you okay?\u{201D} is pre-recorded in a natural neural voice that's built in, so it sounds human with no download. (Kokoro, Apache 2.0)")
+                    Text("Pulse speaks as Corey (Cartesia) when online. \u{201C}Are you okay?\u{201D} is pre-recorded in Corey's voice, so the check-in sounds the same offline and locked.")
                         .font(.caption).foregroundStyle(Brand.textSecondary).fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()

@@ -12,6 +12,9 @@ final class AssistantViewModel {
 
     @ObservationIgnored private let service: any AssistantService
     @ObservationIgnored private let voice: any VoiceInputService
+    /// Says replies out loud after a spoken question (hands-free after a crash).
+    @ObservationIgnored var speaker: PulseSpeaker?
+    @ObservationIgnored private var lastInputWasVoice = false
     /// Rebuilt on every request so replies use the latest profile and connectivity.
     @ObservationIgnored var contextProvider: () -> AssistantContext
 
@@ -54,6 +57,7 @@ final class AssistantViewModel {
             context.scenario = scenario
             let reply = try await service.reply(to: messages, context: context)
             messages.append(ChatMessage(role: .assistant, text: reply))
+            if lastInputWasVoice { speaker?.speak(PulseSpeaker.spokenPart(of: reply)) }
         } catch {
             errorMessage = "The assistant couldn't answer. Your saved guides still work offline."
         }
@@ -63,9 +67,12 @@ final class AssistantViewModel {
         guard !isListening, !isThinking else { return }
         isListening = true
         do {
+            speaker?.stop()
             let transcript = try await voice.listen()
             isListening = false
+            lastInputWasVoice = true
             await send(transcript)
+            lastInputWasVoice = false
         } catch {
             isListening = false
             errorMessage = "Couldn't hear that. Try again or type your question."

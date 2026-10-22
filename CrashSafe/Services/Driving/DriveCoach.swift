@@ -10,7 +10,7 @@ final class DriveCoach {
     private(set) var message: CoachingMessage?
     private(set) var messageID = 0
     var speaks = true {
-        didSet { if !speaks { synthesizer.stopSpeaking(at: .immediate) } }
+        didSet { if !speaks { speaker.stop() } }
     }
 
     /// Supplies the driver profile inputs each time the coach evaluates.
@@ -19,13 +19,15 @@ final class DriveCoach {
     }
     @ObservationIgnored private let driving: DrivingMonitor
     @ObservationIgnored private let conditions: ConditionsStore
-    @ObservationIgnored private let synthesizer = AVSpeechSynthesizer()
+    /// Pulse's voice (Corey via the backend, the best Apple voice when that isn't reachable).
+    @ObservationIgnored private let speaker: PulseSpeaker
     @ObservationIgnored private var loop: Task<Void, Never>?
     @ObservationIgnored private var spokenAt: [String: Date] = [:]
 
-    init(driving: DrivingMonitor, conditions: ConditionsStore) {
+    init(driving: DrivingMonitor, conditions: ConditionsStore, speaker: PulseSpeaker = PulseSpeaker()) {
         self.driving = driving
         self.conditions = conditions
+        self.speaker = speaker
     }
 
     var isNight: Bool { driving.scenario?.isNight ?? conditions.isNight }
@@ -43,7 +45,7 @@ final class DriveCoach {
     func stop() {
         loop?.cancel()
         loop = nil
-        synthesizer.stopSpeaking(at: .immediate)
+        speaker.stop()
     }
 
     private func evaluate() {
@@ -74,13 +76,7 @@ final class DriveCoach {
         // Don't nag: the same warning at most once a minute.
         if let last = spokenAt[message.title], Date.now.timeIntervalSince(last) < message.repeatAfter { return }
         spokenAt[message.title] = .now
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .voicePrompt, options: [.duckOthers])
-        try? AVAudioSession.sharedInstance().setActive(true)
-        let utterance = AVSpeechUtterance(string: "\(message.title). \(message.body)")
-        utterance.voice = PulseVoice.preferred()
-        utterance.rate = 0.5
-        synthesizer.stopSpeaking(at: .word)
-        synthesizer.speak(utterance)
+        speaker.speak("\(message.title). \(message.body)")
     }
 }
 

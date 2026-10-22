@@ -15,6 +15,8 @@ final class AppEnvironment {
     let conditions: ConditionsStore
     let driving: DrivingMonitor
     let coach: DriveCoach
+    /// Pulse's voice: Corey (Cartesia) through the backend, an Apple voice offline.
+    @ObservationIgnored let speaker: PulseSpeaker
     /// Rolling sensor history → transport mode, harsh events, impact reports (for Pulse and the crash flow).
     let intelligence: MotionIntelligence
     /// Profile → Testing → Sensor lab (live readings, recordings, replays).
@@ -63,7 +65,9 @@ final class AppEnvironment {
         let driving = DrivingMonitor(sensors: sensors, speedLimits: speedLimits)
         self.conditions = conditions
         self.driving = driving
-        self.coach = DriveCoach(driving: driving, conditions: conditions)
+        let speaker = PulseSpeaker(isOnline: { connectivity.isOnline })
+        self.speaker = speaker
+        self.coach = DriveCoach(driving: driving, conditions: conditions, speaker: speaker)
         let intelligence = MotionIntelligence(sensors: sensors)
         self.intelligence = intelligence
         intelligence.start()
