@@ -23,7 +23,9 @@ jobs:
           xcodebuild -version
           swift --version
       - name: Test detection core
-        run: swift test
+        run: |
+          set -o pipefail
+          swift test 2>&1 | tee core-tests.log
       - name: Choose an available iPhone simulator
         run: |
           xcrun simctl list devices available --json > /tmp/devices.json
@@ -34,6 +36,7 @@ jobs:
           set -o pipefail
           xcodebuild test -project CrashSafe.xcodeproj -scheme CrashSafe \
             -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+            -derivedDataPath build \
             -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO \
             -resultBundlePath TestResults.xcresult 2>&1 | tee xcodebuild.log
       - name: Upload build log and test results
@@ -43,4 +46,11 @@ jobs:
           name: ios-test-results
           path: |
             xcodebuild.log
+            core-tests.log
             TestResults.xcresult
+      - name: Upload simulator app
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CrashSafe-simulator
+          path: build/Build/Products/Debug-iphonesimulator/CrashSafe.app
