@@ -21,6 +21,22 @@ struct AssistantContext: Sendable {
     var jurisdiction = "UNKNOWN"
     var assistanceStage = "active"
     var incident: AssistantIncident? = nil
+    /// What the phone's motion says the driver is doing now (transport mode, recent harsh events).
+    var activity: AssistantActivity? = nil
+}
+
+/// Derived from the rolling sensor history by `MotionIntelligence`; no raw telemetry.
+nonisolated struct AssistantActivity: Codable, Sendable, Equatable {
+    var transport: AssistantIncident.Transport
+    var harshBrakes10min: Int
+    var harshAccels10min: Int
+
+    // Snake-case conversion doesn't split before digits; pin the backend's names.
+    enum CodingKeys: String, CodingKey {
+        case transport
+        case harshBrakes10min = "harsh_brakes_10min"
+        case harshAccels10min = "harsh_accels_10min"
+    }
 }
 
 /// The conscious-path assistant.
@@ -92,9 +108,39 @@ private extension String {
 // MARK: - Source-backed local and server assistant
 
 nonisolated struct AssistantIncident: Codable, Sendable {
-    nonisolated struct Transport: Codable, Sendable {
+    nonisolated struct Transport: Codable, Sendable, Equatable {
         var label: String
         var basis: String
+        /// Set when `basis` is "model".
+        var probability: Double? = nil
+        var modelId: String? = nil
+    }
+    /// Matches the backend's behavior event schema (`incident_context.py`).
+    nonisolated struct BehaviorEvent: Codable, Sendable, Equatable {
+        var kind: String
+        var start: Double
+        var end: Double
+        var severity: Double
+    }
+    /// Matches `motion_intel.normalize_impact` (snake_case on the wire).
+    nonisolated struct Impact: Codable, Sendable, Equatable {
+        var peakG: Double
+        var pulseDurationS: Double
+        var deltaVMps: Double
+        var preImpactSpeedMps: Double?
+        var postImpactSpeedMps: Double?
+        var timeToStopS: Double?
+        var stopBasis: String?
+        var averageStopDecelerationG: Double?
+        var severity: String
+        var isSimulated: Bool
+
+        init(_ r: ImpactReport) {
+            peakG = r.peakG; pulseDurationS = r.pulseDuration; deltaVMps = r.deltaVMPS
+            preImpactSpeedMps = r.preImpactSpeedMPS; postImpactSpeedMps = r.postImpactSpeedMPS
+            timeToStopS = r.timeToStop; stopBasis = r.stopBasis; averageStopDecelerationG = r.averageStopDecelerationG
+            severity = r.severity.rawValue; isSimulated = r.isSimulated
+        }
     }
     var schemaVersion = 1
     var capturedAt: String
@@ -105,6 +151,8 @@ nonisolated struct AssistantIncident: Codable, Sendable {
     var peakG: Double
     var speedDropMps: Double?
     var transport: Transport
+    var behaviorEvents: [BehaviorEvent]? = nil
+    var impact: Impact? = nil
 
     @MainActor static func make(event: CrashEvent) -> Self {
         let assessment = event.assessment
@@ -116,7 +164,8 @@ nonisolated struct AssistantIncident: Codable, Sendable {
                     peakG: event.peakG,
                     speedDropMps: assessment?.speedDropMPS,
                     transport: Transport(label: assessment?.candidate.transportationMode.rawValue ?? "unknown",
-                                         basis: assessment == nil ? "unknown" : "profile"))
+                                         basis: assessment == nil ? "unknown" : "profile"),
+                    impact: event.impact.map(Impact.init))
     }
 }
 
@@ -142,6 +191,40 @@ final class LocalEvidenceAssistant: AssistantService {
                                  "can","of","for","and","you","after","about","have","are"]
         return Set(value.lowercased().components(separatedBy: CharacterSet.alphanumerics.inverted)
             .filter { !$0.isEmpty && !stop.contains($0) }.map { aliases[$0] ?? $0 })
+    }
+
+    /// Answers from the app's own measurements (rolling sensor history), never from guesses.
+    static func motionReply(_ query: String, context: AssistantContext) -> String? {
+        let text = query.lowercased()
+        let asksImpact = ["how hard", "impact", "how fast was", "speed change", "how bad was", "g-force", "g force"]
+            .contains(where: text.contains)
+        let asksActivity = ["what am i doing", "am i driving", "am i walking", "what mode", "my activity", "detect"]
+            .contains(where: text.contains)
+        let asksDriving = ["brake", "braking", "how am i driving", "driving behavior", "accelerat"].contains(where: text.contains)
+        if asksImpact, let impact = context.incident?.impact {
+            let mph = Int((impact.deltaVMps * 2.23694).rounded())
+            var answer = "Your phone measured a \(impact.severity) impact: a peak of about \(Int(impact.peakG.rounded())) g "
+                + "and a speed change of roughly \(mph) mph over \(Int((impact.pulseDurationS * 1000).rounded())) ms."
+            if let stop = impact.timeToStopS { answer += String(format: " The car stopped about %.1f s after the hit.", stop) }
+            if impact.isSimulated { answer += " (This was a test crash with simulated data.)" }
+            return answer + " It's an estimate from the phone's sensors, not a medical assessment — if anyone is hurt, call 911."
+        }
+        if asksActivity, let activity = context.activity {
+            let mode = TransportClass.allCases.first { $0.label == activity.transport.label }
+            guard let mode else {
+                return "I can't tell yet — the last few seconds of motion don't clearly match one mode."
+            }
+            let score = Int(((activity.transport.probability ?? 0) * 100).rounded())
+            return "From your phone's motion over the last few seconds, it looks like you're \(mode.title.lowercased()) "
+                + "(model score \(score)%). That's a pattern match, not a certainty."
+        }
+        if asksDriving, let activity = context.activity {
+            let brakes = activity.harshBrakes10min, accels = activity.harshAccels10min
+            if brakes + accels == 0 { return "No harsh braking or acceleration in the last 10 minutes. Nice and smooth." }
+            return "In the last 10 minutes: \(brakes) hard brake\(brakes == 1 ? "" : "s") and \(accels) hard acceleration\(accels == 1 ? "" : "s"). "
+                + "Leaving a bigger gap ahead gives you more time to slow down gently."
+        }
+        return nil
     }
 
     static func emergencyReply(_ query: String) -> String? {
@@ -179,6 +262,7 @@ final class LocalEvidenceAssistant: AssistantService {
     func reply(to history: [ChatMessage], context: AssistantContext) async throws -> String {
         let query = history.last(where: { $0.role == .user })?.text ?? ""
         if let urgent = Self.emergencyReply(query) { return urgent }
+        if let measured = Self.motionReply(query, context: context) { return measured }
         let today = String(Date().ISO8601Format().prefix(10))
         let terms = Self.words(query)
         let ranked = Self.cards.compactMap { card -> (LocalKnowledgeCard, Int)? in
@@ -336,6 +420,8 @@ final class RAGAssistantService: AssistantService {
     func reply(to history: [ChatMessage], context: AssistantContext) async throws -> String {
         let query = history.last(where: { $0.role == .user })?.text ?? ""
         if let urgent = LocalEvidenceAssistant.emergencyReply(query) { return urgent }
+        // Questions about the phone's own measurements are answered from those measurements.
+        if let measured = LocalEvidenceAssistant.motionReply(query, context: context) { return measured }
         guard context.isOnline, let endpoint else {
             return try await fallback.reply(to: history, context: context)
         }
@@ -347,7 +433,7 @@ final class RAGAssistantService: AssistantService {
             encoder.keyEncodingStrategy = .convertToSnakeCase
             request.httpBody = try encoder.encode(Request(query: query,
                 jurisdiction: context.jurisdiction, stage: context.assistanceStage,
-                persona: context.responseStyle, incident: context.incident))
+                persona: context.responseStyle, incident: context.incident, activity: context.activity))
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse, http.statusCode == 200,
                   data.count < 100_000 else { throw URLError(.badServerResponse) }
@@ -369,6 +455,7 @@ final class RAGAssistantService: AssistantService {
         let stage: String
         let persona: String
         let incident: AssistantIncident?
+        let activity: AssistantActivity?
     }
     private nonisolated struct Response: Decodable {
         nonisolated struct Citation: Decodable { let title: String; let url: String }

@@ -19,11 +19,14 @@ nonisolated struct CrashEvaluationConfiguration: Equatable, Sendable {
     var deliveryGraceSeconds = 0.5
     var maximumMotionGap = 0.15
     var cooldownSeconds = 15.0
+    /// Horizontal speed change measured from the impact pulse itself, m/s (≈ 6.7 mph). Airbag systems
+    /// use a similar measure; it works without GPS, which is often lost or lagging right after a crash.
+    var crashDeltaVMPS = 3.0
 
     var isValid: Bool {
         let positive = [candidateG, strongImpactG, minimumImpactDuration, rotationRadPerSecond,
                         minimumSpeedLossMPS, minimumSpeedLossFraction, settledRMSG, preImpactSeconds,
-                        postImpactSeconds, maximumMotionGap, cooldownSeconds]
+                        postImpactSeconds, maximumMotionGap, cooldownSeconds, crashDeltaVMPS]
         return positive.allSatisfy { $0.isFinite && $0 > 0 } &&
             strongImpactG >= candidateG && minimumSpeedLossFraction <= 1 &&
             preImpactSeconds >= 0.5 && postImpactSeconds >= 1.5 &&
@@ -45,6 +48,8 @@ nonisolated enum CrashDecision: String, Codable, Sendable {
 nonisolated enum CrashEvidence: String, Codable, Sendable {
     case sustainedImpact, strongImpact, rapidRotation, speedLoss, settledAfterImpact
     case possiblePhoneDrop, continuedTravel
+    /// The impact pulse alone changed the car's horizontal speed by at least `crashDeltaVMPS`.
+    case largeImpactDeltaV
 }
 
 nonisolated enum CrashDataIssue: String, Codable, Sendable {
@@ -65,6 +70,8 @@ nonisolated struct CrashAssessment: Identifiable, Codable, Equatable, Sendable {
     var speedDropMPS: Double?
     var postImpactRMSG: Double?
     var location: LocationSample?
+    /// Horizontal speed change integrated over the impact pulse, m/s.
+    var impactDeltaVMPS: Double?
 }
 
 /// Stateless step 5. It can consume candidates from the team's eventual step 4 implementation.
@@ -104,6 +111,9 @@ nonisolated struct CrashEvidenceEvaluator: Sendable {
         let possibleDrop = longestRun(in: samples.filter { $0.uptime < t && $0.uptime >= t - 0.5 },
                                      matching: { $0.totalAccelerationG.magnitude < 0.25 }) >= 0.06
         let sustained = duration + 0.000001 >= c.minimumImpactDuration
+        let pulseDeltaV = Self.horizontalDeltaV(impact: impact, baseline: baseline, maximumGap: c.maximumMotionGap)
+        let bigPulse = pulseDeltaV.map { $0 >= c.crashDeltaVMPS } ?? false
+        let hugePulse = pulseDeltaV.map { $0 >= 2 * c.crashDeltaVMPS } ?? false
         let settled = rms.map { $0 <= c.settledRMSG } ?? false
         var evidence: [CrashEvidence] = []
         if sustained { evidence.append(.sustainedImpact) }
@@ -112,9 +122,10 @@ nonisolated struct CrashEvidenceEvaluator: Sendable {
         if speedLoss { evidence.append(.speedLoss) }
         if settled { evidence.append(.settledAfterImpact) }
         if possibleDrop { evidence.append(.possiblePhoneDrop) }
-        if let preFix, let postFix, postFix.speedMPS >= 3, postFix.speedMPS >= preFix.speedMPS - 2 {
-            evidence.append(.continuedTravel)
-        }
+        // A car that was standing still can't "continue" traveling: if it moves afterward, it was pushed.
+        let continued = preFix.flatMap { pre in postFix.map { $0.speedMPS >= 3 && pre.speedMPS >= 3 && $0.speedMPS >= pre.speedMPS - 2 } } ?? false
+        if continued { evidence.append(.continuedTravel) }
+        if bigPulse && sustained { evidence.append(.largeImpactDeltaV) }
 
         var issues: [CrashDataIssue] = []
         if baseline.count < 10 || span(baseline) < 0.5 { issues.append(.insufficientBaseline) }
@@ -131,7 +142,16 @@ nonisolated struct CrashEvidenceEvaluator: Sendable {
             decision = .inconclusive
         } else if !sustained {
             decision = .rejected
+        } else if possibleDrop {
+            // The phone fell and hit something. During an emergency stop that looks like speed loss plus
+            // an impact, so it counts only when the hit itself was a hard horizontal one (a loose phone
+            // thrown into the dash by a crash), not a landing on the floor.
+            decision = speedLoss && bigPulse ? .suspectedCrash : .inconclusive
         } else if speedLoss {
+            decision = .suspectedCrash
+        } else if hugePulse || (bigPulse && !continued) {
+            // The pulse alone shows a crash-sized speed change: rear-ended or T-boned while stopped,
+            // side impacts that don't slow the car, and crashes where GPS drops out.
             decision = .suspectedCrash
         } else if issues.contains(.missingReliableGPS) && peak >= c.strongImpactG &&
                     rotation >= c.rotationRadPerSecond && settled && !possibleDrop {
@@ -147,7 +167,35 @@ nonisolated struct CrashEvidenceEvaluator: Sendable {
         return CrashAssessment(candidate: candidate, decision: decision, evidence: evidence, issues: issues,
                                peakG: peak, peakRotationRadPerSecond: rotation, impactDuration: duration,
                                preSpeedMPS: preFix?.speedMPS, postSpeedMPS: postFix?.speedMPS,
-                               speedDropMPS: speedDrop, postImpactRMSG: rms, location: location)
+                               speedDropMPS: speedDrop, postImpactRMSG: rms, location: location,
+                               impactDeltaVMPS: pulseDeltaV)
+    }
+
+    /// Integrates user acceleration over the contiguous pulse around the peak and drops the part along
+    /// gravity, so potholes, bumps and a phone landing flat don't count. m/s; nil without samples.
+    /// The pulse is the run of samples above max(0.8 g, 20% of the peak, 1.5 × the RMS of the second
+    /// before): a crash stands out from what came before it, while the steady 1–2 g of brisk walking
+    /// or jogging would otherwise merge into one long "pulse".
+    static func horizontalDeltaV(impact: [MotionSample], baseline: [MotionSample], maximumGap: TimeInterval) -> Double? {
+        guard let peakIndex = impact.indices.max(by: { impact[$0].accelerationG.magnitude < impact[$1].accelerationG.magnitude }) else { return nil }
+        let recent = baseline.filter { $0.uptime >= impact[0].uptime - 1 }
+        let baselineRMS = recent.isEmpty ? 0 : (recent.reduce(0) { $0 + pow($1.accelerationG.magnitude, 2) } / Double(recent.count)).squareRoot()
+        let threshold = max(0.8, impact[peakIndex].accelerationG.magnitude * 0.2, 1.5 * baselineRMS)
+        var lo = peakIndex, hi = peakIndex
+        while lo > 0, impact[lo - 1].accelerationG.magnitude >= threshold { lo -= 1 }
+        while hi + 1 < impact.count, impact[hi + 1].accelerationG.magnitude >= threshold { hi += 1 }
+        let spacing = impact.count > 1 ? (impact.last!.uptime - impact.first!.uptime) / Double(impact.count - 1) : 0.01
+        var sum = SensorVector.zero
+        for i in lo...hi {
+            let dt = i + 1 < impact.count ? impact[i + 1].uptime - impact[i].uptime : spacing
+            sum = sum + impact[i].accelerationG * (min(max(dt, 0), maximumGap) * SensorVector.standardGravity)
+        }
+        // "Down" from the moment just before the hit (the phone may tumble during it).
+        let reference = baseline.suffix(10).reduce(SensorVector.zero) { $0 + $1.gravityG }
+        let gravity = reference.magnitude > 0.2 ? reference : impact[peakIndex].gravityG
+        guard gravity.magnitude > 0.2 else { return sum.magnitude }
+        let down = gravity * (1 / gravity.magnitude)
+        return (sum - down * sum.dot(down)).magnitude
     }
 
     private func span(_ samples: [MotionSample]) -> TimeInterval {

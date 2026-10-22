@@ -1,3 +1,4 @@
+import CoreLocation
 import SwiftData
 import SwiftUI
 
@@ -43,6 +44,8 @@ private struct ProfileContent: View {
     @State private var confirmingSignOut = false
     @State private var confirmingDelete = false
     @State private var deleteError: String?
+    @State private var delayedCrashSeconds: Int?
+    @State private var showingSensorLab = false
 
     var body: some View {
         ScrollView {
@@ -73,6 +76,44 @@ private struct ProfileContent: View {
                         }
                     }
                     .tint(Brand.blue)
+                    .onChange(of: profile.autoDetectDrives) { _, on in
+                        // Watching drives that start while the app is closed needs "Always" location.
+                        if on, !env.location.hasAlwaysAccess, env.location.canPromptForAlways {
+                            env.location.requestAlwaysPermission()
+                        }
+                    }
+                    Divider().overlay(Brand.stroke)
+                    permissionRow("Background location", systemImage: "location.fill",
+                                  status: locationStatus.text, ok: env.location.hasAlwaysAccess,
+                                  action: locationStatus.action) {
+                        if !env.location.requestAlwaysPermission() && !env.location.hasAlwaysAccess {
+                            PermissionCenter.openSettings()
+                        }
+                    }
+                    Divider().overlay(Brand.stroke)
+                    permissionRow("Motion & Fitness", systemImage: "figure.walk.motion",
+                                  status: motionStatus, ok: env.permissions.motionGranted,
+                                  action: env.permissions.motionDenied ? "Open Settings" : "Allow") {
+                        Task { await env.permissions.requestMotion() }
+                    }
+                    Divider().overlay(Brand.stroke)
+                    permissionRow("Notifications", systemImage: "bell.badge.fill",
+                                  status: notificationStatus, ok: env.permissions.notificationsGranted,
+                                  action: env.permissions.notificationsDenied ? "Open Settings" : "Allow") {
+                        Task { await env.permissions.requestNotifications() }
+                    }
+                    if !env.permissions.notificationsGranted {
+                        Text("Without notifications, a crash check-in can't reach you while the phone is locked.")
+                            .font(.footnote)
+                            .foregroundStyle(Brand.amberInk)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    if profile.autoDetectDrives && !env.location.hasAlwaysAccess {
+                        Text("Without “Always”, Pulse can only watch drives while CrashSafe is open or recently used.")
+                            .font(.footnote)
+                            .foregroundStyle(Brand.amberInk)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
 
                 SafetyNotice()
@@ -98,6 +139,7 @@ private struct ProfileContent: View {
         .sheet(isPresented: $editingMedical) { MedicalEditorView(profile: profile) }
         .sheet(isPresented: $editingInsurance) { InsuranceEditorView(profile: profile) }
         .fullScreenCover(isPresented: $showingNearbyHelp) { RecoveryView(user: user, outcome: nil) }
+        .fullScreenCover(isPresented: $showingSensorLab) { SensorLabView() }
         .confirmationDialog("Delete your account?", isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button("Delete account and data", role: .destructive) {
                 Task { await deleteAccount() }
@@ -273,6 +315,54 @@ private struct ProfileContent: View {
             .card(padding: Space.md)
     }
 
+    private var locationStatus: (text: String, action: String) {
+        switch env.location.authorization {
+        case .authorizedAlways: ("Always", "")
+        case .authorizedWhenInUse: ("While using the app", env.location.canPromptForAlways ? "Allow Always" : "Open Settings")
+        case .notDetermined: ("Not set", "Allow")
+        default: ("Off", "Open Settings")
+        }
+    }
+
+    private var notificationStatus: String {
+        if env.permissions.notificationsGranted { return "Allowed" }
+        return env.permissions.notificationsDenied ? "Off" : "Not set"
+    }
+
+    private var motionStatus: String {
+        if env.permissions.motionGranted { return "Allowed" }
+        return env.permissions.motionDenied ? "Off" : "Not set"
+    }
+
+    private func permissionRow(_ title: String, systemImage: String, status: String, ok: Bool,
+                               action: String, run: @escaping () -> Void) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .foregroundStyle(ok ? Brand.greenInk : Brand.amberInk)
+                .frame(width: 28)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.body.weight(.medium)).foregroundStyle(Brand.textPrimary)
+                Text(status).font(.footnote).foregroundStyle(Brand.textSecondary)
+            }
+            Spacer(minLength: 8)
+            if ok {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(Brand.greenInk)
+                    .accessibilityLabel("Allowed")
+            } else {
+                Button(action, action: run)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Brand.blueInk)
+                    .padding(.horizontal, 14)
+                    .frame(minHeight: 36)
+                    .background(Brand.blueInk.opacity(0.12), in: Capsule())
+                    .frame(minHeight: 44)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
     // MARK: Account
 
     private var account: some View {
@@ -350,7 +440,11 @@ private struct ProfileContent: View {
             }
             .card(padding: Space.md)
 
+            PulseVoiceCard()
+
             VStack(spacing: 0) {
+                testRow("Sensor lab: tilt, gyro, speed, replays", systemImage: "gyroscope") { showingSensorLab = true }
+                Divider().overlay(Brand.stroke)
                 demoDriveRow
                 Divider().overlay(Brand.stroke)
                 testRow("CarPlay mode", systemImage: "car.rear.fill") { env.router.showingCarPlay = true }
@@ -361,10 +455,125 @@ private struct ProfileContent: View {
                     env.crashDetector.simulateCrash()
                 }
                 Divider().overlay(Brand.stroke)
+                testRow(delayedCrashTitle, systemImage: "lock.iphone", tint: Brand.redInk) {
+                    scheduleLockedTestCrash()
+                }
+                .disabled(delayedCrashSeconds != nil)
+                Divider().overlay(Brand.stroke)
                 testRow("Redo setup", systemImage: "arrow.counterclockwise") { profile.onboardingCompleted = false }
             }
             .card(padding: Space.md)
+
+            backgroundSensorCheck
+            motionAnalysis
         }
+    }
+
+    /// The transport-mode model and harsh-event rules, live.
+    private var motionAnalysis: some View {
+        let intelligence = env.intelligence
+        let ranked = intelligence.current.map { obs in
+            obs.probabilities.enumerated().sorted { $0.element > $1.element }.prefix(3)
+                .compactMap { i, p in TransportClass(rawValue: i).map { ($0, p) } }
+        } ?? []
+        let recent = intelligence.harshEvents(within: 600)
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Motion analysis").font(.headline).foregroundStyle(Brand.textPrimary)
+                Spacer()
+                Text("\(intelligence.windowsAnalyzed) windows").font(.footnote.monospacedDigit()).foregroundStyle(Brand.textSecondary)
+            }
+            Text("5-second windows at 50 Hz (the transport repo's input), every 2.5 s, from the rolling sensor history.")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if ranked.isEmpty {
+                Text(env.sensors.health.state == .unavailable ? "No motion sensor on this device." : "Waiting for the first window…")
+                    .font(.subheadline)
+                    .foregroundStyle(Brand.textSecondary)
+            }
+            ForEach(ranked, id: \.0) { mode, p in
+                HStack(spacing: 10) {
+                    Image(systemName: mode.systemImage).frame(width: 24).foregroundStyle(Brand.blueInk)
+                    Text(mode.title).font(.subheadline).foregroundStyle(Brand.textPrimary).frame(width: 96, alignment: .leading)
+                    GeometryReader { proxy in
+                        Capsule().fill(Brand.fieldFill)
+                            .overlay(alignment: .leading) {
+                                Capsule().fill(Brand.blue).frame(width: max(4, proxy.size.width * p))
+                            }
+                    }
+                    .frame(height: 8)
+                    Text("\(Int((p * 100).rounded()))%").font(.footnote.monospacedDigit())
+                        .foregroundStyle(Brand.textSecondary).frame(width: 40, alignment: .trailing)
+                }
+                .accessibilityElement(children: .combine)
+            }
+            Divider().overlay(Brand.stroke)
+            Text("Hard brakes / accelerations, last 10 min: \(recent.filter { $0.event.kind == .harshBrake }.count) / \(recent.filter { $0.event.kind == .harshAccel }.count)")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+            Text("Model: \(intelligence.model.modelID)")
+                .font(.caption.monospaced())
+                .foregroundStyle(Brand.textSecondary)
+            Menu {
+                ForEach(MotionIntelligence.TestMotion.allCases) { kind in
+                    Button(kind.rawValue) { intelligence.replay(kind) }
+                }
+            } label: {
+                Label("Replay test motion", systemImage: "play.circle")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Brand.blueInk)
+                    .frame(minHeight: 44)
+            }
+        }
+        .card(padding: Space.md)
+    }
+
+    /// Proof that sensors keep running with the app closed or the phone locked.
+    private var backgroundSensorCheck: some View {
+        let log = env.sensors.backgroundLog
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Background sensor check")
+                    .font(.headline)
+                    .foregroundStyle(Brand.textPrimary)
+                Spacer()
+                StatusChip(text: env.sensors.isRunning ? "Sensors on" : "Sensors off",
+                           systemImage: env.sensors.isRunning ? "dot.radiowaves.left.and.right" : "pause.circle",
+                           tint: env.sensors.isRunning ? Brand.greenInk : Brand.textSecondary)
+            }
+            Text("Start a drive, lock the phone for a minute, then come back. These counts only go up while CrashSafe is off screen.")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Grid(alignment: .leading, horizontalSpacing: Space.md, verticalSpacing: 6) {
+                GridRow {
+                    Text("").gridColumnAlignment(.leading)
+                    Text("Motion").font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
+                    Text("GPS").font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
+                }
+                GridRow {
+                    Text("In background").foregroundStyle(Brand.textPrimary)
+                    Text(log.backgroundMotion.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                    Text(log.backgroundLocation.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                }
+                GridRow {
+                    Text("While locked").foregroundStyle(Brand.textPrimary)
+                    Text(log.lockedMotion.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                    Text(log.lockedLocation.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                }
+            }
+            .font(.subheadline)
+            Text(log.isEmpty ? "No off-screen readings yet." :
+                    "Longest motion gap off screen: \(log.longestBackgroundGap.formatted(.number.precision(.fractionLength(2)))) s")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+            Button("Reset counts") { env.sensors.resetBackgroundLog() }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Brand.blueInk)
+                .frame(minHeight: 44)
+        }
+        .card(padding: Space.md)
     }
 
     /// Plays a scripted drive (speed, weather, light) so coaching and CarPlay can be tried without driving.
@@ -393,6 +602,26 @@ private struct ProfileContent: View {
                 .frame(minHeight: 48)
                 .contentShape(Rectangle())
             }
+        }
+    }
+
+    private var delayedCrashTitle: String {
+        delayedCrashSeconds.map { "Lock your phone now… \($0)" } ?? "Test crash in 10 s (lock phone)"
+    }
+
+    /// Fires a simulated crash after 10 s so the lock-screen check-in can be tried for real.
+    private func scheduleLockedTestCrash() {
+        let release = CrashResponseCenter.backgroundTask(named: "Locked test crash")
+        let detector = env.crashDetector
+        delayedCrashSeconds = 10
+        Task {
+            for remaining in stride(from: 9, through: 0, by: -1) {
+                try? await Task.sleep(for: .seconds(1))
+                delayedCrashSeconds = remaining == 0 ? nil : remaining
+            }
+            detector.simulateCrash()
+            try? await Task.sleep(for: .seconds(1))
+            release()
         }
     }
 
@@ -539,17 +768,7 @@ private struct VehicleCard: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            ZStack {
-                ScenicRoadArt(showsCar: false)
-                Image(systemName: vehicle.type.systemImage)
-                    .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(tint)
-                    .shadow(color: .black.opacity(0.5), radius: 3, y: 2)
-                    .offset(y: 10)
-            }
-            .frame(width: 100, height: 70)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.small, style: .continuous))
-            .accessibilityHidden(true)
+            VehicleThumbnail()
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(vehicle.displayName)
@@ -574,19 +793,6 @@ private struct VehicleCard: View {
         .card(padding: Space.sm + 2)
         .accessibilityElement(children: .combine)
         .accessibilityHint("Edit vehicle. Touch and hold for more options.")
-    }
-
-    private var tint: Color {
-        switch vehicle.colorName {
-        case "Black": Color(hex: 0x4A4D52)
-        case "White": Color(hex: 0xF2F2F2)
-        case "Silver": Color(hex: 0xC0C4CC)
-        case "Gray": Color(hex: 0x9A9DA3)
-        case "Blue": Color(hex: 0x7FA0CC)
-        case "Red": Color(hex: 0xE0574F)
-        case "Green": Color(hex: 0x5FAF7A)
-        default: Color(hex: 0xD3D6DB)
-        }
     }
 }
 

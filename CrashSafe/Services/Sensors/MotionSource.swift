@@ -28,7 +28,28 @@ final class CoreMotionSource: MotionSource {
         let generation = generation
         let origin = Date().addingTimeInterval(-ProcessInfo.processInfo.systemUptime)
         manager.deviceMotionUpdateInterval = interval
-        manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: queue) { [weak self] data, error in
+        let deliver: @Sendable (MotionSample?, Bool) -> Void = { [weak self] sample, denied in
+            Task { @MainActor in
+                guard let self, self.generation == generation else { return }
+                receive(sample, denied)
+            }
+        }
+        manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: queue,
+                                         withHandler: Self.handler(origin: origin, deliver: deliver))
+    }
+
+    func stop() {
+        generation = UUID()
+        manager.stopDeviceMotionUpdates()
+    }
+
+    /// The closure Core Motion calls on its own queue, ~100 times a second. It is built here, outside the
+    /// main actor, on purpose: a closure created inside this `@MainActor` class would inherit main-actor
+    /// isolation, and Swift 6 traps the moment such a closure runs on Core Motion's queue (this crashed
+    /// every real iPhone as soon as a drive started; simulators have no motion hardware to show it).
+    nonisolated static func handler(origin: Date, deliver: @escaping @Sendable (MotionSample?, Bool) -> Void)
+        -> CMDeviceMotionHandler {
+        return { data, error in
             let nsError = error as NSError?
             let denied = nsError?.domain == CMErrorDomain &&
                 (nsError?.code == Int(CMErrorMotionActivityNotAuthorized.rawValue) ||
@@ -39,15 +60,7 @@ final class CoreMotionSource: MotionSource {
                              gravityG: SensorVector(x: $0.gravity.x, y: $0.gravity.y, z: $0.gravity.z),
                              rotationRate: SensorVector(x: $0.rotationRate.x, y: $0.rotationRate.y, z: $0.rotationRate.z))
             }
-            Task { @MainActor in
-                guard let self, self.generation == generation else { return }
-                receive(sample, denied)
-            }
+            deliver(sample, denied)
         }
-    }
-
-    func stop() {
-        generation = UUID()
-        manager.stopDeviceMotionUpdates()
     }
 }

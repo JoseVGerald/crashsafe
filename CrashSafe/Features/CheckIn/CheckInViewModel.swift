@@ -19,6 +19,8 @@ final class CheckInViewModel {
 
     /// Called once, when the driver answers or the countdown runs out.
     @ObservationIgnored var onResolve: ((CheckInOutcome) -> Void)?
+    /// Called every second of the countdown with the seconds left (drives the spoken prompts).
+    @ObservationIgnored var onTick: ((Int) -> Void)?
     @ObservationIgnored private let alerts: any EmergencyAlertService
     @ObservationIgnored private let isOnline: () -> Bool
     @ObservationIgnored private let tick: Duration
@@ -50,6 +52,7 @@ final class CheckInViewModel {
                 try? await Task.sleep(for: self.tick)
                 guard !Task.isCancelled else { return }
                 self.secondsRemaining -= 1
+                self.onTick?(self.secondsRemaining)
             }
             self?.resolve(.noResponse)
         }

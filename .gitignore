@@ -1,5 +1,6 @@
 # Xcode
 build/
+build-device/
 DerivedData/
 *.xcuserstate
 xcuserdata/
@@ -18,3 +19,5 @@ GoogleService-Info.plist
 
 # macOS
 .DS_Store
+Backend/transport-ml/
+Backend/datasets/

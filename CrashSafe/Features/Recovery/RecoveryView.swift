@@ -97,6 +97,9 @@ struct RecoveryView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.md + 4) {
+                    if env.crashCenter.isSirenOn || (outcome == .noResponse) {
+                        alarmCard
+                    }
                     if let banner {
                         Label {
                             Text(banner.text).foregroundStyle(Brand.textPrimary)
@@ -170,10 +173,44 @@ struct RecoveryView: View {
                     dismiss()
                 }
             } label: {
-                Label("Talk to Pulse", systemImage: "waveform")
+                HStack(spacing: 6) {
+                    PulseOrbDisc(diameter: 28)
+                    Text("Talk to Pulse")
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
             }
             .buttonStyle(.pill(.primary, height: 60))
         }
+    }
+
+    /// No answer: the siren is sounding for anyone nearby, and the 911 call was started.
+    private var alarmCard: some View {
+        let simulated = env.crashCenter.current?.event.isSimulated ?? false
+        return VStack(alignment: .leading, spacing: 12) {
+            Label(env.crashCenter.isSirenOn ? "Alarm sounding" : "Alarm stopped",
+                  systemImage: env.crashCenter.isSirenOn ? "speaker.wave.3.fill" : "speaker.slash.fill")
+                .font(.headline)
+                .foregroundStyle(.white)
+            Text(simulated
+                 ? "Test crash: the siren is real, but no 911 call was started and no one was contacted."
+                 : env.crashCenter.startedEmergencyCall
+                    ? "No answer, so we started a 911 call (iOS asks to confirm) and are alerting your family. If you're a bystander: this driver may be hurt — call 911."
+                    : "No answer. If you're a bystander: this driver may be hurt — call 911.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.9))
+                .fixedSize(horizontal: false, vertical: true)
+            Button(env.crashCenter.isSirenOn ? "I'm okay — stop the alarm" : "Sound the alarm again") {
+                env.crashCenter.isSirenOn ? env.crashCenter.stopSiren() : env.crashCenter.startSiren()
+            }
+            .buttonStyle(.pill(.dark, height: 50))
+        }
+        .padding(Space.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Brand.red, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+        .phaseAnimator([1.0, 0.75], trigger: env.crashCenter.isSirenOn) { view, opacity in
+            view.opacity(env.crashCenter.isSirenOn ? opacity : 1)
+        } animation: { _ in .easeInOut(duration: 0.5).repeatCount(env.crashCenter.isSirenOn ? 40 : 1, autoreverses: true) }
     }
 
     private var mapCard: some View {

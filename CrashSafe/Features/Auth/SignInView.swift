@@ -16,6 +16,8 @@ struct SignInView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.lg) {
                 VStack(alignment: .leading, spacing: Space.sm) {
+                    PulseWordmark()
+                        .padding(.bottom, Space.sm)
                     Text("Welcome back")
                         .font(.largeTitle.bold())
                         .foregroundStyle(Brand.textPrimary)

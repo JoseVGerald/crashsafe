@@ -1,4 +1,5 @@
 import SwiftUI
+import ThinkingOrbsKit
 
 /// Legacy names kept so older call sites read naturally; everything maps to `Brand`.
 enum Theme {
@@ -442,90 +443,102 @@ struct PulseWordmark: View {
     }
 }
 
-/// Flat-color illustration of a mountain highway at dusk (lake, pines, warm horizon).
-/// Drawn in code so it stays crisp at any size and needs no bundled photos.
-struct ScenicRoadArt: View {
-    var showsCar = true
+/// Brand photography: a dark SUV on a mountain highway at dusk.
+enum BrandPhoto: String {
+    /// Full scene — Home hero, sign-in, crash check-in.
+    case roadHero = "RoadHero"
+    /// Wide strip — Trips banner.
+    case roadBanner = "RoadBanner"
+    /// The car, tightly framed — vehicle thumbnails.
+    case carThumb = "CarThumb"
+}
+
+/// Fills its frame with a brand photo, cropping (never stretching) and clipping to bounds.
+struct BrandPhotoView: View {
+    let photo: BrandPhoto
+    var alignment: Alignment = .center
 
     var body: some View {
-        Canvas { context, size in
-            let w = size.width, h = size.height
-            func rect(_ y0: Double, _ y1: Double, _ hex: UInt32) {
-                context.fill(Path(CGRect(x: 0, y: h * y0, width: w, height: h * (y1 - y0) + 1)), with: .color(Color(hex: hex)))
+        Color.clear
+            .overlay(alignment: alignment) {
+                Image(photo.rawValue)
+                    .resizable()
+                    .scaledToFill()
             }
-            func poly(_ points: [(Double, Double)], _ hex: UInt32) {
-                var path = Path()
-                path.addLines(points.map { CGPoint(x: $0.0 * w, y: $0.1 * h) })
-                path.closeSubpath()
-                context.fill(path, with: .color(Color(hex: hex)))
-            }
-            func pine(_ x: Double, _ base: Double, _ height: Double, _ hex: UInt32) {
-                let tw = height * h * 0.36 / w
-                for tier in 0..<3 {
-                    let top = base - height * (1 - Double(tier) * 0.22)
-                    let bottom = base - height * Double(2 - tier) * 0.18
-                    let half = tw * (0.55 + Double(tier) * 0.25)
-                    poly([(x, top), (x + half, bottom), (x - half, bottom)], hex)
-                }
-            }
+            .clipped()
+            .accessibilityHidden(true)
+    }
+}
 
-            // Sky in stepped bands, warming toward the horizon.
-            rect(0, 0.2, 0x26272E)
-            rect(0.2, 0.31, 0x3A3437)
-            rect(0.31, 0.4, 0x6A4A3F)
-            rect(0.4, 0.47, 0xA9663F)
-            rect(0.47, 0.56, 0xD98E52)
-            context.fill(Path(ellipseIn: CGRect(x: w * 0.68, y: h * 0.45, width: h * 0.13, height: h * 0.13)),
-                         with: .color(Color(hex: 0xF6CB86)))
-            for (x, y, cw) in [(0.05, 0.08, 0.34), (0.48, 0.14, 0.3), (0.2, 0.25, 0.22), (0.72, 0.3, 0.26)] {
-                context.fill(Path(roundedRect: CGRect(x: w * x, y: h * y, width: w * cw, height: h * 0.05), cornerRadius: h * 0.025),
-                             with: .color(Color(hex: 0x2E2B2F)))
-            }
+// MARK: - Pulse orb (AI controls)
 
-            // Ranges, lake and far shore.
-            poly([(0, 0.6), (0, 0.5), (0.12, 0.44), (0.22, 0.5), (0.34, 0.41), (0.46, 0.5), (0.56, 0.45),
-                  (0.66, 0.52), (0.8, 0.43), (0.92, 0.5), (1, 0.46), (1, 0.6)], 0x5A4D54)
-            poly([(0, 0.64), (0, 0.55), (0.1, 0.52), (0.2, 0.57), (0.3, 0.51), (0.42, 0.58), (0.58, 0.55),
-                  (0.74, 0.59), (0.88, 0.53), (1, 0.57), (1, 0.64)], 0x39343C)
-            rect(0.6, 0.68, 0x6E5658)
-            context.fill(Path(CGRect(x: w * 0.66, y: h * 0.62, width: w * 0.1, height: h * 0.012)), with: .color(Color(hex: 0xE2A066)))
-            context.fill(Path(CGRect(x: w * 0.69, y: h * 0.645, width: w * 0.05, height: h * 0.01)), with: .color(Color(hex: 0xC98A57)))
-            for i in 0..<14 { pine(0.38 + Double(i) * 0.05, 0.61, 0.05 + Double(i % 3) * 0.015, 0x22272A) }
+/// What Pulse is doing, shown by the thinking orb on every AI control.
+enum PulseOrbMood: Equatable {
+    case idle, listening, thinking
 
-            // Ground, road and guardrail.
-            rect(0.67, 1, 0x1C1F1D)
-            poly([(0.06, 1), (0.56, 0.67), (0.62, 0.67), (1.04, 1)], 0x333336)
-            poly([(0.76, 1), (0.6, 0.67), (0.605, 0.67), (0.775, 1)], 0x8C8C8C)
-            for i in 0..<5 {
-                let t0 = 0.69 + Double(i) * 0.065, t1 = t0 + 0.035
-                let x0 = 0.59 - (t0 - 0.67) * 0.62, x1 = 0.59 - (t1 - 0.67) * 0.62
-                let half0 = 0.002 + (t0 - 0.67) * 0.02, half1 = 0.002 + (t1 - 0.67) * 0.02
-                poly([(x0 - half0, t0), (x0 + half0, t0), (x1 + half1, t1), (x1 - half1, t1)], 0xD9C28C)
-            }
-            poly([(0.88, 1), (0.63, 0.66), (0.633, 0.657), (0.895, 0.99)], 0xA3A3A3)
-
-            // Foreground pines.
-            for (x, height) in [(0.03, 0.62), (0.11, 0.48), (0.19, 0.36), (0.27, 0.24), (0.95, 0.3)] {
-                pine(x, 0.72 + height * 0.25, height, 0x141815)
-            }
-
-            if showsCar {
-                let cx = w * 0.4, cy = h * 0.79, cw = w * 0.16
-                let ch = cw * 0.42
-                context.fill(Path(roundedRect: CGRect(x: cx - cw * 0.38, y: cy - ch * 1.05, width: cw * 0.76, height: ch * 0.6),
-                                  cornerRadius: ch * 0.2), with: .color(Color(hex: 0x3B4148)))
-                context.fill(Path(roundedRect: CGRect(x: cx - cw * 0.31, y: cy - ch * 0.95, width: cw * 0.62, height: ch * 0.36),
-                                  cornerRadius: ch * 0.12), with: .color(Color(hex: 0x15181C)))
-                context.fill(Path(roundedRect: CGRect(x: cx - cw / 2, y: cy - ch * 0.5, width: cw, height: ch * 0.62),
-                                  cornerRadius: ch * 0.18), with: .color(Color(hex: 0x4A5058)))
-                for side in [-1.0, 1.0] {
-                    context.fill(Path(roundedRect: CGRect(x: cx + side * cw * 0.36 - cw * 0.1, y: cy - ch * 0.38, width: cw * 0.2, height: ch * 0.12),
-                                      cornerRadius: 2), with: .color(Color(hex: 0xFF5A4A)))
-                    context.fill(Path(roundedRect: CGRect(x: cx + side * cw * 0.34 - cw * 0.08, y: cy + ch * 0.08, width: cw * 0.16, height: ch * 0.26),
-                                      cornerRadius: 3), with: .color(Color(hex: 0x0D0E10)))
-                }
-            }
+    var orbState: OrbState {
+        switch self {
+        case .idle: .solving
+        case .listening: .listening
+        case .thinking: .working
         }
-        .accessibilityHidden(true)
+    }
+
+    /// Ring colour around the orb: blue at rest, red while the mic is open.
+    var ringTint: Color { self == .listening ? Brand.redInk : Brand.blueInk }
+}
+
+/// Pulse's animated thinking orb (ThinkingOrbsKit), drawn in white dots.
+/// Decorative: the control around it carries the accessibility label.
+struct PulseOrb: View {
+    var mood: PulseOrbMood = .idle
+    var size: CGFloat
+    var animated = true
+
+    var body: some View {
+        ThinkingOrb(state: mood.orbState, size: size >= 40 ? .px64 : .px20, theme: .dark,
+                    paused: !animated, displaySize: size)
+            .accessibilityHidden(true)
+    }
+}
+
+/// The orb on a near-black disc with a thin coloured ring — the dots need a dark backdrop to read.
+struct PulseOrbDisc: View {
+    var mood: PulseOrbMood = .idle
+    var diameter: CGFloat
+    var animated = true
+
+    var body: some View {
+        ZStack {
+            Circle().fill(Brand.navy)
+            Circle().strokeBorder(mood.ringTint.opacity(0.75), lineWidth: max(1.5, diameter * 0.03))
+            PulseOrb(mood: mood, size: diameter * 0.7, animated: animated)
+        }
+        .frame(width: diameter, height: diameter)
+        .animation(.easeOut(duration: 0.2), value: mood)
+    }
+}
+
+/// The face of a Pulse voice button: the orb disc plus a small mic badge so it still reads as "talk".
+struct PulseVoiceFace: View {
+    var mood: PulseOrbMood
+    var diameter: CGFloat
+    var showsMicBadge = true
+
+    var body: some View {
+        PulseOrbDisc(mood: mood, diameter: diameter)
+            .overlay(alignment: .bottomTrailing) {
+                if showsMicBadge && mood == .idle {
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: diameter * 0.15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: diameter * 0.34, height: diameter * 0.34)
+                        .background(Brand.blue, in: Circle())
+                        .overlay(Circle().strokeBorder(Brand.background, lineWidth: 2))
+                        .offset(x: diameter * 0.04, y: diameter * 0.04)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .animation(.spring(response: 0.3), value: mood)
     }
 }

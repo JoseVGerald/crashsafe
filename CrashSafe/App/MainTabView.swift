@@ -21,7 +21,8 @@ struct MainTabView: View {
                 viewModel: HomeViewModel(detector: env.crashDetector, driving: env.driving,
                                          conditions: env.conditions, userID: user.id),
                 talk: PressToTalkViewModel(assistant: env.assistant) { [user, env] in
-                    AssistantContext.make(user: user, profile: nil, activeTrip: nil, isOnline: env.connectivity.isOnline)
+                    AssistantContext.make(user: user, profile: nil, activeTrip: nil, isOnline: env.connectivity.isOnline,
+                                          activity: env.intelligence.assistantActivity)
                 }
             )
             .tabItem { Label("Home", systemImage: "house.fill") }
@@ -54,9 +55,10 @@ struct MainTabView: View {
         }
         .onAppear(perform: startBackgroundCoaching)
         .onChange(of: profiles.first?.autoDetectDrives) { startBackgroundCoaching() }
+        .onChange(of: profiles.first?.carType) { startBackgroundCoaching() }
     }
 
-    /// Always-on: coach every drive, and start live monitoring when Core Motion detects driving.
+    /// Always-on: coach every drive, and start live monitoring + crash detection when Core Motion detects driving.
     private func startBackgroundCoaching() {
         let profiles = profiles
         env.coach.profileProvider = {
@@ -67,17 +69,13 @@ struct MainTabView: View {
         }
         env.coach.start()
 
-        guard profiles.first?.autoDetectDrives ?? true else {
-            env.autoDetector.stop()
-            return
+        // Watch every drive: coaching + crash detection start when Core Motion notices a drive, and the
+        // armed state is saved so a background relaunch (no screen) resumes it. "Always" location lets
+        // iOS wake the app when the phone starts moving after it was closed.
+        if profiles.first?.autoDetectDrives ?? true {
+            env.driveWatcher.arm(.init(ownerID: user.id, carType: profiles.first?.carType ?? .sedan))
+        } else {
+            env.driveWatcher.disarm()
         }
-        let driving = env.driving
-        env.autoDetector.onDriveStarted = {
-            if !driving.isActive { driving.startLive(background: true) }
-        }
-        env.autoDetector.onDriveEnded = {
-            if driving.mode == .live { driving.stop() }
-        }
-        env.autoDetector.start()
     }
 }

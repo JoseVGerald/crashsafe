@@ -111,20 +111,7 @@ struct PressToTalkCard: View {
                     .fill(Brand.surface)
                     .frame(width: 124, height: 124)
                     .overlay(Circle().strokeBorder(Brand.stroke))
-                Circle()
-                    .fill(Brand.blue)
-                    .frame(width: 96, height: 96)
-                if viewModel.isListening {
-                    WaveformBars()
-                        .foregroundStyle(.white)
-                        .frame(width: 38, height: 30)
-                } else if case .thinking = viewModel.phase {
-                    ProgressView().tint(.white)
-                } else {
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 36, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
+                PulseVoiceFace(mood: mood, diameter: 96)
             }
             .scaleEffect(viewModel.isListening ? 1.06 : 1)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.isListening)
@@ -134,6 +121,14 @@ struct PressToTalkCard: View {
         .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.isListening)
         .accessibilityLabel(viewModel.isListening ? "Stop and send" : "Talk to Pulse")
         .accessibilityHint(viewModel.isListening ? "Sends what you said." : "Starts listening.")
+    }
+
+    private var mood: PulseOrbMood {
+        switch viewModel.phase {
+        case .idle, .answered: .idle
+        case .listening: .listening
+        case .thinking: .thinking
+        }
     }
 
     private func toggle() {
@@ -159,25 +154,5 @@ struct PressToTalkCard: View {
         case .listening: "Tap again when you're done."
         case .thinking(let transcript), .answered(let transcript, _): "“\(transcript)”"
         }
-    }
-}
-
-/// Animated voice bars.
-struct WaveformBars: View {
-    var count = 5
-
-    var body: some View {
-        TimelineView(.animation) { timeline in
-            let t = timeline.date.timeIntervalSinceReferenceDate
-            HStack(alignment: .center, spacing: 3) {
-                ForEach(0..<count, id: \.self) { index in
-                    Capsule()
-                        .frame(width: 4)
-                        .frame(maxHeight: .infinity)
-                        .scaleEffect(y: 0.3 + 0.7 * abs(sin(t * 6 + Double(index) * 0.9)), anchor: .center)
-                }
-            }
-        }
-        .accessibilityHidden(true)
     }
 }
