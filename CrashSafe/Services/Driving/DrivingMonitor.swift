@@ -97,6 +97,9 @@ struct DrivingSnapshot: Equatable, Sendable {
     /// True for a posted limit (OpenStreetMap `maxspeed` or a demo); false for a typical limit for the road type.
     var speedLimitIsPosted = true
     var roadName: String?
+    /// Residential street, arterial, ramp, gravel… (from the road data).
+    var roadSegment: RoadSegment?
+    var roadFeatures: RoadFeatures = []
     var averageSpeedMPH: Double = 0
     var maxSpeedMPH: Double = 0
     var hardBrakes = 0
@@ -134,6 +137,10 @@ final class DrivingMonitor {
     @ObservationIgnored private var demoTask: Task<Void, Never>?
     @ObservationIgnored private var lastSpeed: (mph: Double, at: Date)?
     /// Strongest reading since the screen was last updated (motion arrives 100 times a second).
+    /// Hard braking from the phone's motion (GPS alone, once a second, missed real hard stops).
+    @ObservationIgnored private var brakeDetector = LongitudinalEventDetector()
+    @ObservationIgnored private var motionBrakes = false
+    @ObservationIgnored private var recentSpeeds: [(mph: Double, at: Date)] = []
     @ObservationIgnored private var pendingG = 0.0
     @ObservationIgnored private var lastGUpdate: TimeInterval = -.infinity
     /// How often g-force reaches the screen: 10 times a second is smooth; 100 made every screen that
@@ -166,7 +173,9 @@ final class DrivingMonitor {
         mode = .live
         sensorObserver = sensors.addObserver { [weak self] reading in
             switch reading {
-            case .motion(let sample): self?.ingest(g: sample.accelerationG.magnitude, at: sample.uptime)
+            case .motion(let sample):
+                self?.ingest(g: sample.accelerationG.magnitude, at: sample.uptime)
+                self?.detectBraking(sample)
             case .location(let sample):
                 self?.applySpeedLimit(from: sample)
                 if let mps = Self.displaySpeedMPS(sample, now: ProcessInfo.processInfo.systemUptime) {
@@ -229,6 +238,8 @@ final class DrivingMonitor {
         snapshot.speedLimitMPH = reading.mph
         snapshot.speedLimitIsPosted = reading.isPosted
         snapshot.roadName = reading.roadName
+        if snapshot.roadSegment != reading.resolvedSegment { snapshot.roadSegment = reading.resolvedSegment }
+        if snapshot.roadFeatures != reading.features { snapshot.roadFeatures = reading.features }
         snapshot.environment = switch reading.environment {
         case .highway: .highway
         case .rural: .forest
@@ -244,6 +255,9 @@ final class DrivingMonitor {
         lastSpeed = nil
         pendingG = 0
         lastGUpdate = -.infinity
+        brakeDetector = LongitudinalEventDetector()
+        motionBrakes = false
+        recentSpeeds = []
         startedAt = .now
     }
 
@@ -253,11 +267,14 @@ final class DrivingMonitor {
             if dt > 0 {
                 let mphPerSecond = (speedMPH - last.mph) / dt
                 // ≈ 0.3 g of braking or acceleration.
-                if mphPerSecond < -6.5 { snapshot.hardBrakes += 1 }
+                // GPS-only fallback when the phone has no motion data (≈ 0.3 g).
+                if mphPerSecond < -6.5 && !motionBrakes { snapshot.hardBrakes += 1 }
                 if mphPerSecond > 6.5 { snapshot.hardAccelerations += 1 }
             }
         }
         lastSpeed = (speedMPH, date)
+        recentSpeeds.append((speedMPH, date))
+        recentSpeeds.removeAll { date.timeIntervalSince($0.at) > 4 }
         if speedMPH > 3 {
             movingSpeedSum += speedMPH
             movingSpeedCount += 1
@@ -266,6 +283,17 @@ final class DrivingMonitor {
         snapshot.maxSpeedMPH = max(snapshot.maxSpeedMPH, speedMPH)
         snapshot.averageSpeedMPH = movingSpeedCount == 0 ? 0 : movingSpeedSum / Double(movingSpeedCount)
         snapshot.elapsed = startedAt.map { Date.now.timeIntervalSince($0) } ?? 0
+    }
+
+    /// A hard longitudinal event from motion counts as a brake unless GPS says the car sped up.
+    private func detectBraking(_ sample: MotionSample) {
+        motionBrakes = true
+        guard brakeDetector.add(sample) != nil else { return }
+        if let first = recentSpeeds.first, let last = recentSpeeds.last, last.mph > first.mph + 2 {
+            snapshot.hardAccelerations += 1
+        } else if (recentSpeeds.last?.mph ?? 10) > 3 {
+            snapshot.hardBrakes += 1
+        }
     }
 
     private func ingest(g: Double, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {

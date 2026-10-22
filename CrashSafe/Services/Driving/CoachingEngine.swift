@@ -7,8 +7,11 @@ struct CoachingMessage: Equatable {
     let title: String
     let body: String
     let severity: Severity
-    /// Pulse only speaks out loud when the driver is over the speed limit; everything else is on screen only.
+    /// Pulse speaks out loud when the driver is over the speed limit, and once on entering an area that
+    /// needs extra care (residential streets, parking lots…); everything else is on screen only.
     var speaksAloud = false
+    /// Don't say the same thing again within this many seconds.
+    var repeatAfter: TimeInterval = 60
 }
 
 /// Turns driving data + the driver profile into a short message in the style that works for them.
@@ -41,7 +44,7 @@ enum CoachingEngine {
         }
         let comparison = DrivingComparison.make(snapshot: snapshot, advice: input.advice, isDriving: true)
         let friction = input.weather?.condition.roadFriction ?? 0.7
-        let place = (input.isNight ? "dark " : "") + snapshot.environment.label
+        let place = (input.isNight ? "dark " : "") + (snapshot.roadSegment?.title.lowercased() ?? snapshot.environment.label)
 
         switch comparison.status {
         case .tooFast, .caution:
@@ -66,6 +69,7 @@ enum CoachingEngine {
                 return CoachingMessage(title: "Let's take it easy", body: body, severity: severity)
             }
         case .noData, .onTrack:
+            if let area = areaCaution(snapshot) { return area }
             if snapshot.hardBrakes >= 3 { return harshEvents(input) }
             switch input.style {
             case .logical:
@@ -82,6 +86,15 @@ enum CoachingEngine {
         }
     }
 
+    /// Entering a residential street, parking lot, gravel road…: say once to be extra careful there.
+    static func areaCaution(_ snapshot: DrivingSnapshot) -> CoachingMessage? {
+        guard let segment = snapshot.roadSegment, segment.caution == .high || snapshot.roadFeatures.contains(.unpaved) else { return nil }
+        var body = segment.advice
+        if snapshot.roadFeatures.contains(.bridge) { body += " Bridges ice first in the cold." }
+        let title = segment == .residential ? "Residential area: be extra careful" : segment.title
+        return CoachingMessage(title: title, body: body, severity: .caution, speaksAloud: true, repeatAfter: 300)
+    }
+
     /// "Imagine…" — what speeding would turn a near miss into, from the car's real speed and the road.
     static func speeding(_ input: Input, limit: Double) -> CoachingMessage {
         let snapshot = input.snapshot
@@ -90,7 +103,7 @@ enum CoachingEngine {
         let hazardDistance = stoppingDistanceFeet(mph: limit, friction: friction)
         let impact = impactSpeedMPH(from: speed, obstacleFeet: Double(hazardDistance), friction: friction)
         let limitText = snapshot.speedLimitIsPosted ? "a \(Int(limit))" : "a road that's usually \(Int(limit))"
-        let place = (input.isNight ? "dark " : "") + snapshot.environment.label
+        let place = (input.isNight ? "dark " : "") + (snapshot.roadSegment?.title.lowercased() ?? snapshot.environment.label)
         let over = speed - limit
         let severity: CoachingMessage.Severity = over >= max(7, limit * 0.15) ? .warning : .caution
         let title = "Slow to \(Int(limit)) mph"

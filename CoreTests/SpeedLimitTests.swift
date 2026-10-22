@@ -89,9 +89,48 @@ struct ValhallaTraceTests {
         #expect(residential.mph == 25 && !residential.isPosted)
         let ramp = try #require(try decode(#"{"road_class":"motorway","use":"ramp","way_id":2}"#))
         #expect(ramp.mph == 35 && !ramp.isPosted && ramp.highway == "motorway_link")
-        #expect(try decode(#"{"road_class":"service_other","use":"parking_aisle","way_id":3}"#) == nil)
+        // Parking aisles have no posted limit but are labeled (10 mph typical, not posted).
+        let lot = try decode(#"{"road_class":"service_other","use":"parking_aisle","way_id":3}"#)
+        #expect(lot?.segment == .parkingLot && lot?.isPosted == false)
+        #expect(try decode(#"{"road_class":"service_other","use":"road","way_id":6}"#) == nil) // other service roads: no guess
         #expect(try decode(#"{"road_class":"motorway","speed_limit":255,"way_id":4}"#)?.isPosted == false) // "no limit"
         #expect(try decode(#"{"road_class":"primary","speed_limit":56,"way_id":5}"#, distance: 80) == nil)  // too far to trust
         #expect(try RoadMatcher.decodeValhallaTrace(Data(#"{"edges":[],"matched_points":[{"type":"unmatched"}]}"#.utf8)) == nil)
+    }
+}
+
+struct RoadSegmentTests {
+    @Test func classifiesFinerRoadTypes() {
+        #expect(RoadSegment.classify(highway: "motorway", mph: 60) == .interstate)
+        #expect(RoadSegment.classify(highway: "motorway_link", mph: 35) == .ramp)
+        #expect(RoadSegment.classify(highway: "residential", mph: 25, density: 15) == .residential)
+        #expect(RoadSegment.classify(highway: "residential", mph: 45, density: 1) == .ruralRoad)
+        #expect(RoadSegment.classify(highway: "primary", mph: 35, density: 12) == .arterial)
+        #expect(RoadSegment.classify(highway: "primary", mph: 55, density: 2) == .ruralRoad)
+        #expect(RoadSegment.classify(highway: "tertiary", mph: 20, density: 15) == .downtown)
+        #expect(RoadSegment.classify(highway: "tertiary", mph: 35, density: 10, unpaved: true) == .gravelRoad)
+        #expect(RoadSegment.classify(highway: "living_street", mph: 5) == .livingStreet)
+        #expect(RoadSegment.residential.caution == .high && RoadSegment.interstate.caution == .normal)
+        #expect(RoadSegment.residential.advice.contains("driveways"))
+    }
+
+    @Test func regionalDefaultsComeFromTheBundledTable() throws {
+        let url = try #require(Bundle.module.url(forResource: "default_speeds", withExtension: "json", subdirectory: "Fixtures"))
+        let defaults = try RoadDefaults(json: Data(contentsOf: url))
+        #expect(defaults.regions.count > 200)
+        #expect(defaults.typicalMPH(for: .residential, region: "US-OR") == 25)
+        #expect(defaults.typicalMPH(for: .residential, region: "US-WA") == 25) // WA: urban default
+        #expect(defaults.typicalMPH(for: .alley, region: "US-OR") == 15)
+        #expect(defaults.typicalMPH(for: .livingStreet, region: "DE") == 5)  // walking pace
+        #expect(defaults.typicalMPH(for: .ruralRoad, region: "DE") == 62)     // 100 km/h
+        #expect(defaults.typicalMPH(for: .residential, region: nil) == nil)
+    }
+
+    @Test func valhallaDetailsBecomeSegmentAndFeatures() throws {
+        let data = Data(#"{"edges":[{"road_class":"residential","use":"road","speed_limit":32,"density":15,"lane_count":1,"bridge":true,"unpaved":false,"names":["NE 19th Ave"],"way_id":9}],"matched_points":[{"type":"matched","edge_index":0,"distance_from_trace_point":3}]}"#.utf8)
+        let r = try #require(try RoadMatcher.decodeValhallaTrace(data))
+        #expect(r.segment == .residential && r.features.contains(.bridge) && r.mph == 20)
+        let lot = Data(#"{"edges":[{"road_class":"service_other","use":"parking_aisle","way_id":3}],"matched_points":[{"type":"matched","edge_index":0,"distance_from_trace_point":2}]}"#.utf8)
+        #expect(try RoadMatcher.decodeValhallaTrace(lot)?.segment == .parkingLot)
     }
 }

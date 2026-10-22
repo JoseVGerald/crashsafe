@@ -216,3 +216,27 @@ struct BackendParityTests {
         }
     }
 }
+
+struct LongitudinalEventTests {
+    /// Feeds `seconds` of 100 Hz motion: horizontal g along x, yaw (rad/s) about vertical, gravity down z.
+    static func run(_ detector: inout LongitudinalEventDetector, from start: Double, seconds: Double,
+                    g: Double, yaw: Double) -> [Double] {
+        var hits: [Double] = []
+        for i in 0..<Int(seconds * 100) {
+            let t = start + Double(i) / 100
+            let s = MotionSample(uptime: t, date: .now, accelerationG: SensorVector(x: g + 0.02 * sin(t * 40), y: 0, z: 0.03 * sin(t * 25)),
+                                 gravityG: SensorVector(x: 0, y: 0, z: -1), rotationRate: SensorVector(x: 0.01, y: 0, z: yaw))
+            if let peak = detector.add(s) { hits.append(peak) }
+        }
+        return hits
+    }
+
+    @Test func hardStopIsCaughtButTurnsAndJoltsAreNot() {
+        var d = LongitudinalEventDetector()
+        #expect(Self.run(&d, from: 0, seconds: 5, g: 0.02, yaw: 0).isEmpty)          // cruising
+        #expect(Self.run(&d, from: 5, seconds: 1.5, g: 0.35, yaw: 0.03).count == 1)  // hard stop
+        #expect(Self.run(&d, from: 10, seconds: 3, g: 0.42, yaw: 0.45).isEmpty)      // hard turn
+        #expect(Self.run(&d, from: 15, seconds: 0.3, g: 0.6, yaw: 0).isEmpty)        // pothole jolt
+        #expect(Self.run(&d, from: 20, seconds: 1.5, g: 0.18, yaw: 0).isEmpty)       // gentle stop
+    }
+}
