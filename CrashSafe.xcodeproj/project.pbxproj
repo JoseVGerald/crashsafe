@@ -69,6 +69,9 @@
 		7C8713DB3BF177954DB10F25 /* SensorHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB56D1D971DBAB4B3C62963B /* SensorHub.swift */; };
 		1DAB40EC2D0EBF43A7C25F7F /* SensorTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA173BA4B314C8D592C7E79 /* SensorTypes.swift */; };
 		432DB557E320AC59C153B105 /* SensorHubTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B98C7751B295FC71669CD1 /* SensorHubTests.swift */; };
+		247F7D54D0639995732D62E8 /* CrashEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3B967FC047EA5A97E8E472 /* CrashEvidence.swift */; };
+		52C15ED4590AC188843A83F1 /* CrashPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C0954799C04DE3632D1ED1 /* CrashPipeline.swift */; };
+		EDB8AA1D36A50D73B440B129 /* LiveCrashDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175D990311654EAC0DA999DC /* LiveCrashDetectorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +151,9 @@
 		DB56D1D971DBAB4B3C62963B /* SensorHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SensorHub.swift; path = "Sensors/SensorHub.swift"; sourceTree = "<group>"; };
 		4AA173BA4B314C8D592C7E79 /* SensorTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SensorTypes.swift; path = "Sensors/SensorTypes.swift"; sourceTree = "<group>"; };
 		E3B98C7751B295FC71669CD1 /* SensorHubTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SensorHubTests.swift; path = "SensorHubTests.swift"; sourceTree = "<group>"; };
+		4D3B967FC047EA5A97E8E472 /* CrashEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CrashEvidence.swift; path = "CrashDetection/CrashEvidence.swift"; sourceTree = "<group>"; };
+		12C0954799C04DE3632D1ED1 /* CrashPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CrashPipeline.swift; path = "CrashDetection/CrashPipeline.swift"; sourceTree = "<group>"; };
+		175D990311654EAC0DA999DC /* LiveCrashDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveCrashDetectorTests.swift; path = "LiveCrashDetectorTests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -199,6 +205,8 @@
 		247F6F7272FF745B756CE275 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				12C0954799C04DE3632D1ED1 /* CrashPipeline.swift */,
+				4D3B967FC047EA5A97E8E472 /* CrashEvidence.swift */,
 				4AA173BA4B314C8D592C7E79 /* SensorTypes.swift */,
 				DB56D1D971DBAB4B3C62963B /* SensorHub.swift */,
 				B509F9DBBFE6D0CF23B96EE2 /* MotionSource.swift */,
@@ -343,6 +351,7 @@
 		AE511D98B765FCB817D778E4 /* CrashSafeTests */ = {
 			isa = PBXGroup;
 			children = (
+				175D990311654EAC0DA999DC /* LiveCrashDetectorTests.swift */,
 				E3B98C7751B295FC71669CD1 /* SensorHubTests.swift */,
 				389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */,
 			);
@@ -557,6 +566,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52C15ED4590AC188843A83F1 /* CrashPipeline.swift in Sources */,
+				247F7D54D0639995732D62E8 /* CrashEvidence.swift in Sources */,
 				1DAB40EC2D0EBF43A7C25F7F /* SensorTypes.swift in Sources */,
 				7C8713DB3BF177954DB10F25 /* SensorHub.swift in Sources */,
 				A03B6079897E1711EE6FB44E /* MotionSource.swift in Sources */,
@@ -621,6 +632,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDB8AA1D36A50D73B440B129 /* LiveCrashDetectorTests.swift in Sources */,
 				432DB557E320AC59C153B105 /* SensorHubTests.swift in Sources */,
 				C1CC2CF9212A2D9F2835ED24 /* CrashSafeTests.swift in Sources */,
 			);
