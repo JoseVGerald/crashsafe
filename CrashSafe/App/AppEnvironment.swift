@@ -8,6 +8,7 @@ final class AppEnvironment {
     let router: AppRouter
     let connectivity: ConnectivityMonitor
     let location: LocationService
+    let sensors: SensorHub
     let conditions: ConditionsStore
     let driving: DrivingMonitor
     let coach: DriveCoach
@@ -32,7 +33,9 @@ final class AppEnvironment {
         self.connectivity = connectivity
         self.location = location
         let conditions = ConditionsStore(service: weather)
-        let driving = DrivingMonitor(location: location)
+        let sensors = SensorHub(location: location)
+        self.sensors = sensors
+        let driving = DrivingMonitor(sensors: sensors)
         self.conditions = conditions
         self.driving = driving
         self.coach = DriveCoach(driving: driving, conditions: conditions)

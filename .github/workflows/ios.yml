@@ -1,0 +1,46 @@
+name: Build and test
+on:
+  push:
+    branches: [master, main, 'codex/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode 26
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' | sort -V | tail -1)
+          test -n "$XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+          swift --version
+      - name: Test detection core
+        run: swift test
+      - name: Choose an available iPhone simulator
+        run: |
+          xcrun simctl list devices available --json > /tmp/devices.json
+          DEVICE=$(python3 -c 'import json; d=json.load(open("/tmp/devices.json")); print(next(x["udid"] for r, xs in d["devices"].items() if "iOS" in r for x in xs if "iPhone" in x["name"]))')
+          echo "SIMULATOR_ID=$DEVICE" >> "$GITHUB_ENV"
+      - name: Build and run iOS tests
+        run: |
+          set -o pipefail
+          xcodebuild test -project CrashSafe.xcodeproj -scheme CrashSafe \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+            -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO \
+            -resultBundlePath TestResults.xcresult 2>&1 | tee xcodebuild.log
+      - name: Upload build log and test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: |
+            xcodebuild.log
+            TestResults.xcresult

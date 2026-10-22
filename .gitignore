@@ -5,6 +5,9 @@ DerivedData/
 xcuserdata/
 *.xcscmblueprint
 .swiftpm/
+.build/
+*.xcresult/
+xcodebuild.log
 
 # Secrets — never commit these
 GoogleService-Info.plist
