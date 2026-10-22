@@ -23,6 +23,13 @@ struct RootView: View {
         .animation(.easeInOut(duration: 0.35), value: env.session.phase)
         .task { await env.session.restore() }
         .task { await listenForCrashes() }
+        .onChange(of: env.session.user?.id) { previous, current in
+            if previous != nil, previous != current {
+                env.crashDetector.stopMonitoring()
+                env.driving.stop()
+                env.autoDetector.stop()
+            }
+        }
     }
 
     /// One listener for the app's lifetime (an AsyncStream ends when its consumer is cancelled,

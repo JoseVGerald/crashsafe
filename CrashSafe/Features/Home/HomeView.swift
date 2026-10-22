@@ -68,6 +68,13 @@ struct HomeView: View {
                     )
                     .fadeUp(delay: 0.15)
 
+                    if let sensorNotice {
+                        Label(sensorNotice, systemImage: "exclamationmark.triangle")
+                            .font(.subheadline)
+                            .foregroundStyle(Brand.amberInk)
+                            .card(padding: Space.md)
+                    }
+
                     tripCard.fadeUp(delay: 0.2)
                     quickActions.fadeUp(delay: 0.25)
                     lastCheckIn.fadeUp(delay: 0.3)
@@ -107,6 +114,18 @@ struct HomeView: View {
     }
 
     // MARK: Sections
+
+    private var sensorNotice: String? {
+        guard env.driving.mode == .live else { return nil }
+        switch env.sensors.health.state {
+        case .starting: return "Waiting for motion readings. Crash monitoring is not ready yet."
+        case .permissionDenied: return "Motion access is off. Enable it in Settings to monitor for crashes."
+        case .unavailable: return "Motion sensors are unavailable. Automatic crash monitoring is unavailable."
+        case .interrupted, .stale, .stopped: return "Motion readings have stopped. Automatic crash monitoring is interrupted."
+        case .active:
+            return env.sensors.health.locationUnavailable ? "Reliable location or speed is unavailable. Crash monitoring has limited information." : nil
+        }
+    }
 
     private var header: some View {
         AdaptiveStack(spacing: Space.sm) {
