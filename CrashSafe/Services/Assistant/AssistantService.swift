@@ -401,19 +401,22 @@ final class RAGAssistantService: AssistantService {
         configuration.timeoutIntervalForResource = 2
         configuration.urlCache = nil
         self.session = session ?? URLSession(configuration: configuration)
+        self.injectedSession = session
     }
+    private let injectedSession: URLSession?
 
     static func configured() -> RAGAssistantService {
-        var endpoint: URL?
-        if let configured = Bundle.main.object(forInfoDictionaryKey: "RAGEndpoint") as? String,
-           let url = URL(string: configured), url.scheme == "https" {
-            endpoint = url
-        }
-        #if DEBUG && targetEnvironment(simulator)
-        endpoint = endpoint ?? URL(string: "http://127.0.0.1:8787")
-        #endif
-        return RAGAssistantService(endpoint: endpoint)
+        RAGAssistantService(endpoint: PulseBackend.endpoint())
     }
+
+    /// Conversation takes a model turn (≈0.5–2 s, more when the free model is busy).
+    private lazy var conversationSession: URLSession = injectedSession ?? {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 9
+        configuration.timeoutIntervalForResource = 10
+        configuration.urlCache = nil
+        return URLSession(configuration: configuration)
+    }()
 
     func greeting(for context: AssistantContext) -> String { fallback.greeting(for: context) }
 
@@ -424,6 +427,10 @@ final class RAGAssistantService: AssistantService {
         if let measured = LocalEvidenceAssistant.motionReply(query, context: context) { return measured }
         guard context.isOnline, let endpoint else {
             return try await fallback.reply(to: history, context: context)
+        }
+        // Pulse as a companion (the team's Pulse core on the server), then the verified evidence answer.
+        if let conversational = try await converse(history, context: context, endpoint: endpoint) {
+            return conversational
         }
         do {
             var request = URLRequest(url: endpoint.appendingPathComponent("v1/assist"))
@@ -447,6 +454,39 @@ final class RAGAssistantService: AssistantService {
         } catch {
             return try await fallback.reply(to: history, context: context)
         }
+    }
+
+    /// `POST /v1/converse`: the last turns go along; the server keeps nothing.
+    private func converse(_ history: [ChatMessage], context: AssistantContext, endpoint: URL) async throws -> String? {
+        do {
+            var request = URLRequest(url: endpoint.appendingPathComponent("v1/converse"))
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            let encoder = JSONEncoder()
+            encoder.keyEncodingStrategy = .convertToSnakeCase
+            let turns = history.suffix(12).map { ConverseRequest.Turn(role: $0.role == .user ? "user" : "assistant", text: $0.text) }
+            request.httpBody = try encoder.encode(ConverseRequest(messages: turns, jurisdiction: context.jurisdiction,
+                stage: context.assistanceStage, incident: context.incident, activity: context.activity))
+            let (data, response) = try await conversationSession.data(for: request)
+            guard (response as? HTTPURLResponse)?.statusCode == 200, data.count < 100_000 else { return nil }
+            let result = try JSONDecoder().decode(Response.self, from: data)
+            guard ["answered", "emergency"].contains(result.status), !result.answer.isEmpty else { return nil }
+            let sources = result.citations.map { "\($0.title): \($0.url)" }.joined(separator: "\n")
+            return result.answer + (sources.isEmpty ? "" : "\n\nSources:\n" + sources)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            return nil
+        }
+    }
+
+    private nonisolated struct ConverseRequest: Encodable {
+        nonisolated struct Turn: Encodable { let role: String; let text: String }
+        let messages: [Turn]
+        let jurisdiction: String
+        let stage: String
+        let incident: AssistantIncident?
+        let activity: AssistantActivity?
     }
 
     private nonisolated struct Request: Encodable {

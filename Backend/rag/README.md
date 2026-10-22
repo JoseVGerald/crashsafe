@@ -164,3 +164,23 @@ See [INTEGRATION.md](INTEGRATION.md) for the CrashSafe app adapter, typed incide
 Added 13 primary-source pages and upgraded the NIMH children-and-trauma source from a search extract to a full-page review. Added 27 cards on concussion recovery, air bags, internal bleeding, chest injury, optional coping, family support, repair authorization, replacement parts, GAP and uninsured coverage, and WA/OR/CA procedures. Washington repair-inspection and towing explanation cards use the WAC version effective October 18, 2026.
 
 Supportive and practical styles use the same evidence. Emotional support is optional, does not diagnose PTSD, and is separated from immediate crash procedures through stage filters. State selection is explicit; no state-specific reporting deadline is supplied for an unknown location. The two discovery-only cards remain quarantined. New cards expire January 20, 2027 pending renewed review; no card has professional approval.
+
+## Pulse voice (Corey) and conversation
+
+`POST /v1/converse` answers as Pulse, using the team's Pulse core (`pulse_core/`, from
+github.com/udaykamboj/pulse-voice-assistant) on a free OpenRouter model. Our emergency rules run first (911,
+no model), the verified evidence cards are given to the model as data, and every sentence passes the
+team's deterministic sentence filter before it can be spoken. If the model is down, the verified answer
+is returned. `POST /v1/tts` speaks text as Cartesia's "Corey - Supportive Buddy" (MP3).
+
+Keys go in `Backend/rag/.env` (git-ignored, never in the app):
+
+```
+OPENROUTER_API_KEY=...
+CARTESIA_API_KEY=...
+```
+
+Optional: `PULSE_MODEL` (a free OpenRouter model to try first), `CARTESIA_VOICE`, `CARTESIA_MODEL`.
+The app uses these endpoints when it can reach the backend (the simulator always can; a phone needs an
+HTTPS `RAGEndpoint`), and otherwise falls back to the on-device guides and the best Apple voice.
+The crash check-in's fixed lines are bundled in Corey's voice (`Tools/Voice/render_prompts_corey.py`).

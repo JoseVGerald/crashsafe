@@ -45,6 +45,7 @@ struct AssistantView: View {
         }
         .onAppear {
             viewModel.contextProvider = makeContext
+            viewModel.speaker = env.speaker
             consumePendingScenario()
             viewModel.begin(.general)
         }
