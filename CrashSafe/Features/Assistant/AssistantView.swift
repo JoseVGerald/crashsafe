@@ -11,6 +11,9 @@ struct AssistantView: View {
     @Query private var profiles: [Profile]
     @Query private var trips: [Trip]
 
+    @State private var jurisdiction = "UNKNOWN"
+    @State private var assistanceStage = "active"
+
     private let suggestions = [
         ("car.side.fill", "I need a tow"),
         ("doc.text.fill", "What do I tell insurance?"),
@@ -33,6 +36,7 @@ struct AssistantView: View {
                 if viewModel.isAfterCrash {
                     emergencyBar
                 }
+                assistanceControls
                 messageList
                 inputBar
             }
@@ -51,12 +55,39 @@ struct AssistantView: View {
         guard let scenario = env.router.pendingAssistantScenario else { return }
         env.router.pendingAssistantScenario = nil
         viewModel.contextProvider = makeContext
+        assistanceStage = "active"
         viewModel.begin(scenario)
     }
 
     private func makeContext() -> AssistantContext {
-        AssistantContext.make(user: user, profile: profiles.first, activeTrip: trips.first,
-                              isOnline: env.connectivity.isOnline, scenario: viewModel.scenario)
+        var context = AssistantContext.make(user: user, profile: profiles.first, activeTrip: trips.first,
+                              isOnline: env.connectivity.isOnline, scenario: viewModel.scenario,
+                              incident: viewModel.isAfterCrash ? env.router.assistantIncident : nil)
+        context.jurisdiction = jurisdiction
+        context.assistanceStage = viewModel.isAfterCrash ? assistanceStage : "followup"
+        return context
+    }
+
+    private var assistanceControls: some View {
+        HStack {
+            Menu {
+                Button("Washington") { jurisdiction = "WA" }
+                Button("Other state or not specified") { jurisdiction = "UNKNOWN" }
+            } label: {
+                Label(jurisdiction == "WA" ? "Crash location: Washington" : "Crash location: Not specified",
+                      systemImage: "mappin")
+            }
+            .accessibilityHint("Sets which state procedures can be shown")
+            Spacer()
+            if viewModel.isAfterCrash {
+                Button(assistanceStage == "active" ? "Show follow-up help" : "Back to immediate steps") {
+                    assistanceStage = assistanceStage == "active" ? "followup" : "active"
+                }
+            }
+        }
+        .font(.caption)
+        .padding(.horizontal, Space.md)
+        .padding(.vertical, 6)
     }
 
     // MARK: Pieces

@@ -247,3 +247,55 @@ struct AccountDeletionTests {
         #expect(plist["NSPrivacyTracking"] as? Bool == false)
     }
 }
+
+
+@MainActor
+struct RAGAssistantIntegrationTests {
+    private func context(stage: String = "followup", style: String = "practical") -> AssistantContext {
+        var value = AssistantContext(userName: "Test", isOnline: false, scenario: .general,
+            carDescription: "", insurer: "", medicalNotes: "", familyContactNames: [])
+        value.assistanceStage = stage
+        value.responseStyle = style
+        return value
+    }
+
+    @Test func emergencyPrecedesLocalRetrieval() async throws {
+        let service = RAGAssistantService(endpoint: nil)
+        let reply = try await service.reply(to: [ChatMessage(role: .user,
+            text: "I am panicking and my chest hurts")], context: context())
+        #expect(reply.hasPrefix("Call 911"))
+        #expect(!reply.contains("breathe in"))
+    }
+
+    @Test func noResponseDoesNotClaimAnAlertWasDelivered() {
+        let service = LocalEvidenceAssistant()
+        var value = context()
+        value.scenario = .afterCrash(.noResponse)
+        let reply = service.greeting(for: value)
+        #expect(reply.contains("does not establish unconsciousness"))
+        #expect(reply.contains("confirm"))
+        #expect(!reply.contains("I alerted"))
+    }
+
+    @Test func profileChoiceMapsToSupportivePersona() {
+        let profile = Profile(ownerID: "test")
+        profile.coachingStyle = .emotional
+        let value = AssistantContext.make(user: AuthUser(id: "test", name: "Test", email: ""),
+            profile: profile, activeTrip: nil, isOnline: false)
+        #expect(value.responseStyle == "supportive")
+        #expect(value.jurisdiction == "UNKNOWN")
+    }
+
+    @Test func eventPacketPreservesSimulation() throws {
+        let event = CrashEvent(date: .now, peakG: 6, speedDropMPH: 20, isSimulated: true)
+        let packet = AssistantIncident.make(event: event)
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let data = try encoder.encode(packet)
+        let json = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(json["schema_version"] as? Int == 1)
+        #expect(json["is_simulated"] as? Bool == true)
+        #expect(json["decision"] as? String == "inconclusive")
+        #expect(json["medical_notes"] == nil)
+    }
+}
