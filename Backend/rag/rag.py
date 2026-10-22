@@ -224,7 +224,7 @@ class Engine:
             "retrieval":result,"warning":generation_warning,"professional_review":"pending",
             "latency_ms":round((time.perf_counter()-start)*1000,3)}
 
-def make_server(engine,port=8787,developer_engine=None,voice=None):
+def make_server(engine,port=8787,developer_engine=None,voice=None,host="127.0.0.1",lan_token=None,trusted=("127.0.0.1","::1")):
     voices=[voice]
     def pulse_voice():
         # Conversational Pulse + Corey speech (pulse_voice.py); built on first use.
@@ -239,11 +239,20 @@ def make_server(engine,port=8787,developer_engine=None,voice=None):
             self.send_response(status); self.send_header("Content-Type","application/json; charset=utf-8")
             self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
             self.send_header("X-Content-Type-Options","nosniff"); self.end_headers(); self.wfile.write(raw)
+        def allowed(self):
+            # The Mac itself (simulator) is trusted; another device on the Wi-Fi (the phone) must send the
+            # LAN token. Without a token configured, nothing off this machine gets in.
+            if self.client_address[0] in trusted: return True
+            import hmac
+            given=self.headers.get("X-Pulse-Token","")
+            if lan_token and hmac.compare_digest(given.encode(),lan_token.encode()): return True
+            self.reply(401,{"error":"Not authorized"}); return False
         def audio(self,raw):
             self.send_response(200); self.send_header("Content-Type","audio/mpeg")
             self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
             self.end_headers(); self.wfile.write(raw)
         def do_GET(self):
+            if not self.allowed(): return
             if self.path.startswith("/v1/roads?"):
                 # Speed-limit road data (cached OpenStreetMap tiles). Nothing about the request is logged.
                 from urllib.parse import urlsplit, parse_qs
@@ -260,6 +269,7 @@ def make_server(engine,port=8787,developer_engine=None,voice=None):
                     "generation_model_configured":bool(engine.llm_model),"professional_review":"pending"})
             else: self.reply(404,{"error":"Not found"})
         def do_POST(self):
+            if not self.allowed(): return
             if self.path not in ("/v1/retrieve","/v1/answer","/v1/assist","/v1/developer/retrieve","/v1/analyze-window","/v1/alerts","/v1/roads/route","/v1/converse","/v1/tts"): return self.reply(404,{"error":"Not found"})
             # Loopback only. Reject browser cross-origin requests; no permissive CORS.
             origin=self.headers.get("Origin")
@@ -307,7 +317,7 @@ def make_server(engine,port=8787,developer_engine=None,voice=None):
         daemon_threads=True
         def get_request(self):
             sock,addr=super().get_request(); sock.settimeout(5); return sock,addr
-    return Server(("127.0.0.1",port),Handler)
+    return Server((host,port),Handler)
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -319,6 +329,7 @@ def main():
     a.add_argument("--stage",choices=["active","followup"],default="active")
     a.add_argument("--persona",choices=["auto","supportive","practical"],default="auto")
     s=sub.add_parser("serve"); s.add_argument("--port",type=int,default=8787)
+    s.add_argument("--lan",action="store_true",help="Also accept the phone over Wi-Fi (requires PULSE_LAN_TOKEN in .env)")
     s.add_argument("--production",action="store_true")
     b=sub.add_parser("benchmark"); b.add_argument("--runs",type=int,default=200)
     pr=sub.add_parser("prefetch-roads",help="Cache OpenStreetMap speed-limit tiles for a region")
@@ -335,8 +346,14 @@ def main():
         elif args.command=="serve":
             dev_path=ROOT/"data"/"developer.sqlite3"
             developer_engine=Engine(dev_path) if dev_path.exists() else None
-            server=make_server(engine,args.port,developer_engine)
-            print(f"Prototype API at http://127.0.0.1:{args.port}",flush=True)
+            lan=getattr(args,"lan",False)
+            token=None
+            if lan:
+                from pulse_voice import load_env
+                token=load_env().get("PULSE_LAN_TOKEN") or os.getenv("PULSE_LAN_TOKEN")
+                if not token or len(token)<32: raise SystemExit("--lan needs PULSE_LAN_TOKEN (32+ random characters) in Backend/rag/.env")
+            server=make_server(engine,args.port,developer_engine,host="0.0.0.0" if lan else "127.0.0.1",lan_token=token)
+            print(f"Prototype API at http://127.0.0.1:{args.port}"+(" and on the local network (token required)" if lan else ""),flush=True)
             try: server.serve_forever()
             finally:
                 server.server_close()
