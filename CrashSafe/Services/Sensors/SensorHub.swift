@@ -85,7 +85,7 @@ final class SensorHub {
     }
 
     func release(owner: UUID) {
-        owners[owner] = nil
+        guard owners.removeValue(forKey: owner) != nil else { return }
         location.setBackgroundUpdates(owners.values.contains(true))
         guard !isRunning else { return }
         motion.stop()
