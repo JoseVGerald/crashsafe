@@ -25,6 +25,8 @@ struct RootView: View {
         .animation(.easeInOut(duration: 0.35), value: env.session.phase)
         .task { await env.session.restore() }
         .task { await env.permissions.refresh() }
+        // Read the installed voices off the main thread now, not when Pulse first speaks.
+        .task { await PulseVoice.reload() }
         .onChange(of: env.session.user?.id) { _, id in
             env.intelligence.setActivitySensing(id != nil && scenePhase == .active)
         }

@@ -464,116 +464,10 @@ private struct ProfileContent: View {
             }
             .card(padding: Space.md)
 
-            backgroundSensorCheck
-            motionAnalysis
+            // Own views: they update every few seconds, and only they should redraw.
+            BackgroundSensorCheckCard()
+            MotionAnalysisCard()
         }
-    }
-
-    /// The transport-mode model and harsh-event rules, live.
-    private var motionAnalysis: some View {
-        let intelligence = env.intelligence
-        let ranked = intelligence.current.map { obs in
-            obs.probabilities.enumerated().sorted { $0.element > $1.element }.prefix(3)
-                .compactMap { i, p in TransportClass(rawValue: i).map { ($0, p) } }
-        } ?? []
-        let recent = intelligence.harshEvents(within: 600)
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Motion analysis").font(.headline).foregroundStyle(Brand.textPrimary)
-                Spacer()
-                Text("\(intelligence.windowsAnalyzed) windows").font(.footnote.monospacedDigit()).foregroundStyle(Brand.textSecondary)
-            }
-            Text("5-second windows at 50 Hz (the transport repo's input), every 2.5 s, from the rolling sensor history.")
-                .font(.footnote)
-                .foregroundStyle(Brand.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-            if ranked.isEmpty {
-                Text(env.sensors.health.state == .unavailable ? "No motion sensor on this device." : "Waiting for the first window…")
-                    .font(.subheadline)
-                    .foregroundStyle(Brand.textSecondary)
-            }
-            ForEach(ranked, id: \.0) { mode, p in
-                HStack(spacing: 10) {
-                    Image(systemName: mode.systemImage).frame(width: 24).foregroundStyle(Brand.blueInk)
-                    Text(mode.title).font(.subheadline).foregroundStyle(Brand.textPrimary).frame(width: 96, alignment: .leading)
-                    GeometryReader { proxy in
-                        Capsule().fill(Brand.fieldFill)
-                            .overlay(alignment: .leading) {
-                                Capsule().fill(Brand.blue).frame(width: max(4, proxy.size.width * p))
-                            }
-                    }
-                    .frame(height: 8)
-                    Text("\(Int((p * 100).rounded()))%").font(.footnote.monospacedDigit())
-                        .foregroundStyle(Brand.textSecondary).frame(width: 40, alignment: .trailing)
-                }
-                .accessibilityElement(children: .combine)
-            }
-            Divider().overlay(Brand.stroke)
-            Text("Hard brakes / accelerations, last 10 min: \(recent.filter { $0.event.kind == .harshBrake }.count) / \(recent.filter { $0.event.kind == .harshAccel }.count)")
-                .font(.footnote)
-                .foregroundStyle(Brand.textSecondary)
-            Text("Model: \(intelligence.model.modelID)")
-                .font(.caption.monospaced())
-                .foregroundStyle(Brand.textSecondary)
-            Menu {
-                ForEach(MotionIntelligence.TestMotion.allCases) { kind in
-                    Button(kind.rawValue) { intelligence.replay(kind) }
-                }
-            } label: {
-                Label("Replay test motion", systemImage: "play.circle")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Brand.blueInk)
-                    .frame(minHeight: 44)
-            }
-        }
-        .card(padding: Space.md)
-    }
-
-    /// Proof that sensors keep running with the app closed or the phone locked.
-    private var backgroundSensorCheck: some View {
-        let log = env.sensors.backgroundLog
-        return VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Background sensor check")
-                    .font(.headline)
-                    .foregroundStyle(Brand.textPrimary)
-                Spacer()
-                StatusChip(text: env.sensors.isRunning ? "Sensors on" : "Sensors off",
-                           systemImage: env.sensors.isRunning ? "dot.radiowaves.left.and.right" : "pause.circle",
-                           tint: env.sensors.isRunning ? Brand.greenInk : Brand.textSecondary)
-            }
-            Text("Start a drive, lock the phone for a minute, then come back. These counts only go up while CrashSafe is off screen.")
-                .font(.footnote)
-                .foregroundStyle(Brand.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-            Grid(alignment: .leading, horizontalSpacing: Space.md, verticalSpacing: 6) {
-                GridRow {
-                    Text("").gridColumnAlignment(.leading)
-                    Text("Motion").font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
-                    Text("GPS").font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
-                }
-                GridRow {
-                    Text("In background").foregroundStyle(Brand.textPrimary)
-                    Text(log.backgroundMotion.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
-                    Text(log.backgroundLocation.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
-                }
-                GridRow {
-                    Text("While locked").foregroundStyle(Brand.textPrimary)
-                    Text(log.lockedMotion.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
-                    Text(log.lockedLocation.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
-                }
-            }
-            .font(.subheadline)
-            Text(log.isEmpty ? "No off-screen readings yet." :
-                    "Longest motion gap off screen: \(log.longestBackgroundGap.formatted(.number.precision(.fractionLength(2)))) s")
-                .font(.footnote)
-                .foregroundStyle(Brand.textSecondary)
-            Button("Reset counts") { env.sensors.resetBackgroundLog() }
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Brand.blueInk)
-                .frame(minHeight: 44)
-        }
-        .card(padding: Space.md)
     }
 
     /// Plays a scripted drive (speed, weather, light) so coaching and CarPlay can be tried without driving.
@@ -752,6 +646,121 @@ private struct ProfileContent: View {
         context.delete(vehicle)
         profile.vehicles.removeAll { $0 === vehicle }
         if wasPrimary, let next = profile.sortedVehicles.first { profile.makePrimary(next) }
+    }
+}
+
+/// The transport-mode model and harsh-event rules, live.
+private struct MotionAnalysisCard: View {
+    @Environment(AppEnvironment.self) private var env
+
+    var body: some View {
+        let intelligence = env.intelligence
+        let ranked = intelligence.current.map { obs in
+            obs.probabilities.enumerated().sorted { $0.element > $1.element }.prefix(3)
+                .compactMap { i, p in TransportClass(rawValue: i).map { ($0, p) } }
+        } ?? []
+        let recent = intelligence.harshEvents(within: 600)
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Motion analysis").font(.headline).foregroundStyle(Brand.textPrimary)
+                Spacer()
+                Text("\(intelligence.windowsAnalyzed) windows").font(.footnote.monospacedDigit()).foregroundStyle(Brand.textSecondary)
+            }
+            Text("5-second windows at 50 Hz (the transport repo's input), every 2.5 s, from the rolling sensor history.")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if ranked.isEmpty {
+                Text(env.sensors.health.state == .unavailable ? "No motion sensor on this device." : "Waiting for the first window…")
+                    .font(.subheadline)
+                    .foregroundStyle(Brand.textSecondary)
+            }
+            ForEach(ranked, id: \.0) { mode, p in
+                HStack(spacing: 10) {
+                    Image(systemName: mode.systemImage).frame(width: 24).foregroundStyle(Brand.blueInk)
+                    Text(mode.title).font(.subheadline).foregroundStyle(Brand.textPrimary).frame(width: 96, alignment: .leading)
+                    GeometryReader { proxy in
+                        Capsule().fill(Brand.fieldFill)
+                            .overlay(alignment: .leading) {
+                                Capsule().fill(Brand.blue).frame(width: max(4, proxy.size.width * p))
+                            }
+                    }
+                    .frame(height: 8)
+                    Text("\(Int((p * 100).rounded()))%").font(.footnote.monospacedDigit())
+                        .foregroundStyle(Brand.textSecondary).frame(width: 40, alignment: .trailing)
+                }
+                .accessibilityElement(children: .combine)
+            }
+            Divider().overlay(Brand.stroke)
+            Text("Hard brakes / accelerations, last 10 min: \(recent.filter { $0.event.kind == .harshBrake }.count) / \(recent.filter { $0.event.kind == .harshAccel }.count)")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+            Text("Model: \(intelligence.model.modelID)")
+                .font(.caption.monospaced())
+                .foregroundStyle(Brand.textSecondary)
+            Menu {
+                ForEach(MotionIntelligence.TestMotion.allCases) { kind in
+                    Button(kind.rawValue) { intelligence.replay(kind) }
+                }
+            } label: {
+                Label("Replay test motion", systemImage: "play.circle")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Brand.blueInk)
+                    .frame(minHeight: 44)
+            }
+        }
+        .card(padding: Space.md)
+    }
+}
+
+/// Proof that sensors keep running with the app closed or the phone locked.
+private struct BackgroundSensorCheckCard: View {
+    @Environment(AppEnvironment.self) private var env
+
+    var body: some View {
+        let log = env.sensors.backgroundLog
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Background sensor check")
+                    .font(.headline)
+                    .foregroundStyle(Brand.textPrimary)
+                Spacer()
+                StatusChip(text: env.sensors.isRunning ? "Sensors on" : "Sensors off",
+                           systemImage: env.sensors.isRunning ? "dot.radiowaves.left.and.right" : "pause.circle",
+                           tint: env.sensors.isRunning ? Brand.greenInk : Brand.textSecondary)
+            }
+            Text("Start a drive, lock the phone for a minute, then come back. These counts only go up while CrashSafe is off screen.")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Grid(alignment: .leading, horizontalSpacing: Space.md, verticalSpacing: 6) {
+                GridRow {
+                    Text("").gridColumnAlignment(.leading)
+                    Text("Motion").font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
+                    Text("GPS").font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
+                }
+                GridRow {
+                    Text("In background").foregroundStyle(Brand.textPrimary)
+                    Text(log.backgroundMotion.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                    Text(log.backgroundLocation.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                }
+                GridRow {
+                    Text("While locked").foregroundStyle(Brand.textPrimary)
+                    Text(log.lockedMotion.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                    Text(log.lockedLocation.formatted()).monospacedDigit().foregroundStyle(Brand.textPrimary)
+                }
+            }
+            .font(.subheadline)
+            Text(log.isEmpty ? "No off-screen readings yet." :
+                    "Longest motion gap off screen: \(log.longestBackgroundGap.formatted(.number.precision(.fractionLength(2)))) s")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+            Button("Reset counts") { env.sensors.resetBackgroundLog() }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Brand.blueInk)
+                .frame(minHeight: 44)
+        }
+        .card(padding: Space.md)
     }
 }
 

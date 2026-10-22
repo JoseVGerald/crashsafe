@@ -31,6 +31,7 @@
 		371FF31014CA54C06D6F2EB3 /* AuthLandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F2488D9CE775D06EA66B /* AuthLandingView.swift */; };
 		3DAD74871A8FF82E756C26BE /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624251F4B57EC28C6496B1FB /* TripDetailView.swift */; };
 		4702E7135DC116E74CD6FAE8 /* CrashScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA915D91070A6C6E7177DBC /* CrashScenarios.swift */; };
+		4A34902EDBCD61C45D021779 /* SpeedLimitServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C198AB6CBE2A798D807FA0 /* SpeedLimitServiceTests.swift */; };
 		5176F8E15C66BF51D093097A /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3A02D2109887A77D8BA0BB /* CarPlaySceneDelegate.swift */; };
 		55132413CA9EB801CB369363 /* ConditionsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB3E66A82429427DD6B759 /* ConditionsStore.swift */; };
 		5576CB566BD9F5CB9BB98854 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71081F509E40ABC55732821 /* WeatherService.swift */; };
@@ -97,6 +98,7 @@
 		DE798C761B86A973F3549F8D /* BackgroundDriveWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC686B607767BDC0EF03EF0 /* BackgroundDriveWatcher.swift */; };
 		E3CF0BEE1398F1C3218A5D20 /* MockAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */; };
 		EA37968AA11CBBC6962739DE /* Editors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F6A49957B27238D1BA09B /* Editors.swift */; };
+		EAA429F34A7C46294DAB53F4 /* RedrawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661E5B9E2AD3531C38123DE5 /* RedrawTests.swift */; };
 		F07181A23CD0910316F8166C /* CoachingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651DA069A1B7E0658AA3ED74 /* CoachingEngine.swift */; };
 		F2A7F0091A6E38BE0B09B709 /* RecoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5CD2FE7472ED0EF50C22F5 /* RecoveryView.swift */; };
 		F44FCF6E5D20D06D6469B612 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021A0634FE7084DD4E29B67E /* HomeViewModel.swift */; };
@@ -157,6 +159,7 @@
 		6502E9B8772EC93C22CA1444 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		651DA069A1B7E0658AA3ED74 /* CoachingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachingEngine.swift; sourceTree = "<group>"; };
 		65423B333CB78ED3795F2F92 /* BackgroundFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundFlowTests.swift; sourceTree = "<group>"; };
+		661E5B9E2AD3531C38123DE5 /* RedrawTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedrawTests.swift; sourceTree = "<group>"; };
 		6A825ADD0BC035D33E0EB527 /* AuthViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModels.swift; sourceTree = "<group>"; };
 		6ABBD5CD1F0E28136E5FCC5E /* SensorTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorTypes.swift; sourceTree = "<group>"; };
 		71059D240AB15C89B38CE958 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
@@ -206,6 +209,7 @@
 		DCC686B607767BDC0EF03EF0 /* BackgroundDriveWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDriveWatcher.swift; sourceTree = "<group>"; };
 		E2772272FC0E6E39BF337C54 /* SensorHubTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorHubTests.swift; sourceTree = "<group>"; };
 		E408DE1F0E5654AE43291C4B /* MotionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSource.swift; sourceTree = "<group>"; };
+		E5C198AB6CBE2A798D807FA0 /* SpeedLimitServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedLimitServiceTests.swift; sourceTree = "<group>"; };
 		E6BB3E66A82429427DD6B759 /* ConditionsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionsStore.swift; sourceTree = "<group>"; };
 		E71081F509E40ABC55732821 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		E73F6A49957B27238D1BA09B /* Editors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editors.swift; sourceTree = "<group>"; };
@@ -484,8 +488,10 @@
 				910E89ED7542C6F5CC1F4140 /* LiveCrashDetectorTests.swift */,
 				AFA9B99B848E5737315AA5EB /* MotionAndEscalationTests.swift */,
 				79A80EFF07644E2749DE1FAF /* OnDeviceSensorTests.swift */,
+				661E5B9E2AD3531C38123DE5 /* RedrawTests.swift */,
 				E2772272FC0E6E39BF337C54 /* SensorHubTests.swift */,
 				85E4F73668117E9C4EB05E07 /* SensorLabTests.swift */,
+				E5C198AB6CBE2A798D807FA0 /* SpeedLimitServiceTests.swift */,
 			);
 			path = CrashSafeTests;
 			sourceTree = "<group>";
@@ -824,8 +830,10 @@
 				72B564875DEF400041872A93 /* LiveCrashDetectorTests.swift in Sources */,
 				C4B93D7552D470FB99E65DF6 /* MotionAndEscalationTests.swift in Sources */,
 				71DCC07A5C25F02B6363AFE1 /* OnDeviceSensorTests.swift in Sources */,
+				EAA429F34A7C46294DAB53F4 /* RedrawTests.swift in Sources */,
 				7AD1EECEC32A8E37B1523832 /* SensorHubTests.swift in Sources */,
 				7DD246268E858464FE7DEEE9 /* SensorLabTests.swift in Sources */,
+				4A34902EDBCD61C45D021779 /* SpeedLimitServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

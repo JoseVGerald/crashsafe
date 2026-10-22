@@ -76,7 +76,7 @@ enum CoachingEngine {
             case .emotional:
                 return CoachingMessage(
                     title: "You're driving beautifully",
-                    body: "Calm and steady — exactly how you make it home safe tonight.",
+                    body: "Calm and steady — exactly how you make it home safe\(input.isNight ? " tonight" : "").",
                     severity: .positive)
             }
         }

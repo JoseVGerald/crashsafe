@@ -54,6 +54,23 @@ struct OnDeviceSensorTests {
         #expect(!hub.isRunning)
     }
 
+    /// The Profile lag: real motion arrives 100 times a second while the app is open, and every change to
+    /// the observed sensor health redraws Home, Profile and CarPlay. It should change a few times, not 200.
+    @Test(.enabled(if: hasHardware)) func realMotionBarelyChangesWhatScreensObserve() async throws {
+        let hub = SensorHub(location: TestLocationSource())
+        let owner = UUID()
+        let probe = ObservationProbe()
+        hub.acquire(owner: owner, background: false)
+        let end = ContinuousClock.now + .seconds(2)
+        while ContinuousClock.now < end {
+            probe.watch { _ = hub.health }
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        #expect(hub.health.measuredHz > 80)
+        #expect(probe.count <= 5, "health changed \(probe.count) times in 2 s of real motion")
+        hub.release(owner: owner)
+    }
+
     /// The Sensor Lab on real sensors: live samples, then a replayed clip in their place, then live again.
     @Test(.enabled(if: hasHardware)) func sensorLabShowsLiveMotionAndReplaysOverIt() async throws {
         let replay = ReplayMotionSource()

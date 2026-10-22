@@ -58,7 +58,15 @@ xcrun simctl location booted start --speed=31 --interval=1 - < Tools/StressLab/r
 xcrun simctl location booted clear
 ```
 
-Tap **Drive this car**: CarPlay mode opens with the live speed, the posted limit (55 mph on that stretch of I-5) and spoken coaching when you're over it.
+Tap **Drive this car**: CarPlay mode opens with the live speed, the posted limit and spoken coaching when you're over it.
+
+Where limits come from (all OpenStreetMap, no key):
+- **Quick lookup** (Valhalla, `valhalla1.openstreetmap.de`): the road under the last few GPS points, in under a second. Used only while the phone has no road data for the area. A cold start showed the first limit 0.9 s after the first GPS fix.
+- **Area download** (Overpass, all mirrors at once): the ~1 km around the car, saved on the phone for offline matching. It starts as soon as Home knows your location, but the public servers often take 30–90 s or fail, so it never blocks the limit.
+
+Watch it live: `xcrun simctl spawn booted log stream --level debug --predicate 'category == "speed-limits"'` prints each lookup and "first speed limit after … s".
+
+Google's Speed Limits API needs an enterprise Asset Tracking license, and Apple Maps gives apps no speed limits, so neither is used.
 
 ## 5. Real phone motion, replayed on the Mac
 

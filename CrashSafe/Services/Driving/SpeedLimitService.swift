@@ -4,26 +4,32 @@ import Observation
 import os
 
 /// Fetches the roads around the car (OpenStreetMap, via the free Overpass API).
-protocol RoadDataSource: Sendable {
+nonisolated protocol RoadDataSource: Sendable {
     func roads(nearLat lat: Double, lon: Double, radiusMeters: Double) async throws -> [RoadWay]
     /// Roads within `radiusMeters` of a path (Overpass `around` with a polyline).
     func roads(along path: [CLLocationCoordinate2D], radiusMeters: Double) async throws -> [RoadWay]
 }
 
-/// Public Overpass servers, tried in order. No key; please keep requests infrequent (the service
-/// fetches an area once and reuses it until the car leaves it).
-struct OverpassRoadSource: RoadDataSource {
+/// One public Overpass server. No key; please keep requests infrequent (the service fetches an area
+/// once, keeps it on disk, and reuses it until the car leaves it).
+nonisolated struct OverpassRoadSource: RoadDataSource {
     static let servers = [
         URL(string: "https://overpass-api.de/api/interpreter")!,
         URL(string: "https://overpass.private.coffee/api/interpreter")!,
         URL(string: "https://overpass.kumi.systems/api/interpreter")!,
     ]
+    var server: URL
     var session: URLSession = .shared
-    /// Public servers are often slow (30–60 s); a lookup never blocks driving, so wait for them.
-    var timeout: TimeInterval = 45
+    /// Busy public servers often take 30–90 s (or are down); the quick lookup covers the wait.
+    var timeout: TimeInterval = 90
+
+    /// All the public mirrors at once; the first to answer wins.
+    static func mirrors() -> RacingRoadSource {
+        RacingRoadSource(sources: servers.map { OverpassRoadSource(server: $0) })
+    }
 
     func roads(nearLat lat: Double, lon: Double, radiusMeters: Double) async throws -> [RoadWay] {
-        try await run("[out:json][timeout:25];way(around:\(Int(radiusMeters)),\(String(format: "%.4f", lat)),\(String(format: "%.4f", lon)))"
+        try await run("[out:json][timeout:80];way(around:\(Int(radiusMeters)),\(String(format: "%.4f", lat)),\(String(format: "%.4f", lon)))"
             + "[highway~\"\(RoadMatcher.highwayPattern)\"];out tags geom qt;")
     }
 
@@ -35,30 +41,103 @@ struct OverpassRoadSource: RoadDataSource {
     }
 
     private func run(_ query: String) async throws -> [RoadWay] {
-        var lastError: Error = URLError(.cannotFindHost)
-        for server in Self.servers {
-            var request = URLRequest(url: server, timeoutInterval: timeout)
-            request.httpMethod = "POST"
-            request.setValue("CrashSafe/0.1 (Congressional App Challenge student project)", forHTTPHeaderField: "User-Agent")
-            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            var body = URLComponents()
-            body.queryItems = [URLQueryItem(name: "data", value: query)]
-            request.httpBody = body.percentEncodedQuery?.data(using: .utf8)
-            do {
-                let (data, response) = try await session.data(for: request)
-                guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
-                return try RoadMatcher.decodeOverpass(data)
-            } catch {
-                lastError = error
+        var request = URLRequest(url: server, timeoutInterval: timeout)
+        request.httpMethod = "POST"
+        request.setValue("CrashSafe/0.1 (Congressional App Challenge student project)", forHTTPHeaderField: "User-Agent")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        var body = URLComponents()
+        body.queryItems = [URLQueryItem(name: "data", value: query)]
+        request.httpBody = body.percentEncodedQuery?.data(using: .utf8)
+        let (data, response) = try await session.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
+        return try await Self.decode(data)
+    }
+
+    /// A 1 km area is about a megabyte of JSON: decoded off the main thread.
+    @concurrent private static func decode(_ data: Data) async throws -> [RoadWay] {
+        try RoadMatcher.decodeOverpass(data)
+    }
+}
+
+/// Asks every source at once and takes the first one that returns roads. The public servers are often
+/// slow or down, and trying them one after another (with long timeouts) used to take minutes.
+nonisolated struct RacingRoadSource: RoadDataSource {
+    let sources: [any RoadDataSource]
+
+    func roads(nearLat lat: Double, lon: Double, radiusMeters: Double) async throws -> [RoadWay] {
+        try await race { try await $0.roads(nearLat: lat, lon: lon, radiusMeters: radiusMeters) }
+    }
+
+    func roads(along path: [CLLocationCoordinate2D], radiusMeters: Double) async throws -> [RoadWay] {
+        try await race { try await $0.roads(along: path, radiusMeters: radiusMeters) }
+    }
+
+    private func race(_ body: @escaping @Sendable (any RoadDataSource) async throws -> [RoadWay]) async throws -> [RoadWay] {
+        try await withTaskGroup(of: Result<[RoadWay], any Error>.self, returning: Result<[RoadWay], any Error>.self) { group in
+            for source in sources {
+                group.addTask {
+                    do { return .success(try await body(source)) } catch { return .failure(error) }
+                }
             }
-        }
-        throw lastError
+            var lastError: any Error = URLError(.cannotFindHost)
+            var answeredEmpty = false
+            while let result = await group.next() {
+                switch result {
+                case .success(let ways) where !ways.isEmpty:
+                    group.cancelAll()
+                    return .success(ways)
+                case .success:
+                    answeredEmpty = true
+                case .failure(let error):
+                    lastError = error
+                }
+            }
+            return answeredEmpty ? .success([]) : .failure(lastError)
+        }.get()
+    }
+}
+
+/// The speed limit of the road the car is on right now, from a short trace of recent GPS points.
+nonisolated protocol QuickSpeedLimitSource: Sendable {
+    func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading?
+}
+
+/// The OpenStreetMap community's Valhalla routing server (FOSSGIS, Germany): the same OpenStreetMap
+/// limits as Overpass, but served from a routing graph kept in memory, so it answers in under a second
+/// instead of 30–60 s. Free, no key; fair use is about one request per second per user, and the service
+/// only asks while the phone has no road data for where the car is.
+nonisolated struct ValhallaSpeedLimitSource: QuickSpeedLimitSource {
+    var endpoint = URL(string: "https://valhalla1.openstreetmap.de/trace_attributes")!
+    var session: URLSession = .shared
+    var timeout: TimeInterval = 6
+
+    func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading? {
+        guard !points.isEmpty else { return nil }
+        // ~11 m rounding; a lone point (parked) is sent twice, the least Valhalla accepts.
+        var shape = points.suffix(5).map { ["lat": ($0.lat * 1e4).rounded() / 1e4, "lon": ($0.lon * 1e4).rounded() / 1e4] }
+        if shape.count == 1 { shape.append(shape[0]) }
+        var request = URLRequest(url: endpoint, timeoutInterval: timeout)
+        request.httpMethod = "POST"
+        request.setValue("CrashSafe/0.1 (Congressional App Challenge student project)", forHTTPHeaderField: "User-Agent")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: [
+            "shape": shape, "costing": "auto", "shape_match": "map_snap",
+            "filters": ["attributes": ["edge.speed_limit", "edge.names", "edge.way_id", "edge.road_class", "edge.use",
+                                       "matched.edge_index", "matched.type", "matched.distance_from_trace_point"],
+                        "action": "include"],
+        ] as [String: Any])
+        let (data, response) = try await session.data(for: request)
+        guard let status = (response as? HTTPURLResponse)?.statusCode else { throw URLError(.badServerResponse) }
+        // 400 "no suitable edges": nowhere near a road (a field, a big parking lot).
+        if status == 400 { return nil }
+        guard status == 200 else { throw URLError(.badServerResponse) }
+        return try RoadMatcher.decodeValhallaTrace(data)
     }
 }
 
 /// The CrashSafe backend's cached road tiles (`GET /v1/roads`, `POST /v1/roads/route`): instant once a
 /// tile has been fetched, and independent of how busy the public servers are right now.
-struct BackendRoadSource: RoadDataSource {
+nonisolated struct BackendRoadSource: RoadDataSource {
     let endpoint: URL
     var session: URLSession = .shared
 
@@ -103,14 +182,14 @@ struct BackendRoadSource: RoadDataSource {
     }
 }
 
-/// Tries each source in order (backend cache, then the public servers directly).
-struct FallbackRoadSource: RoadDataSource {
+/// Tries each source in order (backend cache, then the public servers directly, all at once).
+nonisolated struct FallbackRoadSource: RoadDataSource {
     let sources: [any RoadDataSource]
 
     static func standard() -> FallbackRoadSource {
         var sources: [any RoadDataSource] = []
         if let backend = BackendRoadSource.configured() { sources.append(backend) }
-        sources.append(OverpassRoadSource())
+        sources.append(OverpassRoadSource.mirrors())
         return FallbackRoadSource(sources: sources)
     }
 
@@ -138,7 +217,14 @@ struct FallbackRoadSource: RoadDataSource {
 
 /// The posted (or typical) speed limit where the car is, kept current from GPS.
 ///
-/// Privacy: the area lookup sends the car's position, rounded to ~100 m, to a public OpenStreetMap server.
+/// Two layers, so a limit shows within a second of the first GPS fix:
+/// - Road data for the ~1 km around the car (OpenStreetMap via Overpass, or the trip pack), kept on disk
+///   and matched locally: works offline and costs nothing per fix, but a new area takes 30–60 s to arrive.
+/// - Until it does, a quick lookup of just the road the car is on (`QuickSpeedLimitSource`, < 1 s).
+///
+/// Privacy: the area lookup sends a position rounded to ~100 m; the quick lookup sends the last few
+/// GPS points rounded to ~11 m, only while no road data for the area is on the phone. Neither sends
+/// anything that identifies the driver.
 @MainActor
 @Observable
 final class SpeedLimitService {
@@ -147,24 +233,45 @@ final class SpeedLimitService {
     private(set) var current: SpeedLimitReading?
     private(set) var status: Status = .idle
     private(set) var roadsLoaded = 0
+    /// Seconds from a drive's first GPS fix to its first limit, and where that limit came from.
+    private(set) var firstLimit: (seconds: Double, basis: String)?
 
     @ObservationIgnored private let source: any RoadDataSource
+    @ObservationIgnored private let quick: (any QuickSpeedLimitSource)?
     @ObservationIgnored private let store: RoadAreaStore?
     @ObservationIgnored private var cache: (lat: Double, lon: Double, ways: [RoadWay])?
     /// Roads saved with the active trip's pack (work with no signal).
     @ObservationIgnored private var offline: [RoadWay] = []
     @ObservationIgnored private var fetching = false
     @ObservationIgnored private var retryAfter: Date = .distantPast
+    @ObservationIgnored private var failures = 0
     @ObservationIgnored private var lastFix: LocationSample?
     @ObservationIgnored private var heading: Double?
+    /// Recent fixes at least 6 m apart: the trace the quick lookup matches.
+    @ObservationIgnored private var trail: [LocationSample] = []
+    @ObservationIgnored private var quickReading: (reading: SpeedLimitReading, lat: Double, lon: Double)?
+    @ObservationIgnored private var quickInFlight = false
+    @ObservationIgnored private var quickAfter: Date = .distantPast
+    @ObservationIgnored private var firstFixAt: Date?
 
-    /// Area fetched around the car; refetched when it gets within `refetchMargin` of the edge.
     static let log = Logger(subsystem: "org.cac.crashsafe", category: "speed-limits")
-    static let radius = 700.0
-    static let refetchMargin = 300.0
+    /// Area fetched around the car; refetched when it gets within `refetchMargin` of the edge.
+    static let radius = 1_000.0
+    static let refetchMargin = 400.0
+    /// A quick reading is used this far from where it was looked up, and refreshed after this far
+    /// (further apart on highways, where the limit rarely changes).
+    static let quickValidity = 250.0
+    static let quickSpacing = 120.0
+    static let quickHighwaySpacing = 400.0
+    static let quickHighwayValidity = 600.0
+    /// At most one quick lookup per this many seconds (the server's fair use is one per second).
+    static let quickInterval: TimeInterval = 3
 
-    init(source: any RoadDataSource = FallbackRoadSource.standard(), store: RoadAreaStore? = RoadAreaStore()) {
+    init(source: any RoadDataSource = FallbackRoadSource.standard(),
+         quick: (any QuickSpeedLimitSource)? = ValhallaSpeedLimitSource(),
+         store: RoadAreaStore? = RoadAreaStore()) {
         self.source = source
+        self.quick = quick
         self.store = store
     }
 
@@ -175,63 +282,151 @@ final class SpeedLimitService {
         if !roads.isEmpty && status == .idle { status = .ready }
     }
 
+    /// Starts loading the roads around a position before a drive needs them (the app does this as soon
+    /// as it knows where the phone is, so "Drive this car" usually finds them already on the phone).
+    func prefetch(lat: Double, lon: Double) {
+        let fix = LocationSample(uptime: ProcessInfo.processInfo.systemUptime, date: .now, latitude: lat, longitude: lon,
+                                 horizontalAccuracy: 10, speedMPS: -1, speedAccuracy: -1)
+        guard fix.isValid else { return }
+        if let cache, covers(cache, fix) { return }
+        if let saved = store?.area(covering: fix, radius: Self.radius - Self.refetchMargin) {
+            useArea(saved)
+            return
+        }
+        fetch(lat: fix.latitude, lon: fix.longitude)
+    }
+
+    /// A new drive: forget the last drive's position and limit (road data stays).
+    func startDrive() {
+        current = nil
+        lastFix = nil
+        heading = nil
+        trail = []
+        quickReading = nil
+        firstFixAt = nil
+        firstLimit = nil
+    }
+
     private func match(_ fix: LocationSample) -> SpeedLimitReading? {
         RoadMatcher.match(lat: fix.latitude, lon: fix.longitude, heading: heading, ways: (cache?.ways ?? []) + offline)
     }
 
-    /// Feed every GPS fix. Matching is local and instant; a network fetch only happens for a new area.
+    /// Feed every GPS fix. Matching is local and instant; the network is only used for a new area.
     func observe(_ fix: LocationSample) {
         guard fix.isValid, fix.horizontalAccuracy >= 0, fix.horizontalAccuracy <= 60 else { return }
+        if firstFixAt == nil { firstFixAt = .now }
         if let last = lastFix {
             let moved = TransportFeatures.haversine(last.latitude, last.longitude, fix.latitude, fix.longitude)
             if moved >= 6 {
                 heading = RoadMatcher.bearing(fromLat: last.latitude, lon: last.longitude, toLat: fix.latitude, lon: fix.longitude)
                 lastFix = fix
+                trail.append(fix)
+                if trail.count > 5 { trail.removeFirst() }
             }
         } else {
             lastFix = fix
+            trail = [fix]
         }
         if cache == nil || !covers(cache!, fix), let saved = store?.area(covering: fix, radius: Self.radius - Self.refetchMargin) {
-            cache = saved
-            roadsLoaded = saved.ways.count + offline.count
-            status = .ready
+            useArea(saved)
         }
-        current = match(fix)
-        if let cache, covers(cache, fix) { return }
-        if current != nil, !offline.isEmpty { return } // the trip pack covers this stretch
-        fetch(around: fix)
+        let hasRoadData = (cache.map { covers($0, fix) } ?? false) || !offline.isEmpty
+        if let local = match(fix) {
+            show(local, basis: "road data")
+        } else if let quick = quickReading,
+                  TransportFeatures.haversine(quick.lat, quick.lon, fix.latitude, fix.longitude) <= Self.validity(of: quick.reading) {
+            show(quick.reading, basis: "quick lookup")
+        } else {
+            current = nil
+        }
+        if !(cache.map { covers($0, fix) } ?? false) {
+            if match(fix) == nil { lookUpQuickly(fix) }
+            if !(current != nil && hasRoadData) { fetch(lat: fix.latitude, lon: fix.longitude) }
+        }
     }
 
     func reset() {
-        current = nil
-        lastFix = nil
-        heading = nil
+        startDrive()
+    }
+
+    private func show(_ reading: SpeedLimitReading, basis: String) {
+        current = reading
+        if status != .ready { status = .ready }
+        if firstLimit == nil, let firstFixAt {
+            let seconds = Date.now.timeIntervalSince(firstFixAt)
+            firstLimit = (seconds, basis)
+            Self.log.info("first speed limit after \(seconds, format: .fixed(precision: 1), privacy: .public) s from \(basis, privacy: .public)")
+        }
+    }
+
+    private static func validity(of reading: SpeedLimitReading) -> Double {
+        reading.environment == .highway ? quickHighwayValidity : quickValidity
+    }
+
+    private func useArea(_ area: (lat: Double, lon: Double, ways: [RoadWay])) {
+        cache = area
+        roadsLoaded = area.ways.count + offline.count
+        status = .ready
     }
 
     private func covers(_ area: (lat: Double, lon: Double, ways: [RoadWay]), _ fix: LocationSample) -> Bool {
         TransportFeatures.haversine(area.lat, area.lon, fix.latitude, fix.longitude) < Self.radius - Self.refetchMargin
     }
 
-    private func fetch(around fix: LocationSample) {
+    /// The road the car is on, from the quick source, while the area's road data is still on its way.
+    private func lookUpQuickly(_ fix: LocationSample) {
+        guard let quick, !quickInFlight, Date.now >= quickAfter else { return }
+        if let previous = quickReading,
+           TransportFeatures.haversine(previous.lat, previous.lon, fix.latitude, fix.longitude)
+            < (previous.reading.environment == .highway ? Self.quickHighwaySpacing : Self.quickSpacing) { return }
+        quickInFlight = true
+        if current == nil, status != .ready { status = .loading }
+        var points = trail.map { (lat: $0.latitude, lon: $0.longitude) }
+        if trail.last != fix { points.append((fix.latitude, fix.longitude)) }
+        let started = Date.now
+        Task {
+            do {
+                let reading = try await quick.speedLimit(along: points)
+                Self.log.debug("quick lookup: \(reading.map { "\(Int($0.mph)) mph" } ?? "no road", privacy: .public) in \(Date.now.timeIntervalSince(started), format: .fixed(precision: 2), privacy: .public) s")
+                quickAfter = Date.now.addingTimeInterval(Self.quickInterval)
+                if let reading {
+                    quickReading = (reading, fix.latitude, fix.longitude)
+                    // Road data that arrived meanwhile wins; a reading for where the car no longer is doesn't count.
+                    let last = lastFix ?? fix
+                    if match(last) == nil,
+                       TransportFeatures.haversine(fix.latitude, fix.longitude, last.latitude, last.longitude) <= Self.validity(of: reading) {
+                        show(reading, basis: "quick lookup")
+                    }
+                }
+            } catch {
+                Self.log.debug("quick lookup failed: \(error.localizedDescription, privacy: .public)")
+                quickAfter = Date.now.addingTimeInterval(10)
+            }
+            quickInFlight = false
+        }
+    }
+
+    private func fetch(lat: Double, lon: Double) {
         guard !fetching, Date.now >= retryAfter else { return }
         fetching = true
-        if cache == nil { status = .loading }
-        // ~100 m rounding: enough for a 700 m area, less precise than the car's real position.
-        let lat = (fix.latitude * 1000).rounded() / 1000, lon = (fix.longitude * 1000).rounded() / 1000
+        if cache == nil, current == nil { status = .loading }
+        // ~100 m rounding: enough for a 1 km area, less precise than the car's real position.
+        let lat = (lat * 1000).rounded() / 1000, lon = (lon * 1000).rounded() / 1000
         let started = Date.now
         Task { [source] in
             do {
                 let ways = try await source.roads(nearLat: lat, lon: lon, radiusMeters: Self.radius)
                 Self.log.debug("roads: \(ways.count, privacy: .public) in \(Date.now.timeIntervalSince(started), format: .fixed(precision: 1), privacy: .public) s")
-                cache = (lat, lon, ways)
+                useArea((lat, lon, ways))
+                failures = 0
                 store?.save(lat: lat, lon: lon, ways: ways)
-                roadsLoaded = ways.count + offline.count
-                status = .ready
-                if let last = lastFix { current = match(last) }
+                if let last = lastFix, let local = match(last) { show(local, basis: "road data") }
             } catch {
                 Self.log.debug("roads failed after \(Date.now.timeIntervalSince(started), format: .fixed(precision: 1), privacy: .public) s: \(error.localizedDescription, privacy: .public)")
-                status = cache == nil ? .failed : status
-                retryAfter = Date.now.addingTimeInterval(20)
+                if cache == nil, current == nil { status = .failed }
+                // Back off while the public servers struggle: 20 s, 40 s, 80 s… up to 5 min.
+                failures += 1
+                retryAfter = Date.now.addingTimeInterval(min(300, 20 * pow(2, Double(failures - 1))))
             }
             fetching = false
         }
