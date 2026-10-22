@@ -49,15 +49,7 @@ final class BackendEmergencyAlertService: EmergencyAlertService {
     /// Same server as Pulse: an HTTPS `RAGEndpoint` from Info.plist, or the Mac running a Debug simulator.
     static func configured(driverName: @escaping () -> String,
                            location: @escaping () -> (lat: Double, lon: Double)?) -> BackendEmergencyAlertService {
-        var endpoint: URL?
-        if let configured = Bundle.main.object(forInfoDictionaryKey: "RAGEndpoint") as? String,
-           let url = URL(string: configured), url.scheme == "https" {
-            endpoint = url
-        }
-        #if DEBUG && targetEnvironment(simulator)
-        endpoint = endpoint ?? URL(string: "http://127.0.0.1:8787")
-        #endif
-        return BackendEmergencyAlertService(endpoint: endpoint, driverName: driverName, location: location)
+        BackendEmergencyAlertService(endpoint: PulseBackend.endpoint(), driverName: driverName, location: location)
     }
 
     private nonisolated struct Request: Encodable {
@@ -76,6 +68,7 @@ final class BackendEmergencyAlertService: EmergencyAlertService {
     func alertFamily(_ recipients: [AlertRecipient], outcome: CheckInOutcome, event: CrashEvent, isOnline: Bool) async -> AlertDelivery {
         guard isOnline, let endpoint, !recipients.isEmpty, outcome != .ok else { return .queued }
         var request = URLRequest(url: endpoint.appending(path: "v1/alerts"), timeoutInterval: 10)
+        PulseBackend.authorize(&request)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let encoder = JSONEncoder()

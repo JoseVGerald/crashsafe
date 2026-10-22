@@ -18,17 +18,23 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>During trips, CrashSafe keeps watching your drive in the background so it can coach you and check on you after a crash.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>CrashSafe uses your location to show road conditions, find help nearby, and tell responders where you are.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>In development builds, CrashSafe talks to the Pulse server on your Mac over Wi-Fi.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>During trips, CrashSafe keeps watching your drive in the background so it can coach you and check on you after a crash.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>CrashSafe uses your location to show road conditions, find help nearby, and tell responders where you are.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>CrashSafe uses motion data to notice hard braking and possible crashes.</string>
+	<key>PulseLANHost</key>
+	<string>$(PULSE_LAN_HOST)</string>
+	<key>PulseLANToken</key>
+	<string>$(PULSE_LAN_TOKEN)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -71,6 +71,28 @@ struct OnDeviceSensorTests {
         hub.release(owner: owner)
     }
 
+    /// The phone reaching Pulse on the Mac over Wi-Fi: a conversational reply, then Corey's voice.
+    @Test(.enabled(if: hasHardware && PulseBackend.endpoint() != nil)) func pulseAndCoreyReachThePhoneOverWiFi() async throws {
+        let endpoint = try #require(PulseBackend.endpoint())
+        var talk = URLRequest(url: endpoint.appendingPathComponent("v1/converse"), timeoutInterval: 20)
+        talk.httpMethod = "POST"
+        talk.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        PulseBackend.authorize(&talk)
+        talk.httpBody = Data(#"{"messages":[{"role":"user","text":"Someone bumped my car in a parking lot. What should I do first?"}]}"#.utf8)
+        let (reply, response) = try await URLSession.shared.data(for: talk)
+        #expect((response as? HTTPURLResponse)?.statusCode == 200)
+        let answer = try #require(try JSONSerialization.jsonObject(with: reply) as? [String: Any])
+        #expect((answer["answer"] as? String)?.isEmpty == false)
+        var speak = URLRequest(url: endpoint.appendingPathComponent("v1/tts"), timeoutInterval: 20)
+        speak.httpMethod = "POST"
+        speak.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        PulseBackend.authorize(&speak)
+        speak.httpBody = Data(#"{"text":"I'm right here with you."}"#.utf8)
+        let (audio, audioResponse) = try await URLSession.shared.data(for: speak)
+        #expect((audioResponse as? HTTPURLResponse)?.value(forHTTPHeaderField: "Content-Type") == "audio/mpeg")
+        #expect(audio.count > 5_000)
+    }
+
     /// The Sensor Lab on real sensors: live samples, then a replayed clip in their place, then live again.
     @Test(.enabled(if: hasHardware)) func sensorLabShowsLiveMotionAndReplaysOverIt() async throws {
         let replay = ReplayMotionSource()

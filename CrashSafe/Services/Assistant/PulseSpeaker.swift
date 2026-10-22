@@ -2,19 +2,38 @@ import AVFoundation
 import Foundation
 import os
 
-/// Where the Pulse backend is: an HTTPS `RAGEndpoint` in Info.plist, or the Mac running a Debug simulator.
-/// API keys live only on that server (Backend/rag/.env), never in the app.
-enum PulseBackend {
-    static func endpoint() -> URL? {
-        if let configured = Bundle.main.object(forInfoDictionaryKey: "RAGEndpoint") as? String,
+/// Where the Pulse backend is: an HTTPS `RAGEndpoint` in Info.plist; in Debug, the Mac itself (simulator)
+/// or, on a phone, the Mac over Wi-Fi (`PULSE_LAN_HOST` + `PULSE_LAN_TOKEN` build settings, from
+/// `Backend/rag/.env`; the backend runs with `serve --lan`). API keys live only on the server, never here.
+nonisolated enum PulseBackend {
+    static func endpoint(bundle: Bundle = .main) -> URL? {
+        if let configured = bundle.object(forInfoDictionaryKey: "RAGEndpoint") as? String,
            let url = URL(string: configured), url.scheme == "https" {
             return url
         }
-        #if DEBUG && targetEnvironment(simulator)
+        #if DEBUG
+        #if targetEnvironment(simulator)
         return URL(string: "http://127.0.0.1:8787")
+        #else
+        guard let host = info("PulseLANHost", bundle), token(bundle: bundle) != nil else { return nil }
+        return URL(string: "http://\(host):8787")
+        #endif
         #else
         return nil
         #endif
+    }
+
+    /// Lets this phone past the backend's Wi-Fi check (the Mac itself needs none).
+    static func token(bundle: Bundle = .main) -> String? { info("PulseLANToken", bundle) }
+
+    static func authorize(_ request: inout URLRequest) {
+        if let token = token() { request.setValue(token, forHTTPHeaderField: "X-Pulse-Token") }
+    }
+
+    private static func info(_ key: String, _ bundle: Bundle) -> String? {
+        guard let value = bundle.object(forInfoDictionaryKey: key) as? String,
+              !value.isEmpty, !value.hasPrefix("$(") else { return nil }
+        return value
     }
 }
 
@@ -84,6 +103,7 @@ final class PulseSpeaker {
         var request = URLRequest(url: endpoint.appendingPathComponent("v1/tts"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        PulseBackend.authorize(&request)
         request.httpBody = try? JSONEncoder().encode(["text": text])
         guard let (data, response) = try? await session.data(for: request),
               (response as? HTTPURLResponse)?.statusCode == 200,
