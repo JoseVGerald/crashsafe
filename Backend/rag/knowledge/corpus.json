@@ -198,9 +198,10 @@
       "publisher": "NIMH",
       "url": "https://www.nimh.nih.gov/health/publications/helping-children-and-adolescents-cope-with-disasters-and-other-traumatic-events",
       "jurisdiction": "U.S.; children and adolescents",
-      "access_status": "Search extract",
-      "checked": "2026-10-21",
-      "professional_review": "pending"
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "professional_review": "pending",
+      "sections": "How adults can help; Do and Don't lists; excludes outdated crisis-contact text"
     },
     {
       "id": "S21",
@@ -350,6 +351,149 @@
       "jurisdiction": "Washington; applicability review required",
       "access_status": "Search extract; page blocked",
       "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S36",
+      "title": "What to Do After a Mild TBI or Concussion",
+      "publisher": "CDC",
+      "url": "https://www.cdc.gov/traumatic-brain-injury/response/index.html",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "When to seek medical care; Steps to take",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S37",
+      "title": "Vehicle Air Bags and Injury Prevention",
+      "publisher": "NHTSA",
+      "url": "https://www.nhtsa.gov/vehicle-safety/air-bags",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Protection; deployment and replacement",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S38",
+      "title": "Life-Threatening Internal Bleeding",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/bleeding-life-threatening-internal",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Signs and symptoms; Emergency steps; delayed signs",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S39",
+      "title": "Chest Injury",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/chest-injury",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Emergency steps; General care",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S40",
+      "title": "Coping with Traumatic Stress Reactions",
+      "publisher": "VA National Center for PTSD",
+      "url": "https://www.ptsd.va.gov/gethelp/coping_stress_reactions.asp",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Positive coping actions; flashbacks; relaxation caveat",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S41",
+      "title": "Negative Coping and PTSD",
+      "publisher": "VA National Center for PTSD",
+      "url": "https://www.ptsd.va.gov/gethelp/negative_coping.asp",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Substance use; Avoiding others",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S42",
+      "title": "Collision Reporting and Responsibilities",
+      "publisher": "Oregon DMV",
+      "url": "https://www.oregon.gov/odot/dmv/pages/driverid/accidentreport.aspx",
+      "jurisdiction": "OR",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Reporting thresholds; Police notification; Collision duties",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S43",
+      "title": "Report of Traffic Accident Occurring in California SR-1",
+      "publisher": "California DMV",
+      "url": "https://www.dmv.ca.gov/portal/dmv-virtual-office/accident-reporting/",
+      "jurisdiction": "CA",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Reporting criteria; Before you begin",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S44",
+      "title": "Duty on striking unattended car or other property",
+      "publisher": "Washington Legislature",
+      "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=46.52.010",
+      "jurisdiction": "WA",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "RCW 46.52.010(1)-(2)",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S45",
+      "title": "Auto Repair Basics",
+      "publisher": "Federal Trade Commission",
+      "url": "https://consumer.ftc.gov/articles/0211-auto-repair-basics",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Repair Information; written estimates; parts; second opinion",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S46",
+      "title": "What Does Auto Insurance Cover?",
+      "publisher": "NAIC",
+      "url": "https://content.naic.org/article/what-you-should-know-about-auto-insurance-coverage",
+      "jurisdiction": "US",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Coverage types; GAP; rental; towing (June 11, 2026)",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S47",
+      "title": "Optional personal injury protection coverage and rejection",
+      "publisher": "Washington Legislature",
+      "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=48.22.085",
+      "jurisdiction": "WA",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "RCW 48.22.085(1)-(3)",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S48",
+      "title": "Unfair motor vehicle claims settlement practices",
+      "publisher": "Washington Legislature",
+      "url": "https://app.leg.wa.gov/wac/default.aspx?cite=284-30-390",
+      "jurisdiction": "WA",
+      "access_status": "Full page",
+      "checked": "2026-10-22",
+      "sections": "Version effective October 18, 2026: (1)(a)-(b), (2), (4)-(6)",
       "professional_review": "pending"
     }
   ],
@@ -690,6 +834,411 @@
       "status": "discovery_only",
       "verified": "2026-10-21",
       "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CONCUSSION_RETURN",
+      "title": "Driving and work after a concussion",
+      "terms": "concussion driving return work school recovery written instructions",
+      "body": "After a suspected concussion, seek medical assessment. Ask your healthcare provider for written instructions about returning to driving, work and school. Tell them if symptoms worsen or are not improving; this assistant cannot clear you to drive.",
+      "source_ids": [
+        "S36"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "AIRBAG_REPLACE",
+      "title": "Deployed air bags need replacement",
+      "terms": "airbag air bags deployed deployment replace drive repair",
+      "body": "Air bags work only once. Have deployed air bags replaced at an authorized repair center before driving again. Deployment can itself cause injuries; have medical concerns assessed rather than judging injury from vehicle appearance.",
+      "source_ids": [
+        "S37"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "AIRBAG_LIMIT",
+      "title": "Air bag deployment does not measure injury",
+      "terms": "airbag did not deploy no deployment minor collision injury severity",
+      "body": "Whether air bags deploy depends on the crash and vehicle system. Air bags may deploy in some relatively minor crashes and may not deploy in others. Their deployment alone cannot establish whether someone is injured or needs medical care.",
+      "source_ids": [
+        "S37"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "INTERNAL_BLEED",
+      "title": "Delayed or suspected internal bleeding",
+      "terms": "internal bleeding delayed abdomen abdominal swollen rigid bruising blood vomit urine",
+      "body": "Internal bleeding may become apparent hours or days after an injury. Suspected internal bleeding, including blood in vomit or urine, a tender swollen or rigid abdomen, or signs of shock, needs emergency medical help. Call 911 and describe what you observe; do not wait for visible external bleeding.",
+      "source_ids": [
+        "S38"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CHEST_INJURY",
+      "title": "Chest injury and breathing problems",
+      "terms": "chest rib ribs injury breathing painful severe bruising coughing blood",
+      "body": "After chest trauma, trouble breathing, severe pain or bruising, unusual chest movement, or coughing blood requires immediate emergency medical help. Call 911 and follow the call-taker's instructions. Do not assume these symptoms are anxiety.",
+      "source_ids": [
+        "S39"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "ASK_SUPPORT",
+      "title": "Ask a trusted person for concrete help",
+      "terms": "trusted friend family support help tasks paperwork ride alone isolated",
+      "body": "Once immediate safety needs are addressed, consider asking someone you trust for a specific kind of help, such as company or help with paperwork. You can choose whom to involve and explain what would help; support does not require telling everyone the full story.",
+      "source_ids": [
+        "S40"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "OPTIONAL_CALM",
+      "title": "Calming exercises should be optional",
+      "terms": "breathing exercise relaxation meditation makes worse distress stop calming",
+      "body": "In a safe setting after the emergency, relaxation may help some people but can initially increase distress for others. Choose a manageable approach and tell a clinician if it makes you feel worse. New physical symptoms after a crash still need medical assessment.",
+      "source_ids": [
+        "S40"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "GROUNDING",
+      "title": "Present surroundings during a flashback",
+      "terms": "grounding flashback reliving memories present surroundings eyes open",
+      "body": "In a safe setting, if a memory feels as though it is happening again, keeping your eyes open and noticing your present surroundings may help orient you. Contact a trusted person or clinician for support. This is optional coping support, not a PTSD diagnosis or treatment.",
+      "source_ids": [
+        "S40"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "AVOID_SELF_MEDICATING",
+      "title": "Alcohol and drugs are not a recovery plan",
+      "terms": "alcohol drugs drink sleep self medicate nightmares substance coping",
+      "body": "Using alcohol or drugs to escape traumatic memories or get to sleep can create further problems. If you are relying on them to cope, speak with a healthcare professional about support and safer treatment options. This assistant does not prescribe or change medication.",
+      "source_ids": [
+        "S41"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CHILD_SUPPORT",
+      "title": "Supporting a child after a crash",
+      "terms": "child children teenager teen crying scared parent caregiver trauma comfort",
+      "body": "After addressing safety and medical needs, offer a calm, supportive environment and familiar routines. Let a child cry or express feelings in words or drawings. Do not force them to recount the crash, demand bravery, or promise a recovery timeline you cannot know.",
+      "source_ids": [
+        "S20"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CHILD_FOLLOWUP",
+      "title": "When a child needs more emotional support",
+      "terms": "child nightmares bedwetting school withdrawn behavior weeks provider pediatrician",
+      "body": "Watch for new difficulties with sleep, school, behavior or withdrawal after a traumatic event. Contact the child's healthcare provider when new problems develop, especially when distressing reactions continue for weeks. Support is available without asking the app to diagnose the child.",
+      "source_ids": [
+        "S20"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "OR_REPORT",
+      "title": "Oregon DMV collision report deadlines",
+      "terms": "Oregon DMV report reporting deadline 72 hours 2500 police separate",
+      "body": "In Oregon, file a DMV collision report within 72 hours for injury or death, damage to your vehicle over $2,500, damage to any vehicle over $2,500 with any vehicle towed, or nonvehicle property damage over $2,500. A police report does not replace this DMV report. If late, submit as soon as possible.",
+      "source_ids": [
+        "S42"
+      ],
+      "scope": "OR",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "OR_FILE",
+      "title": "Submitting an Oregon collision report",
+      "terms": "Oregon DMV2U online paper form download copy report license ID",
+      "body": "Oregon DMV2U online collision reporting requires that you were an involved driver and have an Oregon license, permit or ID number. Otherwise use the paper process. Save a copy of your submitted report; Oregon DMV cannot provide you a copy under the cited rule.",
+      "source_ids": [
+        "S42"
+      ],
+      "scope": "OR",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "OR_SCENE",
+      "title": "Oregon scene duties and police notification",
+      "terms": "Oregon stop exchange police notify scene information license address plate",
+      "body": "In Oregon, stop and exchange name, address, driver-license number, plate and insurance information. Immediately notify police when DMV reporting criteria are met; use a nonemergency number for nonemergencies and 911 for emergencies. Do not carelessly move injured people.",
+      "source_ids": [
+        "S42"
+      ],
+      "scope": "OR",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CA_REPORT",
+      "title": "California SR-1 reporting deadline",
+      "terms": "California DMV SR1 SR-1 report deadline 10 days 1000 police separate",
+      "body": "In California, submit an SR-1 to DMV within 10 days when anyone is injured, however slightly, someone dies, or property damage exceeds $1,000. This report is separate from police, CHP and insurance reports. A driver, insurance agent, broker or legal representative may submit it.",
+      "source_ids": [
+        "S43"
+      ],
+      "scope": "CA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CA_FILE",
+      "title": "Information for a California SR-1",
+      "terms": "California SR1 DMV form information VIN plate driver license insurance",
+      "body": "For California's SR-1, gather your driver-license or ID details, vehicle plate or VIN, insurance details and available information about the other party and vehicle. Use the official DMV process and keep your reporting obligations separate from your insurance claim.",
+      "source_ids": [
+        "S43"
+      ],
+      "scope": "CA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_UNATTENDED",
+      "title": "Washington collision with an unattended car",
+      "terms": "Washington parked unattended unoccupied car note owner address",
+      "body": "In Washington, if you strike an unattended vehicle, stop immediately. Locate and notify its owner or operator, or leave a conspicuous written notice in the struck vehicle with the names and addresses of both the driver and owner of the striking vehicle. Other reporting duties may also apply.",
+      "source_ids": [
+        "S44"
+      ],
+      "scope": "WA",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "REPAIR_ESTIMATE",
+      "title": "Written repair estimates and authorization",
+      "terms": "repair body shop estimate authorization signed extra charges diagnostic second opinion",
+      "body": "Before authorizing repairs, ask for a signed written estimate identifying the repair, parts and labor charges. Ask that the shop obtain approval before exceeding an agreed amount. Ask about diagnostic fees and consider a second opinion for expensive or complicated work; specific legal rights vary by state.",
+      "source_ids": [
+        "S45"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "REPAIR_PARTS",
+      "title": "Questions about replacement parts",
+      "terms": "repair parts OEM aftermarket used salvage remanufactured warranty",
+      "body": "Ask what replacement parts the shop proposes and what warranties cover parts and labor. New, remanufactured and salvage parts differ. A certification alone does not guarantee good work; ask about experience with your vehicle's make and model.",
+      "source_ids": [
+        "S45"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "COLLISION_COVERAGE",
+      "title": "Collision versus liability coverage",
+      "terms": "collision liability comprehensive insurance own car damage other person",
+      "body": "Collision coverage generally addresses damage to your own car from a collision; liability coverage addresses covered harm you cause to others. Comprehensive coverage generally addresses other specified losses. Your policy, limits, deductibles and exclusions control the actual result; ask your insurer which coverage applies.",
+      "source_ids": [
+        "S46"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "GAP_LOAN",
+      "title": "A total loss may leave an auto loan balance",
+      "terms": "GAP loan finance owe balance totaled total loss actual cash value",
+      "body": "A vehicle's value may be less than the loan balance. A vehicle-damage settlement may therefore leave money owed to the lender. Ask whether you purchased GAP coverage and what its terms cover; do not assume ordinary auto insurance pays the entire loan.",
+      "source_ids": [
+        "S46"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "UM_UIM",
+      "title": "Uninsured and underinsured coverage questions",
+      "terms": "uninsured underinsured hit run UM UIM other driver no insurance",
+      "body": "Ask your insurer whether you have applicable uninsured or underinsured motorist coverage when the other driver has no insurance or insufficient insurance. Hit-and-run eligibility and reporting requirements depend on the policy and state. Coverage is not established by the other driver's insurance status alone.",
+      "source_ids": [
+        "S46"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "RENTAL_TOW",
+      "title": "Rental and towing coverage are policy dependent",
+      "terms": "rental reimbursement tow towing roadside limits storage receipt coverage",
+      "body": "Rental reimbursement and roadside or towing coverage are separate coverage questions. Ask your insurer whether you purchased them, what limits and conditions apply, and what documentation is needed before assuming a bill will be reimbursed.",
+      "source_ids": [
+        "S46"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_PIP",
+      "title": "Washington PIP is offered but can be rejected",
+      "terms": "Washington PIP personal injury protection offered optional written rejection",
+      "body": "Washington law requires PIP to be offered with new or renewed auto liability policies, subject to statutory exceptions. A named insured may reject it in writing, and that rejection may carry forward. Ask your insurer to confirm your coverage and any rejection; PIP is not automatically present on every policy.",
+      "source_ids": [
+        "S47"
+      ],
+      "scope": "WA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_INSPECTION",
+      "title": "Washington photo estimate disagreement",
+      "terms": "Washington photo virtual inspection disagreement in person five business days estimate",
+      "body": "Under Washington's rule effective October 18, 2026, insurers cannot require a photo-only damage evaluation as a coverage condition. After virtual inspection, if there is a disagreement over the loss amount, they must accept a requested in-person inspection and inspect within five business days or another mutually agreed time.",
+      "source_ids": [
+        "S48"
+      ],
+      "scope": "WA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_TOW_FEES",
+      "title": "Washington written towing and storage coverage explanation",
+      "terms": "Washington towing storage fees written explanation five business days first party",
+      "body": "Washington's rule effective October 18, 2026 requires an insurer to give a first-party claimant a clear written explanation of applicable storage and towing coverage within five business days of claim notification. This is an explanation requirement, not a promise that every charge is covered.",
+      "source_ids": [
+        "S48"
+      ],
+      "scope": "WA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_REPAIR_DIFFERENCE",
+      "title": "Washington repair estimate differences",
+      "terms": "Washington repair estimate difference supplemental damage policy reasons written",
+      "body": "In Washington, when an insurer's repair amount differs from your repair estimate, ask for its reasons and relevant policy provisions. The current rule requires explanations for differences and consideration of additional crash-related damage. Choosing a more expensive repair facility may leave you responsible for amounts above the insurer's estimate.",
+      "source_ids": [
+        "S48"
+      ],
+      "scope": "WA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-22",
+      "expires": "2027-01-20",
       "professional_review": "pending"
     }
   ]

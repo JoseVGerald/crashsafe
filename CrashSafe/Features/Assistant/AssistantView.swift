@@ -72,9 +72,11 @@ struct AssistantView: View {
         HStack {
             Menu {
                 Button("Washington") { jurisdiction = "WA" }
+                Button("Oregon") { jurisdiction = "OR" }
+                Button("California") { jurisdiction = "CA" }
                 Button("Other state or not specified") { jurisdiction = "UNKNOWN" }
             } label: {
-                Label(jurisdiction == "WA" ? "Crash location: Washington" : "Crash location: Not specified",
+                Label("Crash location: " + (["WA": "Washington", "OR": "Oregon", "CA": "California"][jurisdiction] ?? "Not specified"),
                       systemImage: "mappin")
             }
             .accessibilityHint("Sets which state procedures can be shown")

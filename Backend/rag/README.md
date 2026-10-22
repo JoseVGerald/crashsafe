@@ -4,7 +4,7 @@ A local retrieval and evidence-bounded response system for the CAC crash assista
 
 ## What is implemented
 
-- Twenty focused, source-linked answer cards and a 35-source register.
+- 47 focused, source-linked answer cards and a 48-source register.
 - Discovery-only notes excluded from indexing; per-card jurisdiction, stage, expiry and review status.
 - Persistent SQLite FTS5/BM25 retrieval with weighted title and keyword fields.
 - Optional genuine vector embeddings via local Ollama; cosine ranking fused with BM25 using reciprocal rank fusion.
@@ -21,7 +21,7 @@ A local retrieval and evidence-bounded response system for the CAC crash assista
 
 A source directory contains references and planned behavior, not complete domain knowledge. It mixed procedures, policy notes, examples, discovery leads and unresolved questions. Blindly chunking it would let draft material look like authoritative advice and could retrieve Washington rules for a crash elsewhere.
 
-Here, behavior instructions stay outside the retrieval corpus. Each answer card is small and scoped. The full-text-unavailable sources remain in the register without becoming detailed advice. Twenty cards cover a limited core; they are not comprehensive medical or legal coverage.
+Here, behavior instructions stay outside the retrieval corpus. Each answer card is small and scoped. The full-text-unavailable sources remain in the register without becoming detailed advice. The cards cover a limited core plus recovery, family support, repair and coverage questions, with state reporting procedures for Washington, Oregon and California. They are not comprehensive medical or legal coverage.
 
 ## Run from the CrashSafe repository
 
@@ -101,7 +101,16 @@ See VALIDATION.md for measurements from this machine. Retrieval time is not mode
 
 ## Updating the knowledge
 
-Edit knowledge/corpus.json. Every card has:
+Edit knowledge/corpus.json, then run:
+
+~~~powershell
+python sync_knowledge.py
+python sync_knowledge.py --check
+python rag.py ingest
+python -m unittest discover -s tests -v
+~~~
+
+The exporter updates the Swift offline cards and knowledge/SOURCE_CATALOG.md from the same corpus. CI checks for stale generated files. Do not edit generated blocks directly. Every card has:
 id, title, body, terms, scope, stage, source_ids, status, verified, expires and professional_review.
 
 - scope: US for general U.S. content or a state abbreviation.
@@ -143,9 +152,15 @@ Currently this returns no corpus advice because no card has professional approva
 - Ollama embeddings: https://ollama.com/blog/embedding-models
 - Ollama structured outputs: https://ollama.com/blog/structured-outputs
 
-Medical, psychological and insurance source links are in knowledge/corpus.json and the original guide. No framework, hosting service, paid API or database account is required.
+Current medical, psychological and insurance sources, access status, reviewed sections and associated cards are listed in [knowledge/SOURCE_CATALOG.md](knowledge/SOURCE_CATALOG.md). The original guide is historical background. No framework, hosting service, paid API or database account is required.
 
 
 ## Repository integration update
 
 See [INTEGRATION.md](INTEGRATION.md) for the CrashSafe app adapter, typed incident context, transport event adapter, isolated developer knowledge index and current validation limits. New endpoint: POST /v1/assist. Repository context endpoint: POST /v1/developer/retrieve.
+
+## October 22, 2026 expansion
+
+Added 13 primary-source pages and upgraded the NIMH children-and-trauma source from a search extract to a full-page review. Added 27 cards on concussion recovery, air bags, internal bleeding, chest injury, optional coping, family support, repair authorization, replacement parts, GAP and uninsured coverage, and WA/OR/CA procedures. Washington repair-inspection and towing explanation cards use the WAC version effective October 18, 2026.
+
+Supportive and practical styles use the same evidence. Emotional support is optional, does not diagnose PTSD, and is separated from immediate crash procedures through stage filters. State selection is explicit; no state-specific reporting deadline is supplied for an unknown location. The two discovery-only cards remain quarantined. New cards expire January 20, 2027 pending renewed review; no card has professional approval.
