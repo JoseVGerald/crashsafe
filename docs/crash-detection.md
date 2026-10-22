@@ -100,7 +100,7 @@ xcodebuild test -project CrashSafe.xcodeproj -scheme CrashSafe \
   -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO
 ```
 
-The GitHub workflow selects an installed Xcode 26 and available iPhone automatically, runs both suites, and uploads the build log and test-result bundle. Device signing is not required for simulator builds. New tests cover sensor fan-out, independent lease release, bad data, stale/recovered streams, GPS quality, motion interruptions, isolated spikes, braking, free fall, missing GPS, continued movement, cooldown, bounded memory, external candidates, serialization, and the real sensor-to-event integration. Test traces are synthetic software fixtures, not measured crashes.
+The GitHub workflow selects an installed Xcode 26 and available iPhone automatically, runs both suites, and uploads the build log, test-result bundle, and a zipped simulator app. The ZIP preserves the app bundle and executable permissions. This is a simulator build, not a device-signed IPA. Device signing is not required for simulator builds. New tests cover sensor fan-out, independent lease release, bad data, stale/recovered streams, GPS quality, motion interruptions, isolated spikes, braking, free fall, missing GPS, continued movement, cooldown, bounded memory, external candidates, serialization, and the real sensor-to-event integration. Test traces are synthetic software fixtures, not measured crashes.
 
 ## Required real-device validation
 

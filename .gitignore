@@ -9,6 +9,7 @@ xcuserdata/
 *.xcresult/
 xcodebuild.log
 core-tests.log
+CrashSafe-simulator.zip
 
 # Secrets — never commit these
 GoogleService-Info.plist
