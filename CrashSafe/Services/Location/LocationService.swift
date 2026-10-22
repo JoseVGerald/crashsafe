@@ -1,9 +1,10 @@
 import CoreLocation
 import Foundation
 import Observation
+import os
 
-/// Current location + a short place name ("Bellevue, WA"). Shared by Home, the trip planner,
-/// the post-crash help hub and the driving monitor.
+/// The device's live location + a short place name ("Seattle, WA"), from Core Location — never a
+/// hard-coded default. Shared by Home, the trip planner, the post-crash help hub and the driving monitor.
 @Observable
 final class LocationService: NSObject, CLLocationManagerDelegate, LocationSampleSource {
     private(set) var authorization: CLAuthorizationStatus
@@ -16,7 +17,8 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationSample
     @ObservationIgnored private var lastGeocoded: CLLocation?
     @ObservationIgnored private let geocoder = CLGeocoder()
 
-    override init() {
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         authorization = manager.authorizationStatus
         super.init()
         manager.delegate = self
@@ -33,6 +35,23 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationSample
         authorization == .denied || authorization == .restricted
     }
 
+    /// "Always" lets iOS relaunch CrashSafe when a drive starts while the app is closed.
+    var hasAlwaysAccess: Bool { authorization == .authorizedAlways }
+
+    /// iOS shows the "Change to Always Allow" prompt only once; after that the change is made in Settings.
+    var canPromptForAlways: Bool {
+        switch authorization {
+        case .notDetermined: true
+        case .authorizedWhenInUse: !defaults.bool(forKey: Self.askedAlwaysKey)
+        default: false
+        }
+    }
+
+    @ObservationIgnored private let defaults: UserDefaults
+    private static let log = Logger(subsystem: "org.cac.crashsafe", category: "location")
+    @ObservationIgnored private var wantsDriveWakeups = false
+    private static let askedAlwaysKey = "location.askedForAlways"
+
     func requestPermission() {
         if authorization == .notDetermined {
             manager.requestWhenInUseAuthorization()
@@ -41,9 +60,37 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationSample
         }
     }
 
-    /// Needed for always-on drive detection in the background.
-    func requestAlwaysPermission() {
+    /// Asks for "Always" (needed for drive detection while the app is closed).
+    /// Returns `false` when iOS won't show a prompt, so the caller should send the user to Settings.
+    @discardableResult
+    func requestAlwaysPermission() -> Bool {
+        guard canPromptForAlways else { return hasAlwaysAccess }
+        if authorization == .authorizedWhenInUse { defaults.set(true, forKey: Self.askedAlwaysKey) }
         manager.requestAlwaysAuthorization()
+        return true
+    }
+
+    /// Re-reads the permission (e.g. after returning from Settings) and resumes live updates.
+    func refreshAuthorization() {
+        authorization = manager.authorizationStatus
+        if isAuthorized { start() }
+        updateDriveWakeups()
+    }
+
+    /// Significant-change monitoring lets iOS wake or relaunch the app when the phone starts moving,
+    /// so drive detection can resume after the app was closed. Only possible with "Always".
+    func setDriveWakeups(_ enabled: Bool) {
+        wantsDriveWakeups = enabled
+        updateDriveWakeups()
+    }
+
+    private func updateDriveWakeups() {
+        guard CLLocationManager.significantLocationChangeMonitoringAvailable() else { return }
+        if wantsDriveWakeups && hasAlwaysAccess {
+            manager.startMonitoringSignificantLocationChanges()
+        } else {
+            manager.stopMonitoringSignificantLocationChanges()
+        }
     }
 
     func start() {
@@ -76,11 +123,14 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationSample
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorization = manager.authorizationStatus
         if isAuthorized { start() }
+        updateDriveWakeups()
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let latest = locations.last else { return }
         location = latest
+        // Quality only, never coordinates (Console → subsystem org.cac.crashsafe, debug level).
+        Self.log.debug("fix speed=\(latest.speed, privacy: .public) speedAcc=\(latest.speedAccuracy, privacy: .public) hAcc=\(latest.horizontalAccuracy, privacy: .public) course=\(latest.course, privacy: .public)")
         // Preserve measurement timestamps, including batched fixes. Never re-stamp old GPS as fresh.
         let now = Date()
         let uptime = ProcessInfo.processInfo.systemUptime

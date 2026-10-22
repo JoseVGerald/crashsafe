@@ -8,7 +8,9 @@ struct HomeView: View {
     @Environment(\.modelContext) private var context
     @State private var viewModel: HomeViewModel
     @State private var talk: PressToTalkViewModel
-    @State private var showingTripPicker = false
+    @State private var showingDrivePicker = false
+    /// Set when a drive starts from the picker; CarPlay mode opens once the picker has closed.
+    @State private var openCarPlayAfterPicker = false
 
     @Query private var trips: [Trip]
     @Query private var checkIns: [CheckInRecord]
@@ -46,10 +48,18 @@ struct HomeView: View {
                     heroCard.fadeUp(delay: 0.06)
 
                     if let sensorNotice {
-                        Label(sensorNotice, systemImage: "exclamationmark.triangle")
-                            .font(.subheadline)
-                            .foregroundStyle(Brand.amberInk)
-                            .card(padding: Space.md)
+                        Button {
+                            if env.sensors.health.state == .permissionDenied || env.location.isDenied {
+                                PermissionCenter.openSettings()
+                            }
+                        } label: {
+                            Label(sensorNotice, systemImage: "exclamationmark.triangle")
+                                .font(.subheadline)
+                                .foregroundStyle(Brand.amberInk)
+                                .multilineTextAlignment(.leading)
+                                .card(padding: Space.md)
+                        }
+                        .buttonStyle(.pressable)
                     }
 
                     locationCard.fadeUp(delay: 0.09)
@@ -60,7 +70,10 @@ struct HomeView: View {
                         isLoading: env.conditions.weather == nil && env.conditions.isLoading,
                         windMph: env.conditions.weather?.windMph,
                         demoTitle: env.driving.scenario.map { "Demo · \($0.title)" },
-                        showsAttribution: env.conditions.weather != nil && env.driving.scenario == nil
+                        showsAttribution: env.conditions.weather != nil && env.driving.scenario == nil,
+                        source: env.conditions.source,
+                        appleLegalURL: env.conditions.appleLegalURL,
+                        appleMarkURL: env.conditions.appleMarkURL
                     )
                     .fadeUp(delay: 0.12)
 
@@ -79,16 +92,30 @@ struct HomeView: View {
             .statusBarScrim()
             .toolbar(.hidden, for: .navigationBar)
             .refreshable { await env.conditions.refresh(for: env.location.location, force: true) }
-            .confirmationDialog("Start a trip", isPresented: $showingTripPicker, titleVisibility: .visible) {
-                ForEach(upcomingTrips.prefix(3)) { trip in
-                    Button(trip.routeLabel) { viewModel.start(trip, among: trips, profile: profile) }
+            .sheet(isPresented: $showingDrivePicker, onDismiss: {
+                guard openCarPlayAfterPicker else { return }
+                openCarPlayAfterPicker = false
+                env.router.showingCarPlay = true
+            }) {
+                if let profile {
+                    DriveVehiclePicker(
+                        profile: profile,
+                        mode: activeTrip == nil ? .startDrive : .changeCar,
+                        upcomingTrips: upcomingTrips,
+                        onConfirm: { trip in
+                            if activeTrip != nil {
+                                viewModel.changeVehicle(profile: profile)
+                            } else if let trip {
+                                viewModel.start(trip, among: trips, profile: profile)
+                            } else {
+                                viewModel.startQuickTrip(among: trips, profile: profile, in: context)
+                            }
+                            // Straight into the driving dashboard, on live data.
+                            openCarPlayAfterPicker = true
+                        },
+                        onPlanTrip: { env.router.selectedTab = .trips }
+                    )
                 }
-                Button("Quick drive (no route)") {
-                    viewModel.startQuickTrip(among: trips, profile: profile, in: context)
-                }
-                Button("Plan a new trip") { env.router.selectedTab = .trips }
-            } message: {
-                Text("Crash detection and coaching run while a trip is active.")
             }
             .onAppear {
                 viewModel.resumeIfNeeded(activeTrip: activeTrip, profile: profile)
@@ -142,8 +169,28 @@ struct HomeView: View {
             Text("Stay safe. We're looking out for you.")
                 .font(.body)
                 .foregroundStyle(Brand.textSecondary)
+            activityChip
+                .padding(.top, 4)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    /// What the motion model thinks you're doing right now (updates every 2.5 s while on screen).
+    @ViewBuilder
+    private var activityChip: some View {
+        let intelligence = env.intelligence
+        if let current = intelligence.current, let mode = current.transportClass {
+            StatusChip(text: "\(mode.title) · \(Int((current.probability * 100).rounded()))%",
+                       systemImage: mode.systemImage, tint: Brand.blueInk)
+                .contentTransition(.opacity)
+                .animation(.easeOut, value: mode)
+        } else if intelligence.current != nil {
+            StatusChip(text: "Figuring out what you're doing…", systemImage: "waveform.path.ecg", tint: Brand.textSecondary)
+        } else if env.sensors.health.state == .unavailable {
+            StatusChip(text: "Motion sensors unavailable here", systemImage: "sensor.fill", tint: Brand.textSecondary)
+        } else if intelligence.isSensingActivity {
+            StatusChip(text: "Sensing your motion…", systemImage: "waveform.path.ecg", tint: Brand.textSecondary)
+        }
     }
 
     private var isProtected: Bool { viewModel.isMonitoring || isDriving }
@@ -151,24 +198,24 @@ struct HomeView: View {
     /// Scenic hero with the crash-detection status underneath (mockup: "Crash detection active").
     private var heroCard: some View {
         Button {
-            if activeTrip == nil { showingTripPicker = true } else { env.router.selectedTab = .trips }
+            showingDrivePicker = true
         } label: {
             VStack(spacing: 0) {
-                ScenicRoadArt()
-                    .frame(height: 150)
+                BrandPhotoView(photo: .roadHero)
+                    .frame(height: 160)
                     .frame(maxWidth: .infinity)
                 HStack(spacing: 14) {
                     Circle()
-                        .fill(isProtected ? Brand.greenInk : Brand.textSecondary.opacity(0.6))
+                        .fill(statusTint)
                         .frame(width: 14, height: 14)
                         .overlay {
-                            if isProtected { PulseRings(color: Brand.greenInk, count: 2).frame(width: 14, height: 14) }
+                            if isProtected { PulseRings(color: statusTint, count: 2).frame(width: 14, height: 14) }
                         }
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(isProtected ? "Crash detection active" : "Crash detection ready")
+                        Text(heroTitle)
                             .font(.headline)
                             .foregroundStyle(Brand.textPrimary)
-                        Text(isProtected ? "Sensors enabled · Ready to assist" : "Turns on when you start a drive")
+                        Text(heroDetail)
                             .font(.footnote)
                             .foregroundStyle(Brand.textSecondary)
                     }
@@ -184,7 +231,27 @@ struct HomeView: View {
             .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
         }
         .buttonStyle(.pressable)
-        .accessibilityHint(activeTrip == nil ? "Start a trip" : "Opens your trips")
+        .accessibilityHint(activeTrip == nil ? "Pick your car and start a drive" : "Change the car you're driving")
+    }
+
+    /// Honest status: a running drive whose sensors aren't delivering is "limited", not "active".
+    private var heroTitle: String {
+        guard isProtected else { return "Crash detection ready" }
+        return sensorNotice == nil ? "Crash detection active" : "Crash detection limited"
+    }
+
+    private var statusTint: Color {
+        guard isProtected else { return Brand.textSecondary.opacity(0.6) }
+        return sensorNotice == nil ? Brand.greenInk : Brand.amberInk
+    }
+
+    private var heroDetail: String {
+        let car = profile?.primaryVehicle?.displayName
+        if isProtected {
+            let sensors = sensorNotice == nil ? "Sensors enabled" : "Sensors limited — see below"
+            return car.map { "\(sensors) · \($0)" } ?? sensors
+        }
+        return car.map { "Tap to drive the \($0)" } ?? "Tap to pick your car and start"
     }
 
     private var locationCard: some View {
@@ -280,7 +347,7 @@ struct HomeView: View {
                 .buttonStyle(.secondary)
             } else {
                 Button {
-                    showingTripPicker = true
+                    showingDrivePicker = true
                 } label: {
                     Label("Start a trip", systemImage: "car.fill")
                 }
@@ -312,11 +379,225 @@ struct HomeView: View {
 
     private func openLocation() {
         if env.location.isAuthorized {
-            MKMapItem.forCurrentLocation().openInMaps()
+            // Open Maps on the live GPS fix (falls back to Maps' own current-location item while one arrives).
+            if let here = env.location.location {
+                let item = MKMapItem(placemark: MKPlacemark(coordinate: here.coordinate))
+                item.name = env.location.placeName.map { "Your location · \($0)" } ?? "Your location"
+                item.openInMaps(launchOptions: [
+                    MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: here.coordinate),
+                    MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)),
+                ])
+            } else {
+                MKMapItem.forCurrentLocation().openInMaps()
+            }
         } else if env.location.isDenied, let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
         } else {
             env.location.requestPermission()
         }
+    }
+}
+
+/// "Which car are you driving?" — opened from "Crash detection ready". The car you pick tunes crash
+/// detection to its type and becomes your primary car, so the next drive starts with it selected.
+struct DriveVehiclePicker: View {
+    enum Mode {
+        /// Home, no drive yet: pick a car (and optionally a planned trip), then start.
+        case startDrive
+        /// A drive is running: swap the car.
+        case changeCar
+        /// Trip planner: pick the car for the trip being planned.
+        case chooseForTrip
+    }
+
+    @Bindable var profile: Profile
+    let mode: Mode
+    var upcomingTrips: [Trip] = []
+    var onConfirm: (Trip?) -> Void = { _ in }
+    var onPlanTrip: (() -> Void)?
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var selected: Vehicle?
+    @State private var trip: Trip?
+    @State private var addingVehicle = false
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Space.lg) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Which car are you driving?")
+                            .font(.title2.weight(.semibold))
+                            .foregroundStyle(Brand.textPrimary)
+                        Text("Crash detection is tuned to the size and type of the car you pick.")
+                            .font(.subheadline)
+                            .foregroundStyle(Brand.textSecondary)
+                    }
+
+                    VStack(spacing: 10) {
+                        ForEach(profile.sortedVehicles) { vehicle in
+                            vehicleOption(vehicle)
+                        }
+                        if profile.vehicles.isEmpty {
+                            Text("No cars yet. Add the one you're driving so crash detection fits it.")
+                                .font(.subheadline)
+                                .foregroundStyle(Brand.textSecondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .card(padding: Space.md)
+                        }
+                        Button {
+                            addingVehicle = true
+                        } label: {
+                            Label("Add a vehicle", systemImage: "plus.circle")
+                        }
+                        .buttonStyle(.pill(.secondary, height: 48))
+                    }
+
+                    if mode == .startDrive {
+                        tripChoices
+                    }
+
+                    NavigationLink {
+                        CrashDetectionInfoView()
+                    } label: {
+                        Label("How crash detection works", systemImage: "info.circle")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Brand.blueInk)
+                            .frame(minHeight: 44)
+                    }
+                }
+                .padding(Space.lg)
+            }
+            .background(BrandBackground())
+            .safeAreaInset(edge: .bottom) {
+                Button(action: confirm) {
+                    Label(confirmTitle, systemImage: mode == .startDrive ? "car.fill" : "checkmark")
+                }
+                .buttonStyle(.primary)
+                .disabled(selected == nil && !profile.vehicles.isEmpty)
+                .padding(.horizontal, Space.lg)
+                .padding(.vertical, Space.sm)
+                .background(Brand.background)
+            }
+            .navigationTitle("Crash detection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            }
+            .sheet(isPresented: $addingVehicle) { VehicleEditorView(profile: profile) }
+            .onAppear { selected = selected ?? profile.primaryVehicle ?? profile.sortedVehicles.first }
+            .onChange(of: profile.vehicles.count) { _, _ in
+                // Select a car the user just added.
+                if let newest = profile.vehicles.max(by: { $0.createdAt < $1.createdAt }) { selected = newest }
+            }
+        }
+        .presentationDetents([.large])
+        .presentationCornerRadius(28)
+    }
+
+    private var confirmTitle: String {
+        switch mode {
+        case .startDrive: "Start drive"
+        case .changeCar: "Drive this car"
+        case .chooseForTrip: "Use this car"
+        }
+    }
+
+    private func vehicleOption(_ vehicle: Vehicle) -> some View {
+        let isSelected = selected === vehicle
+        return Button {
+            selected = vehicle
+        } label: {
+            HStack(spacing: 14) {
+                VehicleThumbnail(width: 84, height: 58)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(vehicle.displayName)
+                        .font(.headline)
+                        .foregroundStyle(Brand.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                    HStack(spacing: 6) {
+                        if vehicle.isPrimary {
+                            Text("Primary").foregroundStyle(Brand.amberInk).fontWeight(.semibold)
+                            Text("·").foregroundStyle(Brand.textSecondary)
+                        }
+                        Text(vehicle.type.label).foregroundStyle(Brand.textSecondary)
+                    }
+                    .font(.subheadline)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundStyle(isSelected ? Brand.blueInk : Brand.textSecondary.opacity(0.6))
+            }
+            .card(padding: Space.sm + 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: Radius.card, style: .continuous)
+                    .strokeBorder(Brand.blueInk, lineWidth: isSelected ? 2 : 0)
+            )
+        }
+        .buttonStyle(.pressable)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .sensoryFeedback(.selection, trigger: isSelected)
+    }
+
+    private var tripChoices: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Where to?")
+                .font(.headline)
+                .foregroundStyle(Brand.textPrimary)
+            VStack(spacing: 0) {
+                tripRow(title: "Quick drive", subtitle: "No planned route", isSelected: trip == nil) { trip = nil }
+                ForEach(upcomingTrips.prefix(3)) { option in
+                    Divider().overlay(Brand.stroke)
+                    tripRow(title: option.destination, subtitle: "From \(option.origin)", isSelected: trip === option) {
+                        trip = option
+                    }
+                }
+                if let onPlanTrip {
+                    Divider().overlay(Brand.stroke)
+                    Button {
+                        dismiss()
+                        onPlanTrip()
+                    } label: {
+                        HStack {
+                            Label("Plan a new trip", systemImage: "map")
+                                .foregroundStyle(Brand.blueInk)
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(Brand.textSecondary)
+                        }
+                        .frame(minHeight: 48)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.pressable)
+                }
+            }
+            .card(padding: Space.md)
+        }
+    }
+
+    private func tripRow(title: String, subtitle: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.body.weight(.medium)).foregroundStyle(Brand.textPrimary).lineLimit(1)
+                    Text(subtitle).font(.footnote).foregroundStyle(Brand.textSecondary).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(isSelected ? Brand.blueInk : Brand.textSecondary.opacity(0.6))
+            }
+            .frame(minHeight: 52)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.pressable)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func confirm() {
+        if let selected { profile.makePrimary(selected) }
+        onConfirm(trip)
+        dismiss()
     }
 }

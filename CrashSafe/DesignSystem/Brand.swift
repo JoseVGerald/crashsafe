@@ -13,8 +13,8 @@ enum Brand {
     static let blue = Color(hex: 0x4C6C93)
     /// Muted slate-teal secondary accent (white text ≈ 5:1).
     static let teal = Color(hex: 0x3F6670)
-    /// Night canvas used by full-screen alerts.
-    static let navy = Color(hex: 0x161514)
+    /// Deepest canvas, for full-screen alerts and glyphs on light chips.
+    static let navy = Color(hex: 0x12110D)
 
     // MARK: Status fills (white text)
     static let red = Color(hex: 0xC8322B)
@@ -30,16 +30,17 @@ enum Brand {
     static let tealInk = Color(light: 0x2C5F69, dark: 0x8CC3CC)
 
     // MARK: Surfaces
-    static let background = Color(light: 0xF4F3F1, dark: 0x121212)
-    static let surface = Color(light: 0xFFFFFF, dark: 0x1D1D1D)
-    static let surfaceRaised = Color(light: 0xFFFFFF, dark: 0x262626)
-    static let fieldFill = Color(light: 0xE9E8E5, dark: 0x2A2A2A)
+    /// Warm near-black (#1A1812) — every screen background.
+    static let background = Color(light: 0xF4F3F1, dark: 0x1A1812)
+    static let surface = Color(light: 0xFFFFFF, dark: 0x25231C)
+    static let surfaceRaised = Color(light: 0xFFFFFF, dark: 0x2F2C24)
+    static let fieldFill = Color(light: 0xE9E8E5, dark: 0x332F27)
     static let stroke = Color(light: 0x000000, dark: 0xFFFFFF, lightAlpha: 0.07, darkAlpha: 0.07)
 
     // MARK: Text
-    static let textPrimary = Color(light: 0x1C1B1A, dark: 0xF2F2F2)
+    static let textPrimary = Color(light: 0x1C1B1A, dark: 0xF3F1EC)
     /// ≥ 4.5:1 on `surface` in both modes.
-    static let textSecondary = Color(light: 0x66635F, dark: 0xA3A3A3)
+    static let textSecondary = Color(light: 0x66635F, dark: 0xADA89C)
 
 }
 

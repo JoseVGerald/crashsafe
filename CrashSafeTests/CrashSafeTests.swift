@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import Testing
 @testable import CrashSafe
@@ -220,10 +221,11 @@ struct CarPlayTests {
 
         let template = CarPlaySceneDelegate().makeDashboard()
         let titles = template.items.map(\.title)
-        #expect(titles.prefix(3) == ["Speed", "Safe now", "Status"])
+        #expect(titles.prefix(4) == ["Speed", "Limit", "Safe now", "Status"])
         #expect(titles.contains("Conditions"))
         #expect(template.items.first?.detail?.hasSuffix("mph") == true)
-        #expect(template.items[1].detail == "50 mph") // 65 limit × heavy rain 0.75 → 50
+        #expect(template.items[1].detail?.hasPrefix("65 mph") == true) // the road's posted limit
+        #expect(template.items[2].detail == "50 mph") // 65 limit × heavy rain 0.75 → 50
         #expect(template.actions.map(\.title) == ["Mute Pulse", "I need help"])
     }
 }
@@ -297,5 +299,55 @@ struct RAGAssistantIntegrationTests {
         #expect(json["is_simulated"] as? Bool == true)
         #expect(json["decision"] as? String == "inconclusive")
         #expect(json["medical_notes"] == nil)
+    }
+}
+
+@MainActor
+struct RebrandBehaviorTests {
+    @Test func stayAlertCardExplainsWhy() {
+        let night = DrivingAdvice.make(weather: nil, isNight: true)
+        #expect(night.headline == "Dark roads — stay alert")
+        #expect(night.reason.contains("dark"))
+        let fog = WeatherSnapshot(temperatureF: 50, condition: .fog, windMph: 2, visibilityMiles: 0.5, isDay: true)
+        #expect(DrivingAdvice.make(weather: fog, isNight: false).reason.contains("Fog"))
+        let foggyNight = DrivingAdvice.make(weather: fog, isNight: true)
+        #expect(foggyNight.reason.hasSuffix("Darkness makes it harder still."))
+    }
+
+    @Test func tripPacksNeverInventALocation() async throws {
+        let mock = MockTripPackService()
+        await #expect(throws: TripPackError.self) {
+            _ = try await mock.downloadPack(for: TripPackRequest(origin: "Current location", destination: "Somewhere",
+                                                                 originCoordinate: nil, destinationCoordinate: nil))
+        }
+        // With only a destination, sample places sit around that destination, not a default city.
+        let portland = CLLocationCoordinate2D(latitude: 45.52, longitude: -122.68)
+        let pack = try await mock.downloadPack(for: TripPackRequest(origin: "Here", destination: "Portland",
+                                                                    originCoordinate: nil, destinationCoordinate: portland))
+        let here = CLLocation(latitude: portland.latitude, longitude: portland.longitude)
+        #expect(pack.allPlaces.allSatisfy { $0.distanceMiles(from: here) < 5 })
+    }
+
+    @Test func pickingACarTunesCrashDetection() {
+        let profile = Profile(ownerID: "u1")
+        let sedan = Vehicle(make: "Toyota", model: "Camry", year: 2019, type: .sedan)
+        let suv = Vehicle(make: "Honda", model: "CR-V", type: .suv)
+        sedan.isPrimary = true
+        profile.vehicles = [sedan, suv]
+        #expect(profile.carType == .sedan)
+        // What DriveVehiclePicker does on confirm.
+        profile.makePrimary(suv)
+        #expect(profile.carType == .suv && profile.primaryVehicle === suv && !sedan.isPrimary)
+
+        let detector = MockCrashDetector()
+        let home = HomeViewModel(detector: detector, driving: DrivingMonitor(sensors: SensorHub(motion: TestMotionSource(),
+                                                                                           location: TestLocationSource(),
+                                                                                           useWatchdog: false)),
+                                 conditions: ConditionsStore(service: MockWeatherService()), userID: "u1")
+        home.changeVehicle(profile: profile) // not monitoring: no-op
+        #expect(!detector.isMonitoring)
+        detector.startMonitoring(carType: .sedan)
+        home.changeVehicle(profile: profile)
+        #expect(detector.isMonitoring)
     }
 }

@@ -1,14 +1,13 @@
-import CoreMotion
+import SwiftData
 import SwiftUI
-import UserNotifications
 
-/// First-run setup after sign up: driver style, vehicles, health, insurance, family, permissions.
+/// First-run setup after sign up: driver style, drive monitoring, vehicles, health, insurance, family, permissions.
 struct OnboardingFlowView: View {
     let user: AuthUser
     @Bindable var profile: Profile
 
     enum Step: Int, CaseIterable {
-        case welcome, driver, vehicles, health, insurance, family, permissions, done
+        case welcome, driver, monitoring, vehicles, health, insurance, family, permissions, done
 
         var isOptional: Bool { [.vehicles, .health, .insurance, .family].contains(self) }
     }
@@ -120,11 +119,12 @@ struct OnboardingFlowView: View {
         switch step {
         case .welcome: WelcomeStep(name: user.firstName)
         case .driver: DriverStep(profile: profile)
+        case .monitoring: MonitoringStep(profile: profile)
         case .vehicles: VehiclesStep(profile: profile)
         case .health: HealthStep(profile: profile)
         case .insurance: InsuranceStep(profile: profile)
         case .family: FamilyStep(profile: profile)
-        case .permissions: PermissionsStep()
+        case .permissions: PermissionsStep(profile: profile)
         case .done: DoneStep(name: user.firstName, profile: profile)
         }
     }
@@ -163,27 +163,24 @@ private struct WelcomeStep: View {
     let name: String
 
     var body: some View {
-        VStack(spacing: Space.lg) {
-            Spacer()
-            ZStack {
-                PulseRings(color: Brand.blue)
-                    .frame(width: 130, height: 130)
-                Image(systemName: "person.crop.circle.badge.checkmark")
-                    .font(.system(size: 56, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 124, height: 124)
-                    .background(Brand.blue, in: Circle())
-            }
-            .frame(height: 220)
-            .fadeUp()
-            VStack(spacing: Space.sm) {
-                Text("Welcome, \(name)")
-                    .font(.largeTitle.bold())
+        VStack(alignment: .leading, spacing: Space.lg) {
+            PulseWordmark()
+                .padding(.top, Space.md)
+                .fadeUp()
+            BrandPhotoView(photo: .roadHero)
+                .frame(height: 230)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
+                .fadeUp(delay: 0.05)
+            VStack(alignment: .leading, spacing: Space.sm) {
+                Text(name.isEmpty ? "Welcome" : "Welcome, \(name)")
+                    .font(.largeTitle.weight(.semibold))
                     .foregroundStyle(Brand.textPrimary)
-                Text("Let's set up your safety profile. It takes about two minutes, and everything stays on this phone.")
+                Text("A few quick questions to set up your safety profile. It takes about two minutes, and everything stays on this phone.")
                     .font(.body)
-                    .multilineTextAlignment(.center)
                     .foregroundStyle(Brand.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .fadeUp(delay: 0.1)
             Spacer()
@@ -204,7 +201,7 @@ private struct DriverStep: View {
                         profile.coachingStyle = style
                     } label: {
                         HStack(spacing: 14) {
-                            IconBadge(systemName: style.systemImage, tint: style == .logical ? Brand.blue : Brand.red, size: 46)
+                            IconBadge(systemName: style.systemImage, tint: style == .logical ? Brand.blue : Brand.teal, size: 46)
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(style.title).font(.headline).foregroundStyle(Brand.textPrimary)
                                 Text(style.subtitle).font(.subheadline).foregroundStyle(Brand.textSecondary)
@@ -262,6 +259,55 @@ private struct DriverStep: View {
         case .experienced: "car.fill"
         case .veteran: "star.fill"
         }
+    }
+}
+
+/// New question: should Pulse start watching on its own whenever you drive?
+private struct MonitoringStep: View {
+    @Bindable var profile: Profile
+
+    var body: some View {
+        StepScaffold(title: "Watch every drive?",
+                     subtitle: "Pulse can turn on crash detection by itself when it notices you're driving — even if you forget to open the app.") {
+            VStack(spacing: 12) {
+                option(true, icon: "car.fill", title: "Yes, watch every drive",
+                       detail: "Starts automatically. Works best with “Always” location, which you can allow on a later step.")
+                option(false, icon: "hand.tap.fill", title: "Only when I start a drive",
+                       detail: "You'll pick your car and tap Start before each drive.")
+            }
+            Text("You can change this anytime in Profile → Driving.")
+                .font(.footnote)
+                .foregroundStyle(Brand.textSecondary)
+        }
+    }
+
+    private func option(_ value: Bool, icon: String, title: String, detail: String) -> some View {
+        let isSelected = profile.autoDetectDrives == value
+        return Button {
+            profile.autoDetectDrives = value
+        } label: {
+            HStack(spacing: 14) {
+                IconBadge(systemName: icon, tint: value ? Brand.blue : Brand.teal, size: 46)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title).font(.headline).foregroundStyle(Brand.textPrimary)
+                    Text(detail).font(.subheadline).foregroundStyle(Brand.textSecondary)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundStyle(isSelected ? Brand.blueInk : Brand.textSecondary.opacity(0.5))
+            }
+            .card()
+            .overlay(
+                RoundedRectangle(cornerRadius: Radius.card, style: .continuous)
+                    .strokeBorder(Brand.blueInk, lineWidth: isSelected ? 2 : 0)
+            )
+        }
+        .buttonStyle(.pressable)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .sensoryFeedback(.selection, trigger: profile.autoDetectDrives)
     }
 }
 
@@ -383,6 +429,7 @@ private struct InsuranceStep: View {
 private struct FamilyStep: View {
     @Bindable var profile: Profile
     @State private var adding = false
+    @State private var picked: ContactPicker.Picked?
     @Environment(\.modelContext) private var context
 
     var body: some View {
@@ -406,65 +453,77 @@ private struct FamilyStep: View {
                     .transition(.scale(scale: 0.95).combined(with: .opacity))
                 }
                 Button {
-                    adding = true
+                    // Opens Apple Contacts; the pick lands in the editor so a relationship can be added.
+                    Task {
+                        if let contact = await ContactPicker.pickPhone() { picked = contact }
+                    }
                 } label: {
-                    Label(profile.familyContacts.isEmpty ? "Add a contact" : "Add another contact", systemImage: "person.badge.plus")
+                    Label(profile.familyContacts.isEmpty ? "Add a contact" : "Add another contact", systemImage: "person.crop.circle.badge.plus")
                 }
-                .buttonStyle(.secondary)
+                .buttonStyle(.primary)
+                Button("Type it in instead") { adding = true }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Brand.blueInk)
+                    .frame(minHeight: 44)
             }
             .animation(.spring(response: 0.4), value: profile.familyContacts.count)
         }
         .sheet(isPresented: $adding) {
             ContactEditorView(profile: profile)
         }
+        .sheet(item: $picked) { contact in
+            ContactEditorView(profile: profile, prefill: contact)
+        }
     }
 }
 
 private struct PermissionsStep: View {
+    @Bindable var profile: Profile
     @Environment(AppEnvironment.self) private var env
-    @State private var motionGranted = CMMotionActivityManager.authorizationStatus() == .authorized
-    @State private var notificationsGranted = false
 
     var body: some View {
         StepScaffold(title: "Allow a few things",
-                     subtitle: "These let CrashSafe notice a crash and send help to the right place.") {
+                     subtitle: "iOS asks you directly. These let CrashSafe notice a crash and send help to the right place.") {
             VStack(spacing: 12) {
                 PermissionRow(icon: "location.fill", tint: Brand.blue, title: "Location",
                               detail: "Find help near you and share where you are.",
-                              granted: env.location.isAuthorized) {
-                    env.location.requestPermission()
+                              granted: env.location.isAuthorized,
+                              actionTitle: env.location.isDenied ? "Settings" : "Allow") {
+                    if env.location.isDenied { PermissionCenter.openSettings() } else { env.location.requestPermission() }
                 }
-                PermissionRow(icon: "figure.walk.motion", tint: Brand.green, title: "Motion",
+                if profile.autoDetectDrives {
+                    PermissionRow(icon: "location.circle.fill", tint: Brand.teal, title: "Always allow location",
+                                  detail: "So Pulse can notice drives that start while CrashSafe is closed. iOS asks for this separately.",
+                                  granted: env.location.hasAlwaysAccess,
+                                  actionTitle: env.location.canPromptForAlways ? "Allow" : "Settings") {
+                        if !env.location.requestAlwaysPermission() && !env.location.hasAlwaysAccess {
+                            PermissionCenter.openSettings()
+                        }
+                    }
+                    .transition(.opacity)
+                }
+                PermissionRow(icon: "figure.walk.motion", tint: Brand.green, title: "Motion & Fitness",
                               detail: "Detect hard stops and possible crashes.",
-                              granted: motionGranted) {
-                    requestMotion()
+                              granted: env.permissions.motionGranted,
+                              actionTitle: env.permissions.motionDenied ? "Settings" : "Allow") {
+                    Task { await env.permissions.requestMotion() }
                 }
                 PermissionRow(icon: "bell.badge.fill", tint: Brand.red, title: "Notifications",
                               detail: "Check on you if a crash is detected.",
-                              granted: notificationsGranted) {
-                    Task {
-                        notificationsGranted = (try? await UNUserNotificationCenter.current()
-                            .requestAuthorization(options: [.alert, .sound, .criticalAlert])) ?? false
-                    }
+                              granted: env.permissions.notificationsGranted,
+                              actionTitle: env.permissions.notificationsDenied ? "Settings" : "Allow") {
+                    Task { await env.permissions.requestNotifications() }
                 }
+                Text("Changed your mind? You can update these anytime in Profile → Driving or in Settings.")
+                    .font(.footnote)
+                    .foregroundStyle(Brand.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 SafetyNotice()
                     .padding(.top, Space.sm)
             }
+            .animation(.spring(response: 0.35), value: env.location.isAuthorized)
         }
-        .task {
-            let settings = await UNUserNotificationCenter.current().notificationSettings()
-            notificationsGranted = settings.authorizationStatus == .authorized
-        }
-    }
-
-    private func requestMotion() {
-        // Querying activity triggers the Motion & Fitness prompt.
-        let manager = CMMotionActivityManager()
-        manager.queryActivityStarting(from: .now.addingTimeInterval(-60), to: .now, to: .main) { _, _ in
-            Task { @MainActor in
-                motionGranted = CMMotionActivityManager.authorizationStatus() == .authorized
-            }
-        }
+        .task { await env.permissions.refresh() }
     }
 }
 
@@ -474,6 +533,7 @@ private struct PermissionRow: View {
     let title: String
     let detail: String
     let granted: Bool
+    var actionTitle = "Allow"
     let request: () -> Void
 
     var body: some View {
@@ -482,6 +542,7 @@ private struct PermissionRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.headline).foregroundStyle(Brand.textPrimary)
                 Text(detail).font(.subheadline).foregroundStyle(Brand.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 8)
             if granted {
@@ -491,7 +552,7 @@ private struct PermissionRow: View {
                     .transition(.scale.combined(with: .opacity))
                     .accessibilityLabel("Allowed")
             } else {
-                Button("Allow", action: request)
+                Button(actionTitle, action: request)
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 16)
                     .frame(minHeight: 36)
@@ -533,13 +594,9 @@ private struct DoneStep: View {
                     .foregroundStyle(Brand.textSecondary)
             }
             .fadeUp(delay: 0.15)
-            HStack(spacing: 8) {
-                StatusChip(text: "\(profile.vehicles.count) vehicle\(profile.vehicles.count == 1 ? "" : "s")", systemImage: "car.fill")
-                StatusChip(text: "\(profile.familyContacts.count) contact\(profile.familyContacts.count == 1 ? "" : "s")",
-                           systemImage: "person.2.fill", tint: Brand.greenInk)
-                StatusChip(text: profile.coachingStyle == .logical ? "Facts" : "Heart",
-                           systemImage: profile.coachingStyle.systemImage,
-                           tint: profile.coachingStyle == .logical ? Brand.blueInk : Brand.redInk)
+            ViewThatFits {
+                HStack(spacing: 8) { summaryChips }
+                VStack(spacing: 8) { summaryChips }
             }
             .fadeUp(delay: 0.25)
             Spacer()
@@ -549,6 +606,18 @@ private struct DoneStep: View {
         .onAppear {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.55).delay(0.1)) { pop = true }
         }
+    }
+
+    @ViewBuilder
+    private var summaryChips: some View {
+        StatusChip(text: "\(profile.vehicles.count) vehicle\(profile.vehicles.count == 1 ? "" : "s")", systemImage: "car.fill")
+        StatusChip(text: "\(profile.familyContacts.count) contact\(profile.familyContacts.count == 1 ? "" : "s")",
+                   systemImage: "person.2.fill", tint: Brand.greenInk)
+        StatusChip(text: profile.autoDetectDrives ? "Every drive" : "Manual start",
+                   systemImage: profile.autoDetectDrives ? "steeringwheel" : "hand.tap.fill", tint: Brand.amberInk)
+        StatusChip(text: profile.coachingStyle == .logical ? "Facts" : "Heart",
+                   systemImage: profile.coachingStyle.systemImage,
+                   tint: profile.coachingStyle == .logical ? Brand.blueInk : Brand.redInk)
     }
 }
 

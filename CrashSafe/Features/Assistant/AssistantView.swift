@@ -62,7 +62,8 @@ struct AssistantView: View {
     private func makeContext() -> AssistantContext {
         var context = AssistantContext.make(user: user, profile: profiles.first, activeTrip: trips.first,
                               isOnline: env.connectivity.isOnline, scenario: viewModel.scenario,
-                              incident: viewModel.isAfterCrash ? env.router.assistantIncident : nil)
+                              incident: viewModel.isAfterCrash ? env.router.assistantIncident : nil,
+                              activity: env.intelligence.assistantActivity)
         context.jurisdiction = jurisdiction
         context.assistanceStage = viewModel.isAfterCrash ? assistanceStage : "followup"
         return context
@@ -96,7 +97,7 @@ struct AssistantView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            PulseAvatar(size: 44, active: viewModel.isThinking || viewModel.isListening)
+            PulseAvatar(size: 44, active: viewModel.isThinking || viewModel.isListening, listening: viewModel.isListening)
             VStack(alignment: .leading, spacing: 1) {
                 Text("Pulse").font(.title3.bold()).foregroundStyle(Brand.textPrimary)
                 Text(viewModel.isThinking ? "Thinking…" : (env.connectivity.isOnline ? "Online assistant" : "Offline · using your trip pack"))
@@ -191,12 +192,8 @@ struct AssistantView: View {
             } label: {
                 ZStack {
                     PulseRings(color: Brand.blue, count: 2, active: viewModel.isListening)
-                    Circle().fill(viewModel.isListening ? AnyShapeStyle(Brand.red) : AnyShapeStyle(Brand.blue))
-                    if viewModel.isListening {
-                        WaveformBars().foregroundStyle(.white).frame(width: 24, height: 20)
-                    } else {
-                        Image(systemName: "mic.fill").font(.title3.weight(.semibold)).foregroundStyle(.white)
-                    }
+                    PulseVoiceFace(mood: viewModel.isListening ? .listening : (viewModel.isThinking ? .thinking : .idle),
+                                   diameter: 52)
                 }
                 .frame(width: 52, height: 52)
             }
@@ -236,18 +233,19 @@ struct AssistantView: View {
     }
 }
 
-/// Pulse's avatar: gradient orb with a sparkle, softly pulsing while it works.
+/// Pulse's avatar: the thinking orb on a blue disc. `active` switches it to the working
+/// animation with rings; `animated: false` holds a still frame (for avatars repeated down a chat).
 struct PulseAvatar: View {
     var size: CGFloat = 32
     var active = false
+    var listening = false
+    var animated = true
 
     var body: some View {
         ZStack {
             PulseRings(color: Brand.blue, count: 2, active: active)
-            Circle().fill(Brand.blue)
-            Image(systemName: "sparkles")
-                .font(.system(size: size * 0.45, weight: .semibold))
-                .foregroundStyle(.white)
+            PulseOrbDisc(mood: listening ? .listening : (active ? .thinking : .idle), diameter: size,
+                         animated: animated || active)
         }
         .frame(width: size, height: size)
         .accessibilityHidden(true)
@@ -262,7 +260,7 @@ struct MessageBubble: View {
             if message.role == .user {
                 Spacer(minLength: 48)
             } else {
-                PulseAvatar(size: 28)
+                PulseAvatar(size: 28, animated: false)
             }
             Text(message.text)
                 .font(.body)

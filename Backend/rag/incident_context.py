@@ -2,8 +2,9 @@
 from __future__ import annotations
 import datetime as dt
 import math
+from motion_intel import normalize_impact, normalize_activity, describe_impact
 
-EVIDENCE={"sustainedImpact","strongImpact","rapidRotation","speedLoss","settledAfterImpact","possiblePhoneDrop","continuedTravel"}
+EVIDENCE={"sustainedImpact","strongImpact","rapidRotation","speedLoss","settledAfterImpact","possiblePhoneDrop","continuedTravel","largeImpactDeltaV"}
 ISSUES={"insufficientBaseline","insufficientPostImpact","motionGap","missingReliableGPS"}
 MODES={"car","motorcycle","bicycle","still","walk","run","bus","train","subway","unknown"}
 BEHAVIOR={"harsh_brake","harsh_accel","sharp_corner","instability","speeding"}
@@ -16,7 +17,7 @@ def number(value, name, lo=0, hi=100000):
 def normalize_incident(raw, now=None):
     if raw is None: return None
     if not isinstance(raw,dict): raise ValueError("incident must be an object")
-    allowed={"schema_version","captured_at","is_simulated","decision","evidence","issues","peak_g","speed_drop_mps","transport","behavior_events"}
+    allowed={"schema_version","captured_at","is_simulated","decision","evidence","issues","peak_g","speed_drop_mps","transport","behavior_events","impact"}
     if set(raw)-allowed: raise ValueError("Unsupported incident fields; do not send private profile details")
     if type(raw.get("schema_version")) is not int or raw.get("schema_version")!=1 or type(raw.get("is_simulated")) is not bool:
         raise ValueError("Invalid incident version or simulation flag")
@@ -66,12 +67,15 @@ def normalize_incident(raw, now=None):
         clean.append({"kind":event["kind"],"start":start,"end":end,"severity":severity,
             "authority":"experimental_heuristic","legal_speed_limit_known":False})
     result["behavior_events"]=clean
+    # Impact metrics from the app's rolling sensor history (motion_intel.impact_report on device).
+    result["impact"]=normalize_impact(raw.get("impact"))
     result["limitations"]=["Does not establish injury, consciousness, fault, legal speeding or insurance coverage.",
         "A rejected detector event does not establish that nobody was injured."]
     return result
 
-def assist(engine,query,jurisdiction="UNKNOWN",stage="active",persona="auto",flags=None,incident=None):
+def assist(engine,query,jurisdiction="UNKNOWN",stage="active",persona="auto",flags=None,incident=None,activity=None):
     observation=normalize_incident(incident)
+    current=normalize_activity(activity)
     # Sensor evidence never sets injury/fire/nonresponse flags, never selects jurisdiction,
     # and never cancels a user-reported emergency.
     if not isinstance(query,str) or not query.strip() or len(query)>4000:
@@ -82,6 +86,7 @@ def assist(engine,query,jurisdiction="UNKNOWN",stage="active",persona="auto",fla
     urgent=engine.emergency(query,"active",flags or {})
     result=engine.answer(query,jurisdiction,"active" if urgent else stage,persona,flags)
     result["incident_context"]=observation
+    result["activity_context"]=current
     if observation:
         if observation["is_simulated"]:
             note="Demo incident data: this is a simulated event."
@@ -93,6 +98,8 @@ def assist(engine,query,jurisdiction="UNKNOWN",stage="active",persona="auto",fla
             note="The detector did not confirm its candidate. That does not establish that you are uninjured."
         else:
             note="The experimental sensor assessment was inconclusive."
+        if observation.get("impact") and not observation["stale"]:
+            note+=" "+describe_impact(observation["impact"])
         result["incident_note"]=note
         # Never put a sensor explanation before an emergency instruction.
         if result["status"] not in ("emergency","review_required"):

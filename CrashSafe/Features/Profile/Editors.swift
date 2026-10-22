@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 // MARK: - Vehicle editor
@@ -173,16 +174,27 @@ struct ChoiceTile: View {
 
 struct ContactEditorView: View {
     let profile: Profile
-    @State private var viewModel = AddContactViewModel()
+    /// A contact picked from Apple Contacts, ready for a relationship.
+    var prefill: ContactPicker.Picked?
+    @State var viewModel = AddContactViewModel()
     @Environment(\.dismiss) private var dismiss
-    @FocusState private var focus: Field?
+    @FocusState var focus: Field?
 
-    private enum Field { case name, phone, relationship }
+    enum Field { case name, phone, relationship }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
+                    Button {
+                        Task {
+                            guard let picked = await ContactPicker.pickPhone() else { return }
+                            apply(picked)
+                        }
+                    } label: {
+                        Label("Choose from Contacts", systemImage: "person.crop.circle.badge.plus")
+                    }
+                    .buttonStyle(.pill(.secondary, height: 50))
                     FormField(title: "Name", text: $viewModel.name, error: viewModel.nameError, placeholder: "e.g. Maria Lopez", systemImage: "person.fill",
                               contentType: .name, autocapitalization: .words, focus: $focus, field: .name)
                     FormField(title: "Phone", text: $viewModel.phone, error: viewModel.phoneError, placeholder: "(206) 555-0100", systemImage: "phone.fill",
@@ -204,14 +216,38 @@ struct ContactEditorView: View {
                     .fontWeight(.semibold)
                 }
             }
-            .onAppear { focus = .name }
+            .onAppear {
+                if let prefill { apply(prefill) } else { focus = .name }
+            }
         }
         .presentationDetents([.medium, .large])
         .presentationCornerRadius(28)
     }
 }
 
+extension ContactEditorView {
+    func apply(_ picked: ContactPicker.Picked) {
+        viewModel.name = picked.name
+        viewModel.phone = picked.phone
+        if !picked.relationship.isEmpty { viewModel.relationship = picked.relationship }
+        focus = .relationship
+    }
+}
+
 // MARK: - Rows
+
+/// Photo thumbnail used wherever a vehicle is listed.
+struct VehicleThumbnail: View {
+    var width: CGFloat = 100
+    var height: CGFloat = 70
+
+    var body: some View {
+        BrandPhotoView(photo: .carThumb)
+            .frame(width: width, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.small, style: .continuous))
+            .accessibilityHidden(true)
+    }
+}
 
 struct VehicleRow: View {
     let vehicle: Vehicle
@@ -220,7 +256,7 @@ struct VehicleRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            IconBadge(systemName: vehicle.type.systemImage, tint: Brand.blue, size: 44)
+            VehicleThumbnail(width: 72, height: 50)
             VStack(alignment: .leading, spacing: 4) {
                 Text(vehicle.displayName)
                     .font(.headline)

@@ -26,78 +26,83 @@ struct AuthLandingView: View {
     @Environment(AppEnvironment.self) private var env
     @State private var appleViewModel: SignInViewModel?
 
-    private let features: [(icon: String, tint: Color, title: String, detail: String)] = [
-        ("waveform.path.ecg", Brand.red, "Checks on you after a crash", "If you don't answer, your family is alerted."),
-        ("sparkles", Brand.teal, "Pulse talks you through it", "Calm, step-by-step help — by voice."),
-        ("antenna.radiowaves.left.and.right.slash", Brand.green, "Works with no signal", "Tow, hospitals and guides saved for your route."),
+    private let features: [(icon: String, title: String, detail: String)] = [
+        ("waveform.path.ecg", "Checks on you after a crash", "If you don't answer, your family is alerted."),
+        ("mic.fill", "Pulse talks you through it", "Calm, step-by-step help — by voice."),
+        ("antenna.radiowaves.left.and.right.slash", "Works with no signal", "Tow, hospitals and guides saved for your route."),
     ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer(minLength: Space.lg)
+        ScrollView {
+            VStack(alignment: .leading, spacing: Space.md + 4) {
+                PulseWordmark()
+                    .padding(.top, Space.xs)
+                    .fadeUp()
 
-            ZStack {
-                PulseRings(color: Brand.blue, count: 3)
-                    .frame(width: 120, height: 120)
-                Image(systemName: "checkmark.shield.fill")
-                    .font(.system(size: 54, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 112, height: 112)
-                    .background(Brand.blue, in: Circle())
-            }
-            .frame(height: 200)
-            .fadeUp()
+                BrandPhotoView(photo: .roadHero)
+                    .frame(height: 176)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
+                    .fadeUp(delay: 0.04)
 
-            VStack(spacing: Space.sm) {
-                Text("CrashSafe")
-                    .font(.largeTitle.bold())
-                    .foregroundStyle(Brand.textPrimary)
-                Text("Help for what happens next.")
-                    .font(.title3)
-                    .foregroundStyle(Brand.textSecondary)
-            }
-            .fadeUp(delay: 0.08)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Stay safe on every drive.")
+                        .font(.largeTitle.weight(.semibold))
+                        .foregroundStyle(Brand.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("CrashSafe watches for crashes, checks on you, and gets help to the right place.")
+                        .font(.body)
+                        .foregroundStyle(Brand.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .fadeUp(delay: 0.08)
 
-            VStack(alignment: .leading, spacing: 18) {
-                ForEach(Array(features.enumerated()), id: \.offset) { index, feature in
-                    HStack(spacing: 14) {
-                        IconBadge(systemName: feature.icon, tint: feature.tint, size: 42)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(feature.title).font(.headline).foregroundStyle(Brand.textPrimary)
-                            Text(feature.detail).font(.subheadline).foregroundStyle(Brand.textSecondary)
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(Array(features.enumerated()), id: \.offset) { index, feature in
+                        HStack(spacing: 14) {
+                            Image(systemName: feature.icon)
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(Brand.blueInk)
+                                .frame(width: 40, height: 40)
+                                .background(Brand.surface, in: Circle())
+                                .overlay(Circle().strokeBorder(Brand.stroke))
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(feature.title).font(.headline).foregroundStyle(Brand.textPrimary)
+                                Text(feature.detail).font(.subheadline).foregroundStyle(Brand.textSecondary)
+                            }
                         }
+                        .accessibilityElement(children: .combine)
+                        .fadeUp(delay: 0.12 + Double(index) * 0.05)
                     }
-                    .fadeUp(delay: 0.16 + Double(index) * 0.07)
                 }
+
+                VStack(spacing: 12) {
+                    NavigationLink(value: AuthRoute.signUp) {
+                        Text("Create account")
+                    }
+                    .buttonStyle(.primary)
+
+                    SystemAppleButton {
+                        let viewModel = SignInViewModel(session: env.session)
+                        appleViewModel = viewModel
+                        Task { await viewModel.signInWithApple() }
+                    }
+                    .disabled(appleViewModel?.isLoading == true)
+
+                    NavigationLink(value: AuthRoute.signIn) {
+                        Text("I already have an account")
+                    }
+                    .buttonStyle(.pill(.ghost, height: 48))
+                }
+                .fadeUp(delay: 0.3)
             }
-            .padding(.top, Space.xl)
-            .padding(.horizontal, Space.sm)
-
-            Spacer(minLength: Space.lg)
-
-            VStack(spacing: 12) {
-                NavigationLink(value: AuthRoute.signUp) {
-                    Text("Create account")
-                }
-                .buttonStyle(.primary)
-
-                SystemAppleButton {
-                    let viewModel = SignInViewModel(session: env.session)
-                    appleViewModel = viewModel
-                    Task { await viewModel.signInWithApple() }
-                }
-                .disabled(appleViewModel?.isLoading == true)
-
-                NavigationLink(value: AuthRoute.signIn) {
-                    Text("I already have an account")
-                }
-                .buttonStyle(.pill(.ghost, height: 48))
-            }
-            .fadeUp(delay: 0.4)
+            .padding(.horizontal, Space.lg)
+            .padding(.bottom, Space.md)
+            .frame(maxWidth: 680)
+            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, Space.lg)
-        .padding(.bottom, Space.sm)
-        .frame(maxWidth: 680)
         .background(BrandBackground())
         .toolbar(.hidden, for: .navigationBar)
     }

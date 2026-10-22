@@ -3,6 +3,7 @@ import SwiftUI
 /// Routes between splash, the signed-out flow and the signed-in app.
 struct RootView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
@@ -23,22 +24,28 @@ struct RootView: View {
         .preferredColorScheme(.dark) // the Pulse brand is a dark, night-driving theme
         .animation(.easeInOut(duration: 0.35), value: env.session.phase)
         .task { await env.session.restore() }
-        .task { await listenForCrashes() }
+        .task { await env.permissions.refresh() }
+        .onChange(of: env.session.user?.id) { _, id in
+            env.intelligence.setActivitySensing(id != nil && scenePhase == .active)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // Coming back from Settings (or the background): pick up permission changes right away.
+            // On screen: keep sensors running so Home can show what you're doing (walking, driving…).
+            env.intelligence.setActivitySensing(phase == .active && env.session.user != nil)
+            guard phase == .active else { return }
+            env.location.refreshAuthorization()
+            env.sensors.refreshAfterForeground()
+            Task { await env.permissions.refresh() }
+        }
+        .onChange(of: env.router.activeCrash == nil) { _, closed in
+            if closed { env.crashCenter.dismiss() }
+        }
         .onChange(of: env.session.user?.id) { previous, current in
             if previous != nil, previous != current {
                 env.crashDetector.stopMonitoring()
                 env.driving.stop()
-                env.autoDetector.stop()
+                env.driveWatcher.disarm()
             }
-        }
-    }
-
-    /// One listener for the app's lifetime (an AsyncStream ends when its consumer is cancelled,
-    /// so this must not live in a view that comes and goes, like the tab view).
-    private func listenForCrashes() async {
-        for await event in env.crashDetector.events {
-            guard env.session.user != nil, env.router.activeCrash == nil else { continue }
-            env.router.activeCrash = event
         }
     }
 }

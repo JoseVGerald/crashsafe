@@ -171,8 +171,10 @@ struct MapPinPickerView: View {
     init(start: CLLocationCoordinate2D?, onPick: @escaping (PlaceSelection) -> Void) {
         self.start = start
         self.onPick = onPick
-        let center = start ?? CLLocationCoordinate2D(latitude: 47.6101, longitude: -122.2015)
-        _position = State(initialValue: .region(MKCoordinateRegion(center: center, latitudinalMeters: 30_000, longitudinalMeters: 30_000)))
+        // Open on the given point, or on the device's live location — no hard-coded city.
+        _position = State(initialValue: start.map {
+            .region(MKCoordinateRegion(center: $0, latitudinalMeters: 30_000, longitudinalMeters: 30_000))
+        } ?? .userLocation(fallback: .automatic))
     }
 
     var body: some View {

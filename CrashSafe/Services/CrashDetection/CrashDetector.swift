@@ -11,6 +11,8 @@ struct CrashEvent: Identifiable, Equatable, Sendable {
     let speedDropMPH: Double?
     let isSimulated: Bool
     let assessment: CrashAssessment?
+    /// How hard the hit was and how fast the car stopped (from the rolling sensor history).
+    var impact: ImpactReport?
 
     init(date: Date, peakG: Double, speedDropMPH: Double?, isSimulated: Bool, assessment: CrashAssessment? = nil) {
         self.date = date
@@ -51,10 +53,14 @@ final class CoreMotionCrashDetector: CrashDetector {
     @ObservationIgnored private var observer: UUID?
     @ObservationIgnored private var timer: Task<Void, Never>?
     @ObservationIgnored private var pipeline: CrashPipeline
+    /// True while readings must not reach crash detection (a Sensor Lab replay, unless the tester opts in).
+    @ObservationIgnored private let ignoreReadings: @MainActor () -> Bool
 
     init(sensors: SensorHub, configuration: CrashEvaluationConfiguration = .init(),
-         automaticCandidates: Bool = true, useWatchdog: Bool = true) {
+         automaticCandidates: Bool = true, useWatchdog: Bool = true,
+         ignoreReadings: @escaping @MainActor () -> Bool = { false }) {
         self.sensors = sensors
+        self.ignoreReadings = ignoreReadings
         self.configuration = configuration
         self.automaticCandidates = automaticCandidates
         self.useWatchdog = useWatchdog
@@ -69,7 +75,7 @@ final class CoreMotionCrashDetector: CrashDetector {
         lastAssessment = nil
         isMonitoring = true
         observer = sensors.addObserver { [weak self] reading in
-            guard let self, self.isMonitoring else { return }
+            guard let self, self.isMonitoring, !self.ignoreReadings() else { return }
             self.publish(self.pipeline.ingest(reading))
         }
         sensors.acquire(owner: owner, background: true)

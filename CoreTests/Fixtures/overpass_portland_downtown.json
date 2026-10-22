@@ -1,0 +1,3390 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-22T05:43:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "way",
+  "id": 5515496,
+  "bounds": {
+    "minlat": 45.5146518,
+    "minlon": -122.6749840,
+    "maxlat": 45.5148253,
+    "maxlon": -122.6746719
+  },
+  "geometry": [
+    { "lat": 45.5146518, "lon": -122.6746719 },
+    { "lat": 45.5147788, "lon": -122.6748254 },
+    { "lat": 45.5147956, "lon": -122.6748560 },
+    { "lat": 45.5148104, "lon": -122.6748948 },
+    { "lat": 45.5148211, "lon": -122.6749363 },
+    { "lat": 45.5148253, "lon": -122.6749840 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "foot": "no",
+    "highway": "primary_link",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "oneway": "yes",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5522395,
+  "bounds": {
+    "minlat": 45.5156665,
+    "minlon": -122.6777091,
+    "maxlat": 45.5157858,
+    "maxlon": -122.6773153
+  },
+  "geometry": [
+    { "lat": 45.5156760, "lon": -122.6773153 },
+    { "lat": 45.5156713, "lon": -122.6774075 },
+    { "lat": 45.5156665, "lon": -122.6774829 },
+    { "lat": 45.5156718, "lon": -122.6775234 },
+    { "lat": 45.5156875, "lon": -122.6775639 },
+    { "lat": 45.5157140, "lon": -122.6776040 },
+    { "lat": 45.5157858, "lon": -122.6777091 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "tertiary",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "note": "road closure for elk fountain restoration and other related works. no exact completion date other than \"winter 2025\". https://www.portland.gov/water/improvements/construction/thompson-elk-fountain-restoration-project",
+    "oneway": "yes",
+    "opening_date": "2025-11-07",
+    "sidewalk": "left",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5543013,
+  "bounds": {
+    "minlat": 45.5119959,
+    "minlon": -122.6778002,
+    "maxlat": 45.5126653,
+    "maxlon": -122.6774376
+  },
+  "geometry": [
+    { "lat": 45.5119959, "lon": -122.6778002 },
+    { "lat": 45.5120541, "lon": -122.6777687 },
+    { "lat": 45.5125744, "lon": -122.6774868 },
+    { "lat": 45.5125936, "lon": -122.6774764 },
+    { "lat": 45.5126653, "lon": -122.6774376 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 2nd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 30259953,
+  "bounds": {
+    "minlat": 45.5134826,
+    "minlon": -122.6757851,
+    "maxlat": 45.5137408,
+    "maxlon": -122.6748143
+  },
+  "geometry": [
+    { "lat": 45.5134826, "lon": -122.6748143 },
+    { "lat": 45.5135092, "lon": -122.6749144 },
+    { "lat": 45.5137164, "lon": -122.6756924 },
+    { "lat": 45.5137408, "lon": -122.6757851 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 30259963,
+  "bounds": {
+    "minlat": 45.5143463,
+    "minlon": -122.6746719,
+    "maxlat": 45.5146518,
+    "maxlon": -122.6744978
+  },
+  "geometry": [
+    { "lat": 45.5143463, "lon": -122.6744978 },
+    { "lat": 45.5144176, "lon": -122.6745480 },
+    { "lat": 45.5146518, "lon": -122.6746719 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "primary",
+    "lanes": "2",
+    "maxspeed": "30 mph",
+    "name": "Hawthorne Bridge",
+    "name:etymology": "Hawthorne Boulevard",
+    "name:etymology:wikidata": "Q96418541",
+    "name:etymology:wikipedia": "en:Hawthorne Boulevard (Portland, Oregon)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 30259980,
+  "bounds": {
+    "minlat": 45.5141812,
+    "minlon": -122.6751869,
+    "maxlat": 45.5143502,
+    "maxlon": -122.6745562
+  },
+  "geometry": [
+    { "lat": 45.5143502, "lon": -122.6751869 },
+    { "lat": 45.5143366, "lon": -122.6750700 },
+    { "lat": 45.5141812, "lon": -122.6745562 }
+  ],
+  "tags": {
+    "bicycle": "use_sidepath",
+    "highway": "primary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "maxweight": "25 st",
+    "maxweight:hgv:conditional": "40 st @ (trailer)",
+    "maxweight:hgv_articulated": "40 st",
+    "name": "Hawthorne Bridge",
+    "name:etymology": "Hawthorne Boulevard",
+    "name:etymology:wikidata": "Q96418541",
+    "name:etymology:wikipedia": "en:Hawthorne Boulevard (Portland, Oregon)",
+    "oneway": "yes",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 30290602,
+  "bounds": {
+    "minlat": 45.5150366,
+    "minlon": -122.6760027,
+    "maxlat": 45.5153143,
+    "maxlon": -122.6750902
+  },
+  "geometry": [
+    { "lat": 45.5150366, "lon": -122.6750902 },
+    { "lat": 45.5150789, "lon": -122.6751889 },
+    { "lat": 45.5151273, "lon": -122.6753401 },
+    { "lat": 45.5152809, "lon": -122.6759119 },
+    { "lat": 45.5153143, "lon": -122.6760027 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "lanes:bus": "1",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 30291317,
+  "bounds": {
+    "minlat": 45.5147477,
+    "minlon": -122.6752397,
+    "maxlat": 45.5150366,
+    "maxlon": -122.6750902
+  },
+  "geometry": [
+    { "lat": 45.5150366, "lon": -122.6750902 },
+    { "lat": 45.5149532, "lon": -122.6751360 },
+    { "lat": 45.5147477, "lon": -122.6752397 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 40158753,
+  "bounds": {
+    "minlat": 45.5139895,
+    "minlon": -122.6777385,
+    "maxlat": 45.5142603,
+    "maxlon": -122.6767203
+  },
+  "geometry": [
+    { "lat": 45.5139895, "lon": -122.6767203 },
+    { "lat": 45.5140168, "lon": -122.6768259 },
+    { "lat": 45.5140367, "lon": -122.6768975 },
+    { "lat": 45.5142269, "lon": -122.6776131 },
+    { "lat": 45.5142603, "lon": -122.6777385 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 52059548,
+  "bounds": {
+    "minlat": 45.5160087,
+    "minlon": -122.6824077,
+    "maxlat": 45.5162714,
+    "maxlon": -122.6814199
+  },
+  "geometry": [
+    { "lat": 45.5162714, "lon": -122.6824077 },
+    { "lat": 45.5162534, "lon": -122.6823401 },
+    { "lat": 45.5161827, "lon": -122.6820746 },
+    { "lat": 45.5160459, "lon": -122.6815609 },
+    { "lat": 45.5160087, "lon": -122.6814199 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "unclassified",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 52975534,
+  "bounds": {
+    "minlat": 45.5137408,
+    "minlon": -122.6767203,
+    "maxlat": 45.5139895,
+    "maxlon": -122.6757851
+  },
+  "geometry": [
+    { "lat": 45.5137408, "lon": -122.6757851 },
+    { "lat": 45.5137657, "lon": -122.6758777 },
+    { "lat": 45.5139709, "lon": -122.6766470 },
+    { "lat": 45.5139895, "lon": -122.6767203 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:left": "yes",
+    "sidewalk:right": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 52975535,
+  "bounds": {
+    "minlat": 45.5130835,
+    "minlon": -122.6761411,
+    "maxlat": 45.5137408,
+    "maxlon": -122.6757851
+  },
+  "geometry": [
+    { "lat": 45.5137408, "lon": -122.6757851 },
+    { "lat": 45.5136916, "lon": -122.6758133 },
+    { "lat": 45.5131391, "lon": -122.6761110 },
+    { "lat": 45.5130835, "lon": -122.6761411 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 53062845,
+  "bounds": {
+    "minlat": 45.5150719,
+    "minlon": -122.6807900,
+    "maxlat": 45.5157427,
+    "maxlon": -122.6804175
+  },
+  "geometry": [
+    { "lat": 45.5150719, "lon": -122.6807900 },
+    { "lat": 45.5151482, "lon": -122.6807487 },
+    { "lat": 45.5156868, "lon": -122.6804455 },
+    { "lat": 45.5157427, "lon": -122.6804175 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 53062846,
+  "bounds": {
+    "minlat": 45.5143813,
+    "minlon": -122.6811460,
+    "maxlat": 45.5144146,
+    "maxlon": -122.6810199
+  },
+  "geometry": [
+    { "lat": 45.5144146, "lon": -122.6811460 },
+    { "lat": 45.5144079, "lon": -122.6811206 },
+    { "lat": 45.5143813, "lon": -122.6810199 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 53062847,
+  "bounds": {
+    "minlat": 45.5146790,
+    "minlon": -122.6821401,
+    "maxlat": 45.5151151,
+    "maxlon": -122.6819039
+  },
+  "geometry": [
+    { "lat": 45.5151151, "lon": -122.6819039 },
+    { "lat": 45.5147474, "lon": -122.6821030 },
+    { "lat": 45.5146790, "lon": -122.6821401 }
+  ],
+  "tags": {
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "cycleway:right:lane": "exclusive",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 69333876,
+  "bounds": {
+    "minlat": 45.5142603,
+    "minlon": -122.6777385,
+    "maxlat": 45.5149327,
+    "maxlon": -122.6773743
+  },
+  "geometry": [
+    { "lat": 45.5149327, "lon": -122.6773743 },
+    { "lat": 45.5148580, "lon": -122.6774150 },
+    { "lat": 45.5145237, "lon": -122.6775958 },
+    { "lat": 45.5143365, "lon": -122.6776972 },
+    { "lat": 45.5142603, "lon": -122.6777385 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 3rd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "||right"
+  }
+},
+{
+  "type": "way",
+  "id": 69340938,
+  "bounds": {
+    "minlat": 45.5131990,
+    "minlon": -122.6821043,
+    "maxlat": 45.5139068,
+    "maxlon": -122.6794439
+  },
+  "geometry": [
+    { "lat": 45.5131990, "lon": -122.6794439 },
+    { "lat": 45.5132194, "lon": -122.6795242 },
+    { "lat": 45.5132319, "lon": -122.6795731 },
+    { "lat": 45.5133143, "lon": -122.6798774 },
+    { "lat": 45.5133250, "lon": -122.6799177 },
+    { "lat": 45.5134430, "lon": -122.6803612 },
+    { "lat": 45.5134659, "lon": -122.6804475 },
+    { "lat": 45.5134735, "lon": -122.6804760 },
+    { "lat": 45.5135090, "lon": -122.6806094 },
+    { "lat": 45.5135363, "lon": -122.6807119 },
+    { "lat": 45.5135955, "lon": -122.6809348 },
+    { "lat": 45.5136669, "lon": -122.6812030 },
+    { "lat": 45.5137107, "lon": -122.6813678 },
+    { "lat": 45.5137133, "lon": -122.6813767 },
+    { "lat": 45.5137406, "lon": -122.6814803 },
+    { "lat": 45.5137478, "lon": -122.6815073 },
+    { "lat": 45.5137751, "lon": -122.6816099 },
+    { "lat": 45.5137792, "lon": -122.6816243 },
+    { "lat": 45.5139068, "lon": -122.6821043 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Clay Street",
+    "name:etymology": "Henry Clay Senior",
+    "name:etymology:wikidata": "Q319630",
+    "name:etymology:wikipedia": "en:Henry Clay",
+    "old_name": "Sunset Highway #47 - Roadway #2",
+    "old_ref": "US 26",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 117446020,
+  "bounds": {
+    "minlat": 45.5124166,
+    "minlon": -122.6765023,
+    "maxlat": 45.5130835,
+    "maxlon": -122.6761411
+  },
+  "geometry": [
+    { "lat": 45.5130835, "lon": -122.6761411 },
+    { "lat": 45.5130173, "lon": -122.6761769 },
+    { "lat": 45.5128369, "lon": -122.6762747 },
+    { "lat": 45.5124806, "lon": -122.6764677 },
+    { "lat": 45.5124166, "lon": -122.6765023 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 117446022,
+  "bounds": {
+    "minlat": 45.5150366,
+    "minlon": -122.6750902,
+    "maxlat": 45.5157434,
+    "maxlon": -122.6746996
+  },
+  "geometry": [
+    { "lat": 45.5157434, "lon": -122.6746996 },
+    { "lat": 45.5156712, "lon": -122.6747366 },
+    { "lat": 45.5155002, "lon": -122.6748319 },
+    { "lat": 45.5151311, "lon": -122.6750363 },
+    { "lat": 45.5150366, "lon": -122.6750902 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 117752490,
+  "bounds": {
+    "minlat": 45.5146596,
+    "minlon": -122.6798008,
+    "maxlat": 45.5147900,
+    "maxlon": -122.6797302
+  },
+  "geometry": [
+    { "lat": 45.5147900, "lon": -122.6797302 },
+    { "lat": 45.5147307, "lon": -122.6797623 },
+    { "lat": 45.5146596, "lon": -122.6798008 }
+  ],
+  "tags": {
+    "cycleway:left": "lane",
+    "cycleway:left:buffer": "no",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 117996456,
+  "bounds": {
+    "minlat": 45.5145231,
+    "minlon": -122.6787267,
+    "maxlat": 45.5151966,
+    "maxlon": -122.6783666
+  },
+  "geometry": [
+    { "lat": 45.5145231, "lon": -122.6787267 },
+    { "lat": 45.5146045, "lon": -122.6786826 },
+    { "lat": 45.5151263, "lon": -122.6784038 },
+    { "lat": 45.5151966, "lon": -122.6783666 }
+  ],
+  "tags": {
+    "alt_name": "Positively 4th Street",
+    "bicycle": "designated",
+    "highway": "primary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 4th Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 117996458,
+  "bounds": {
+    "minlat": 45.5139895,
+    "minlon": -122.6767203,
+    "maxlat": 45.5153143,
+    "maxlon": -122.6760027
+  },
+  "geometry": [
+    { "lat": 45.5139895, "lon": -122.6767203 },
+    { "lat": 45.5140500, "lon": -122.6766840 },
+    { "lat": 45.5145978, "lon": -122.6763905 },
+    { "lat": 45.5146619, "lon": -122.6763561 },
+    { "lat": 45.5147241, "lon": -122.6763221 },
+    { "lat": 45.5152716, "lon": -122.6760251 },
+    { "lat": 45.5153143, "lon": -122.6760027 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 2nd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "source:bicycle": "RLIS",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118499501,
+  "bounds": {
+    "minlat": 45.5167865,
+    "minlon": -122.6793607,
+    "maxlat": 45.5177481,
+    "maxlon": -122.6757525
+  },
+  "geometry": [
+    { "lat": 45.5167865, "lon": -122.6757525 },
+    { "lat": 45.5168933, "lon": -122.6761564 },
+    { "lat": 45.5169252, "lon": -122.6762678 },
+    { "lat": 45.5169607, "lon": -122.6764001 },
+    { "lat": 45.5171670, "lon": -122.6771722 },
+    { "lat": 45.5171987, "lon": -122.6772852 },
+    { "lat": 45.5172183, "lon": -122.6773601 },
+    { "lat": 45.5172353, "lon": -122.6774250 },
+    { "lat": 45.5174398, "lon": -122.6782006 },
+    { "lat": 45.5174620, "lon": -122.6782849 },
+    { "lat": 45.5174646, "lon": -122.6782951 },
+    { "lat": 45.5175022, "lon": -122.6784380 },
+    { "lat": 45.5175584, "lon": -122.6786403 },
+    { "lat": 45.5177129, "lon": -122.6792261 },
+    { "lat": 45.5177468, "lon": -122.6793549 },
+    { "lat": 45.5177481, "lon": -122.6793607 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Taylor Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118514928,
+  "bounds": {
+    "minlat": 45.5159926,
+    "minlon": -122.6786433,
+    "maxlat": 45.5167937,
+    "maxlon": -122.6756353
+  },
+  "geometry": [
+    { "lat": 45.5167937, "lon": -122.6786433 },
+    { "lat": 45.5167739, "lon": -122.6785647 },
+    { "lat": 45.5165670, "lon": -122.6777741 },
+    { "lat": 45.5165527, "lon": -122.6777225 },
+    { "lat": 45.5165315, "lon": -122.6776456 },
+    { "lat": 45.5164995, "lon": -122.6775274 },
+    { "lat": 45.5162900, "lon": -122.6767468 },
+    { "lat": 45.5162571, "lon": -122.6766279 },
+    { "lat": 45.5162308, "lon": -122.6765301 },
+    { "lat": 45.5160262, "lon": -122.6757616 },
+    { "lat": 45.5159926, "lon": -122.6756353 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Salmon Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118530729,
+  "bounds": {
+    "minlat": 45.5149327,
+    "minlon": -122.6783666,
+    "maxlat": 45.5151966,
+    "maxlon": -122.6773743
+  },
+  "geometry": [
+    { "lat": 45.5151966, "lon": -122.6783666 },
+    { "lat": 45.5151676, "lon": -122.6782576 },
+    { "lat": 45.5150721, "lon": -122.6778986 },
+    { "lat": 45.5149886, "lon": -122.6775845 },
+    { "lat": 45.5149574, "lon": -122.6774682 },
+    { "lat": 45.5149327, "lon": -122.6773743 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "primary",
+    "lanes": "3",
+    "lanes:bus": "1",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118530730,
+  "bounds": {
+    "minlat": 45.5154624,
+    "minlon": -122.6814199,
+    "maxlat": 45.5160087,
+    "maxlon": -122.6793660
+  },
+  "geometry": [
+    { "lat": 45.5160087, "lon": -122.6814199 },
+    { "lat": 45.5159825, "lon": -122.6813213 },
+    { "lat": 45.5159497, "lon": -122.6811981 },
+    { "lat": 45.5157743, "lon": -122.6805338 },
+    { "lat": 45.5157427, "lon": -122.6804175 },
+    { "lat": 45.5157323, "lon": -122.6803790 },
+    { "lat": 45.5157111, "lon": -122.6803009 },
+    { "lat": 45.5155305, "lon": -122.6796220 },
+    { "lat": 45.5155011, "lon": -122.6795100 },
+    { "lat": 45.5154734, "lon": -122.6794074 },
+    { "lat": 45.5154624, "lon": -122.6793660 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118770582,
+  "bounds": {
+    "minlat": 45.5167937,
+    "minlon": -122.6786433,
+    "maxlat": 45.5174620,
+    "maxlon": -122.6782849
+  },
+  "geometry": [
+    { "lat": 45.5174620, "lon": -122.6782849 },
+    { "lat": 45.5173943, "lon": -122.6783215 },
+    { "lat": 45.5168578, "lon": -122.6786098 },
+    { "lat": 45.5167937, "lon": -122.6786433 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "sidewalk:both:surface": "paving_stones",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118827893,
+  "bounds": {
+    "minlat": 45.5170858,
+    "minlon": -122.6797268,
+    "maxlat": 45.5177481,
+    "maxlon": -122.6793607
+  },
+  "geometry": [
+    { "lat": 45.5170858, "lon": -122.6797268 },
+    { "lat": 45.5171520, "lon": -122.6796908 },
+    { "lat": 45.5176895, "lon": -122.6793946 },
+    { "lat": 45.5177481, "lon": -122.6793607 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "no",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:left": "yes",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118827895,
+  "bounds": {
+    "minlat": 45.5170858,
+    "minlon": -122.6862273,
+    "maxlat": 45.5188247,
+    "maxlon": -122.6797268
+  },
+  "geometry": [
+    { "lat": 45.5188247, "lon": -122.6862273 },
+    { "lat": 45.5188015, "lon": -122.6861382 },
+    { "lat": 45.5185918, "lon": -122.6853628 },
+    { "lat": 45.5185601, "lon": -122.6852418 },
+    { "lat": 45.5185300, "lon": -122.6851256 },
+    { "lat": 45.5184987, "lon": -122.6850098 },
+    { "lat": 45.5184526, "lon": -122.6848383 },
+    { "lat": 45.5184092, "lon": -122.6846770 },
+    { "lat": 45.5183616, "lon": -122.6845000 },
+    { "lat": 45.5183473, "lon": -122.6844474 },
+    { "lat": 45.5183166, "lon": -122.6843332 },
+    { "lat": 45.5182958, "lon": -122.6842544 },
+    { "lat": 45.5182868, "lon": -122.6842202 },
+    { "lat": 45.5182561, "lon": -122.6841041 },
+    { "lat": 45.5182267, "lon": -122.6839940 },
+    { "lat": 45.5181750, "lon": -122.6838004 },
+    { "lat": 45.5180471, "lon": -122.6833239 },
+    { "lat": 45.5180131, "lon": -122.6831922 },
+    { "lat": 45.5179998, "lon": -122.6831488 },
+    { "lat": 45.5179798, "lon": -122.6830758 },
+    { "lat": 45.5179028, "lon": -122.6827877 },
+    { "lat": 45.5178508, "lon": -122.6825932 },
+    { "lat": 45.5177724, "lon": -122.6822999 },
+    { "lat": 45.5177496, "lon": -122.6822145 },
+    { "lat": 45.5177351, "lon": -122.6821549 },
+    { "lat": 45.5176256, "lon": -122.6817561 },
+    { "lat": 45.5176079, "lon": -122.6816838 },
+    { "lat": 45.5175905, "lon": -122.6816187 },
+    { "lat": 45.5173808, "lon": -122.6808331 },
+    { "lat": 45.5173445, "lon": -122.6806963 },
+    { "lat": 45.5173179, "lon": -122.6805964 },
+    { "lat": 45.5171079, "lon": -122.6798121 },
+    { "lat": 45.5170858, "lon": -122.6797268 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Salmon Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118827897,
+  "bounds": {
+    "minlat": 45.5153143,
+    "minlon": -122.6770082,
+    "maxlat": 45.5155943,
+    "maxlon": -122.6760027
+  },
+  "geometry": [
+    { "lat": 45.5153143, "lon": -122.6760027 },
+    { "lat": 45.5153533, "lon": -122.6761070 },
+    { "lat": 45.5155650, "lon": -122.6768975 },
+    { "lat": 45.5155943, "lon": -122.6770082 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118827901,
+  "bounds": {
+    "minlat": 45.5154624,
+    "minlon": -122.6793660,
+    "maxlat": 45.5161287,
+    "maxlon": -122.6790035
+  },
+  "geometry": [
+    { "lat": 45.5161287, "lon": -122.6790035 },
+    { "lat": 45.5160647, "lon": -122.6790397 },
+    { "lat": 45.5157874, "lon": -122.6791900 },
+    { "lat": 45.5155210, "lon": -122.6793327 },
+    { "lat": 45.5154624, "lon": -122.6793660 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "left;through||"
+  }
+},
+{
+  "type": "way",
+  "id": 118829214,
+  "bounds": {
+    "minlat": 45.5157427,
+    "minlon": -122.6804175,
+    "maxlat": 45.5164208,
+    "maxlon": -122.6800847
+  },
+  "geometry": [
+    { "lat": 45.5157427, "lon": -122.6804175 },
+    { "lat": 45.5158069, "lon": -122.6803855 },
+    { "lat": 45.5163556, "lon": -122.6801189 },
+    { "lat": 45.5164208, "lon": -122.6800847 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118831209,
+  "bounds": {
+    "minlat": 45.5144146,
+    "minlon": -122.6811460,
+    "maxlat": 45.5150719,
+    "maxlon": -122.6807900
+  },
+  "geometry": [
+    { "lat": 45.5144146, "lon": -122.6811460 },
+    { "lat": 45.5144831, "lon": -122.6811080 },
+    { "lat": 45.5147345, "lon": -122.6809728 },
+    { "lat": 45.5150150, "lon": -122.6808208 },
+    { "lat": 45.5150719, "lon": -122.6807900 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 118834184,
+  "bounds": {
+    "minlat": 45.5130187,
+    "minlon": -122.6806897,
+    "maxlat": 45.5134659,
+    "maxlon": -122.6804475
+  },
+  "geometry": [
+    { "lat": 45.5134659, "lon": -122.6804475 },
+    { "lat": 45.5133907, "lon": -122.6804882 },
+    { "lat": 45.5132491, "lon": -122.6805648 },
+    { "lat": 45.5130187, "lon": -122.6806897 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:left": "lane",
+    "cycleway:left:buffer": "no",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 119556989,
+  "bounds": {
+    "minlat": 45.5144131,
+    "minlon": -122.6754209,
+    "maxlat": 45.5147477,
+    "maxlon": -122.6752397
+  },
+  "geometry": [
+    { "lat": 45.5147477, "lon": -122.6752397 },
+    { "lat": 45.5144841, "lon": -122.6753838 },
+    { "lat": 45.5144131, "lon": -122.6754209 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 119556991,
+  "bounds": {
+    "minlat": 45.5146518,
+    "minlon": -122.6750902,
+    "maxlat": 45.5150366,
+    "maxlon": -122.6746719
+  },
+  "geometry": [
+    { "lat": 45.5146518, "lon": -122.6746719 },
+    { "lat": 45.5147277, "lon": -122.6747162 },
+    { "lat": 45.5147940, "lon": -122.6747598 },
+    { "lat": 45.5148471, "lon": -122.6748022 },
+    { "lat": 45.5148908, "lon": -122.6748469 },
+    { "lat": 45.5149222, "lon": -122.6748833 },
+    { "lat": 45.5149518, "lon": -122.6749213 },
+    { "lat": 45.5149763, "lon": -122.6749567 },
+    { "lat": 45.5149864, "lon": -122.6749760 },
+    { "lat": 45.5150366, "lon": -122.6750902 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "30 mph",
+    "name": "Hawthorne Bridge",
+    "name:etymology": "Hawthorne Boulevard",
+    "name:etymology:wikidata": "Q96418541",
+    "name:etymology:wikipedia": "en:Hawthorne Boulevard (Portland, Oregon)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 135838499,
+  "bounds": {
+    "minlat": 45.5125295,
+    "minlon": -122.6798065,
+    "maxlat": 45.5138659,
+    "maxlon": -122.6790827
+  },
+  "geometry": [
+    { "lat": 45.5125295, "lon": -122.6798065 },
+    { "lat": 45.5126047, "lon": -122.6797624 },
+    { "lat": 45.5131242, "lon": -122.6794851 },
+    { "lat": 45.5131990, "lon": -122.6794439 },
+    { "lat": 45.5132695, "lon": -122.6794053 },
+    { "lat": 45.5138025, "lon": -122.6791170 },
+    { "lat": 45.5138659, "lon": -122.6790827 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 4th Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 150843661,
+  "bounds": {
+    "minlat": 45.5166814,
+    "minlon": -122.6810555,
+    "maxlat": 45.5185470,
+    "maxlon": -122.6800600
+  },
+  "geometry": [
+    { "lat": 45.5185470, "lon": -122.6800600 },
+    { "lat": 45.5184729, "lon": -122.6801012 },
+    { "lat": 45.5180807, "lon": -122.6802957 },
+    { "lat": 45.5180098, "lon": -122.6803359 },
+    { "lat": 45.5179461, "lon": -122.6803704 },
+    { "lat": 45.5174091, "lon": -122.6806613 },
+    { "lat": 45.5173445, "lon": -122.6806963 },
+    { "lat": 45.5172848, "lon": -122.6807286 },
+    { "lat": 45.5167393, "lon": -122.6810257 },
+    { "lat": 45.5166814, "lon": -122.6810555 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "parking:both": "lane",
+    "parking:both:fee": "yes",
+    "parking:both:orientation": "parallel",
+    "sidewalk": "both",
+    "surface": "asphalt",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 189781347,
+  "bounds": {
+    "minlat": 45.5157858,
+    "minlon": -122.6780057,
+    "maxlat": 45.5158647,
+    "maxlon": -122.6777091
+  },
+  "geometry": [
+    { "lat": 45.5157858, "lon": -122.6777091 },
+    { "lat": 45.5158260, "lon": -122.6778603 },
+    { "lat": 45.5158346, "lon": -122.6778926 },
+    { "lat": 45.5158647, "lon": -122.6780057 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "note": "road closure for elk fountain restoration and other related works. no exact completion date other than \"winter 2025\". https://www.portland.gov/water/improvements/construction/thompson-elk-fountain-restoration-project",
+    "oneway": "yes",
+    "opening_date": "2025-11-07",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 189966930,
+  "bounds": {
+    "minlat": 45.5147477,
+    "minlon": -122.6752397,
+    "maxlat": 45.5148253,
+    "maxlon": -122.6749840
+  },
+  "geometry": [
+    { "lat": 45.5148253, "lon": -122.6749840 },
+    { "lat": 45.5148220, "lon": -122.6750241 },
+    { "lat": 45.5148135, "lon": -122.6750777 },
+    { "lat": 45.5147975, "lon": -122.6751362 },
+    { "lat": 45.5147477, "lon": -122.6752397 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "primary_link",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 189966936,
+  "bounds": {
+    "minlat": 45.5122725,
+    "minlon": -122.6788404,
+    "maxlat": 45.5129396,
+    "maxlon": -122.6784652
+  },
+  "geometry": [
+    { "lat": 45.5129396, "lon": -122.6784652 },
+    { "lat": 45.5128687, "lon": -122.6785176 },
+    { "lat": 45.5123388, "lon": -122.6788053 },
+    { "lat": 45.5122725, "lon": -122.6788404 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 3rd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 198240008,
+  "bounds": {
+    "minlat": 45.5165028,
+    "minlon": -122.6810555,
+    "maxlat": 45.5166814,
+    "maxlon": -122.6803839
+  },
+  "geometry": [
+    { "lat": 45.5165028, "lon": -122.6803839 },
+    { "lat": 45.5166543, "lon": -122.6809536 },
+    { "lat": 45.5166814, "lon": -122.6810555 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 198240010,
+  "bounds": {
+    "minlat": 45.5147900,
+    "minlon": -122.6797302,
+    "maxlat": 45.5154624,
+    "maxlon": -122.6793660
+  },
+  "geometry": [
+    { "lat": 45.5154624, "lon": -122.6793660 },
+    { "lat": 45.5153998, "lon": -122.6793999 },
+    { "lat": 45.5149067, "lon": -122.6796670 },
+    { "lat": 45.5148661, "lon": -122.6796890 },
+    { "lat": 45.5147900, "lon": -122.6797302 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 198240011,
+  "bounds": {
+    "minlat": 45.5164208,
+    "minlon": -122.6800847,
+    "maxlat": 45.5170858,
+    "maxlon": -122.6797268
+  },
+  "geometry": [
+    { "lat": 45.5164208, "lon": -122.6800847 },
+    { "lat": 45.5164873, "lon": -122.6800498 },
+    { "lat": 45.5170246, "lon": -122.6797601 },
+    { "lat": 45.5170858, "lon": -122.6797268 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:left": "yes",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 198240019,
+  "bounds": {
+    "minlat": 45.5151966,
+    "minlon": -122.6793660,
+    "maxlat": 45.5154624,
+    "maxlon": -122.6783666
+  },
+  "geometry": [
+    { "lat": 45.5154624, "lon": -122.6793660 },
+    { "lat": 45.5154392, "lon": -122.6792784 },
+    { "lat": 45.5152319, "lon": -122.6784992 },
+    { "lat": 45.5152185, "lon": -122.6784489 },
+    { "lat": 45.5151966, "lon": -122.6783666 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "secondary",
+    "lanes": "3",
+    "lanes:bus": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 219867061,
+  "bounds": {
+    "minlat": 45.5160087,
+    "minlon": -122.6814199,
+    "maxlat": 45.5166814,
+    "maxlon": -122.6810555
+  },
+  "geometry": [
+    { "lat": 45.5166814, "lon": -122.6810555 },
+    { "lat": 45.5166184, "lon": -122.6810896 },
+    { "lat": 45.5160792, "lon": -122.6813822 },
+    { "lat": 45.5160087, "lon": -122.6814199 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "parking:both": "lane",
+    "parking:both:fee": "yes",
+    "parking:both:orientation": "parallel",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 219867064,
+  "bounds": {
+    "minlat": 45.5155981,
+    "minlon": -122.6816421,
+    "maxlat": 45.5160087,
+    "maxlon": -122.6814199
+  },
+  "geometry": [
+    { "lat": 45.5160087, "lon": -122.6814199 },
+    { "lat": 45.5159494, "lon": -122.6814520 },
+    { "lat": 45.5156487, "lon": -122.6816149 },
+    { "lat": 45.5155981, "lon": -122.6816421 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "parking:both": "lane",
+    "parking:both:fee": "yes",
+    "parking:both:orientation": "parallel",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 219867066,
+  "bounds": {
+    "minlat": 45.5146098,
+    "minlon": -122.6763561,
+    "maxlat": 45.5146619,
+    "maxlon": -122.6761588
+  },
+  "geometry": [
+    { "lat": 45.5146619, "lon": -122.6763561 },
+    { "lat": 45.5146392, "lon": -122.6762704 },
+    { "lat": 45.5146098, "lon": -122.6761588 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "bus:lanes": "1",
+    "cycleway:right": "share_busway",
+    "highway": "primary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 220072686,
+  "bounds": {
+    "minlat": 45.5149327,
+    "minlon": -122.6773743,
+    "maxlat": 45.5155943,
+    "maxlon": -122.6770082
+  },
+  "geometry": [
+    { "lat": 45.5155943, "lon": -122.6770082 },
+    { "lat": 45.5155388, "lon": -122.6770460 },
+    { "lat": 45.5149961, "lon": -122.6773401 },
+    { "lat": 45.5149327, "lon": -122.6773743 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "secondary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 3rd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220072687,
+  "bounds": {
+    "minlat": 45.5138659,
+    "minlon": -122.6790827,
+    "maxlat": 45.5145231,
+    "maxlon": -122.6787267
+  },
+  "geometry": [
+    { "lat": 45.5138659, "lon": -122.6790827 },
+    { "lat": 45.5139257, "lon": -122.6790503 },
+    { "lat": 45.5141466, "lon": -122.6789306 },
+    { "lat": 45.5144670, "lon": -122.6787571 },
+    { "lat": 45.5145231, "lon": -122.6787267 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "primary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxheight": "default",
+    "maxspeed": "20 mph",
+    "name": "Southwest 4th Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220072689,
+  "bounds": {
+    "minlat": 45.5133322,
+    "minlon": -122.6790827,
+    "maxlat": 45.5138659,
+    "maxlon": -122.6770763
+  },
+  "geometry": [
+    { "lat": 45.5138659, "lon": -122.6790827 },
+    { "lat": 45.5138376, "lon": -122.6789764 },
+    { "lat": 45.5136299, "lon": -122.6781957 },
+    { "lat": 45.5136030, "lon": -122.6780945 },
+    { "lat": 45.5135761, "lon": -122.6779933 },
+    { "lat": 45.5133529, "lon": -122.6771648 },
+    { "lat": 45.5133322, "lon": -122.6770763 }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220072694,
+  "bounds": {
+    "minlat": 45.5129396,
+    "minlon": -122.6784652,
+    "maxlat": 45.5142603,
+    "maxlon": -122.6777385
+  },
+  "geometry": [
+    { "lat": 45.5142603, "lon": -122.6777385 },
+    { "lat": 45.5142024, "lon": -122.6777698 },
+    { "lat": 45.5140981, "lon": -122.6778263 },
+    { "lat": 45.5136646, "lon": -122.6780613 },
+    { "lat": 45.5136030, "lon": -122.6780945 },
+    { "lat": 45.5135353, "lon": -122.6781312 },
+    { "lat": 45.5130045, "lon": -122.6784173 },
+    { "lat": 45.5129396, "lon": -122.6784652 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 3rd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220072695,
+  "bounds": {
+    "minlat": 45.5142603,
+    "minlon": -122.6787267,
+    "maxlat": 45.5145231,
+    "maxlon": -122.6777385
+  },
+  "geometry": [
+    { "lat": 45.5142603, "lon": -122.6777385 },
+    { "lat": 45.5142871, "lon": -122.6778394 },
+    { "lat": 45.5144972, "lon": -122.6786290 },
+    { "lat": 45.5145231, "lon": -122.6787267 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 220072696,
+  "bounds": {
+    "minlat": 45.5155943,
+    "minlon": -122.6773153,
+    "maxlat": 45.5156760,
+    "maxlon": -122.6770082
+  },
+  "geometry": [
+    { "lat": 45.5155943, "lon": -122.6770082 },
+    { "lat": 45.5156231, "lon": -122.6771167 },
+    { "lat": 45.5156760, "lon": -122.6773153 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "note": "road closure for elk fountain restoration and other related works. no exact completion date other than \"winter 2025\". https://www.portland.gov/water/improvements/construction/thompson-elk-fountain-restoration-project",
+    "oneway": "yes",
+    "opening_date": "2025-11-07",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220209682,
+  "bounds": {
+    "minlat": 45.5142714,
+    "minlon": -122.6823608,
+    "maxlat": 45.5146790,
+    "maxlon": -122.6821401
+  },
+  "geometry": [
+    { "lat": 45.5146790, "lon": -122.6821401 },
+    { "lat": 45.5146183, "lon": -122.6821730 },
+    { "lat": 45.5142896, "lon": -122.6823510 },
+    { "lat": 45.5142714, "lon": -122.6823608 }
+  ],
+  "tags": {
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "cycleway:right:lane": "exclusive",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 220209683,
+  "bounds": {
+    "minlat": 45.5153363,
+    "minlon": -122.6833109,
+    "maxlat": 45.5157425,
+    "maxlon": -122.6817841
+  },
+  "geometry": [
+    { "lat": 45.5153363, "lon": -122.6817841 },
+    { "lat": 45.5153747, "lon": -122.6819284 },
+    { "lat": 45.5155799, "lon": -122.6827003 },
+    { "lat": 45.5155990, "lon": -122.6827719 },
+    { "lat": 45.5156745, "lon": -122.6830559 },
+    { "lat": 45.5157425, "lon": -122.6833109 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:left": "yes",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220548940,
+  "bounds": {
+    "minlat": 45.5157434,
+    "minlon": -122.6756353,
+    "maxlat": 45.5159926,
+    "maxlon": -122.6746996
+  },
+  "geometry": [
+    { "lat": 45.5159926, "lon": -122.6756353 },
+    { "lat": 45.5159649, "lon": -122.6755315 },
+    { "lat": 45.5157737, "lon": -122.6748142 },
+    { "lat": 45.5157434, "lon": -122.6746996 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "shared_lane",
+    "cycleway:right:lane": "pictogram",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Salmon Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 220548943,
+  "bounds": {
+    "minlat": 45.5159926,
+    "minlon": -122.6756353,
+    "maxlat": 45.5176568,
+    "maxlon": -122.6747402
+  },
+  "geometry": [
+    { "lat": 45.5159926, "lon": -122.6756353 },
+    { "lat": 45.5160635, "lon": -122.6756030 },
+    { "lat": 45.5162112, "lon": -122.6755235 },
+    { "lat": 45.5165935, "lon": -122.6753172 },
+    { "lat": 45.5166607, "lon": -122.6752803 },
+    { "lat": 45.5167201, "lon": -122.6752472 },
+    { "lat": 45.5172426, "lon": -122.6749695 },
+    { "lat": 45.5172591, "lon": -122.6749607 },
+    { "lat": 45.5172872, "lon": -122.6749435 },
+    { "lat": 45.5172917, "lon": -122.6749415 },
+    { "lat": 45.5173798, "lon": -122.6748900 },
+    { "lat": 45.5176568, "lon": -122.6747402 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest 2nd Avenue",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "yes",
+    "source:bicycle": "RLIS",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 302968402,
+  "bounds": {
+    "minlat": 45.5128321,
+    "minlon": -122.6761411,
+    "maxlat": 45.5130835,
+    "maxlon": -122.6751954
+  },
+  "geometry": [
+    { "lat": 45.5130835, "lon": -122.6761411 },
+    { "lat": 45.5130587, "lon": -122.6760478 },
+    { "lat": 45.5128591, "lon": -122.6752974 },
+    { "lat": 45.5128561, "lon": -122.6752863 },
+    { "lat": 45.5128321, "lon": -122.6751954 }
+  ],
+  "tags": {
+    "cycleway": "lane",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt",
+    "turn:lanes": "left|right"
+  }
+},
+{
+  "type": "way",
+  "id": 303506914,
+  "bounds": {
+    "minlat": 45.5146790,
+    "minlon": -122.6856633,
+    "maxlat": 45.5156224,
+    "maxlon": -122.6821401
+  },
+  "geometry": [
+    { "lat": 45.5156224, "lon": -122.6856633 },
+    { "lat": 45.5155901, "lon": -122.6855465 },
+    { "lat": 45.5154858, "lon": -122.6851737 },
+    { "lat": 45.5153726, "lon": -122.6847479 },
+    { "lat": 45.5153397, "lon": -122.6846262 },
+    { "lat": 45.5153325, "lon": -122.6845972 },
+    { "lat": 45.5153142, "lon": -122.6845281 },
+    { "lat": 45.5152852, "lon": -122.6844191 },
+    { "lat": 45.5152368, "lon": -122.6842371 },
+    { "lat": 45.5150882, "lon": -122.6836676 },
+    { "lat": 45.5150172, "lon": -122.6834115 },
+    { "lat": 45.5149418, "lon": -122.6831279 },
+    { "lat": 45.5148379, "lon": -122.6827376 },
+    { "lat": 45.5147188, "lon": -122.6822888 },
+    { "lat": 45.5146790, "lon": -122.6821401 }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "parking:both": "lane",
+    "parking:both:fee": "yes",
+    "parking:both:orientation": "parallel",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 305366065,
+  "bounds": {
+    "minlat": 45.5141328,
+    "minlon": -122.6802394,
+    "maxlat": 45.5141736,
+    "maxlon": -122.6800862
+  },
+  "geometry": [
+    { "lat": 45.5141736, "lon": -122.6802394 },
+    { "lat": 45.5141409, "lon": -122.6801169 },
+    { "lat": 45.5141328, "lon": -122.6800862 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 305366066,
+  "bounds": {
+    "minlat": 45.5145231,
+    "minlon": -122.6791359,
+    "maxlat": 45.5146320,
+    "maxlon": -122.6787267
+  },
+  "geometry": [
+    { "lat": 45.5145231, "lon": -122.6787267 },
+    { "lat": 45.5145465, "lon": -122.6788147 },
+    { "lat": 45.5145610, "lon": -122.6788684 },
+    { "lat": 45.5145967, "lon": -122.6790034 },
+    { "lat": 45.5146320, "lon": -122.6791359 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 365452027,
+  "bounds": {
+    "minlat": 45.5137408,
+    "minlon": -122.6757851,
+    "maxlat": 45.5144131,
+    "maxlon": -122.6754209
+  },
+  "geometry": [
+    { "lat": 45.5144131, "lon": -122.6754209 },
+    { "lat": 45.5143408, "lon": -122.6754601 },
+    { "lat": 45.5138070, "lon": -122.6757493 },
+    { "lat": 45.5137408, "lon": -122.6757851 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "lane",
+    "highway": "primary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 365452028,
+  "bounds": {
+    "minlat": 45.5153143,
+    "minlon": -122.6760027,
+    "maxlat": 45.5159926,
+    "maxlon": -122.6756353
+  },
+  "geometry": [
+    { "lat": 45.5153143, "lon": -122.6760027 },
+    { "lat": 45.5153936, "lon": -122.6759594 },
+    { "lat": 45.5159253, "lon": -122.6756718 },
+    { "lat": 45.5159926, "lon": -122.6756353 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "secondary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 2nd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "source:bicycle": "RLIS",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 372890112,
+  "bounds": {
+    "minlat": 45.5142910,
+    "minlon": -122.6812130,
+    "maxlat": 45.5144146,
+    "maxlon": -122.6811460
+  },
+  "geometry": [
+    { "lat": 45.5142910, "lon": -122.6812130 },
+    { "lat": 45.5143477, "lon": -122.6811820 },
+    { "lat": 45.5144146, "lon": -122.6811460 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:bus": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 373533584,
+  "bounds": {
+    "minlat": 45.5177481,
+    "minlon": -122.6793607,
+    "maxlat": 45.5182331,
+    "maxlon": -122.6790950
+  },
+  "geometry": [
+    { "lat": 45.5177481, "lon": -122.6793607 },
+    { "lat": 45.5178150, "lon": -122.6793219 },
+    { "lat": 45.5182331, "lon": -122.6790950 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 373533588,
+  "bounds": {
+    "minlat": 45.5177481,
+    "minlon": -122.6803359,
+    "maxlat": 45.5180098,
+    "maxlon": -122.6793607
+  },
+  "geometry": [
+    { "lat": 45.5177481, "lon": -122.6793607 },
+    { "lat": 45.5177741, "lon": -122.6794572 },
+    { "lat": 45.5179823, "lon": -122.6802348 },
+    { "lat": 45.5180098, "lon": -122.6803359 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Taylor Street",
+    "oneway": "yes",
+    "sidewalk:left": "yes",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 482331985,
+  "bounds": {
+    "minlat": 45.5129396,
+    "minlon": -122.6794439,
+    "maxlat": 45.5131990,
+    "maxlon": -122.6784652
+  },
+  "geometry": [
+    { "lat": 45.5129396, "lon": -122.6784652 },
+    { "lat": 45.5129692, "lon": -122.6785802 },
+    { "lat": 45.5131717, "lon": -122.6793441 },
+    { "lat": 45.5131990, "lon": -122.6794439 }
+  ],
+  "tags": {
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Clay Street",
+    "name:etymology": "Henry Clay Senior",
+    "name:etymology:wikidata": "Q319630",
+    "name:etymology:wikipedia": "en:Henry Clay",
+    "old_name": "Sunset Highway #47 - Roadway #2",
+    "old_ref": "US 26",
+    "oneway": "yes",
+    "parking:left": "lane",
+    "parking:left:orientation": "parallel",
+    "parking:right": "no",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 482331986,
+  "bounds": {
+    "minlat": 45.5121242,
+    "minlon": -122.6774376,
+    "maxlat": 45.5126653,
+    "maxlon": -122.6754759
+  },
+  "geometry": [
+    { "lat": 45.5121242, "lon": -122.6754759 },
+    { "lat": 45.5121616, "lon": -122.6755630 },
+    { "lat": 45.5121884, "lon": -122.6756617 },
+    { "lat": 45.5123912, "lon": -122.6764070 },
+    { "lat": 45.5124166, "lon": -122.6765023 },
+    { "lat": 45.5124377, "lon": -122.6765817 },
+    { "lat": 45.5125022, "lon": -122.6768241 },
+    { "lat": 45.5126456, "lon": -122.6773634 },
+    { "lat": 45.5126653, "lon": -122.6774376 }
+  ],
+  "tags": {
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Clay Street",
+    "name:etymology": "Henry Clay Senior",
+    "name:etymology:wikidata": "Q319630",
+    "name:etymology:wikipedia": "en:Henry Clay",
+    "old_name": "Sunset Highway #47 - Roadway #2",
+    "old_ref": "US 26",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434542,
+  "bounds": {
+    "minlat": 45.5138659,
+    "minlon": -122.6800041,
+    "maxlat": 45.5141109,
+    "maxlon": -122.6790827
+  },
+  "geometry": [
+    { "lat": 45.5141109, "lon": -122.6800041 },
+    { "lat": 45.5139570, "lon": -122.6794253 },
+    { "lat": 45.5139005, "lon": -122.6792130 },
+    { "lat": 45.5138883, "lon": -122.6791669 },
+    { "lat": 45.5138659, "lon": -122.6790827 }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434543,
+  "bounds": {
+    "minlat": 45.5141736,
+    "minlon": -122.6806165,
+    "maxlat": 45.5142738,
+    "maxlon": -122.6802394
+  },
+  "geometry": [
+    { "lat": 45.5142738, "lon": -122.6806165 },
+    { "lat": 45.5141736, "lon": -122.6802394 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434544,
+  "bounds": {
+    "minlat": 45.5142738,
+    "minlon": -122.6810199,
+    "maxlat": 45.5143813,
+    "maxlon": -122.6806165
+  },
+  "geometry": [
+    { "lat": 45.5143813, "lon": -122.6810199 },
+    { "lat": 45.5142738, "lon": -122.6806165 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434545,
+  "bounds": {
+    "minlat": 45.5144449,
+    "minlon": -122.6821401,
+    "maxlat": 45.5146790,
+    "maxlon": -122.6812591
+  },
+  "geometry": [
+    { "lat": 45.5146790, "lon": -122.6821401 },
+    { "lat": 45.5146546, "lon": -122.6820477 },
+    { "lat": 45.5144998, "lon": -122.6814664 },
+    { "lat": 45.5144449, "lon": -122.6812591 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434546,
+  "bounds": {
+    "minlat": 45.5147900,
+    "minlon": -122.6798783,
+    "maxlat": 45.5148310,
+    "maxlon": -122.6797302
+  },
+  "geometry": [
+    { "lat": 45.5147900, "lon": -122.6797302 },
+    { "lat": 45.5147993, "lon": -122.6797652 },
+    { "lat": 45.5148310, "lon": -122.6798783 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 516434547,
+  "bounds": {
+    "minlat": 45.5148310,
+    "minlon": -122.6806619,
+    "maxlat": 45.5150378,
+    "maxlon": -122.6798783
+  },
+  "geometry": [
+    { "lat": 45.5148310, "lon": -122.6798783 },
+    { "lat": 45.5149883, "lon": -122.6804745 },
+    { "lat": 45.5150378, "lon": -122.6806619 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434548,
+  "bounds": {
+    "minlat": 45.5150378,
+    "minlon": -122.6807900,
+    "maxlat": 45.5150719,
+    "maxlon": -122.6806619
+  },
+  "geometry": [
+    { "lat": 45.5150378, "lon": -122.6806619 },
+    { "lat": 45.5150571, "lon": -122.6807342 },
+    { "lat": 45.5150719, "lon": -122.6807900 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones",
+    "turn:lanes": "|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 516434549,
+  "bounds": {
+    "minlat": 45.5150719,
+    "minlon": -122.6809117,
+    "maxlat": 45.5151044,
+    "maxlon": -122.6807900
+  },
+  "geometry": [
+    { "lat": 45.5150719, "lon": -122.6807900 },
+    { "lat": 45.5151044, "lon": -122.6809117 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 516434550,
+  "bounds": {
+    "minlat": 45.5161061,
+    "minlon": -122.6791495,
+    "maxlat": 45.5161686,
+    "maxlon": -122.6789134
+  },
+  "geometry": [
+    { "lat": 45.5161061, "lon": -122.6789134 },
+    { "lat": 45.5161287, "lon": -122.6790035 },
+    { "lat": 45.5161323, "lon": -122.6790141 },
+    { "lat": 45.5161686, "lon": -122.6791495 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lanes:bus": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 516434551,
+  "bounds": {
+    "minlat": 45.5161686,
+    "minlon": -122.6793898,
+    "maxlat": 45.5162328,
+    "maxlon": -122.6791495
+  },
+  "geometry": [
+    { "lat": 45.5161686, "lon": -122.6791495 },
+    { "lat": 45.5161977, "lon": -122.6792577 },
+    { "lat": 45.5162328, "lon": -122.6793898 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lanes:bus": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 516434552,
+  "bounds": {
+    "minlat": 45.5163842,
+    "minlon": -122.6800847,
+    "maxlat": 45.5164208,
+    "maxlon": -122.6799592
+  },
+  "geometry": [
+    { "lat": 45.5163842, "lon": -122.6799592 },
+    { "lat": 45.5164185, "lon": -122.6800766 },
+    { "lat": 45.5164208, "lon": -122.6800847 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "shared_lane",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones",
+    "turn:lanes": "through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 516434553,
+  "bounds": {
+    "minlat": 45.5164208,
+    "minlon": -122.6801780,
+    "maxlat": 45.5164481,
+    "maxlon": -122.6800847
+  },
+  "geometry": [
+    { "lat": 45.5164208, "lon": -122.6800847 },
+    { "lat": 45.5164481, "lon": -122.6801780 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lanes:bus": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 534926013,
+  "bounds": {
+    "minlat": 45.5134659,
+    "minlon": -122.6804475,
+    "maxlat": 45.5141328,
+    "maxlon": -122.6800862
+  },
+  "geometry": [
+    { "lat": 45.5141328, "lon": -122.6800862 },
+    { "lat": 45.5140632, "lon": -122.6801236 },
+    { "lat": 45.5135327, "lon": -122.6804111 },
+    { "lat": 45.5134659, "lon": -122.6804475 }
+  ],
+  "tags": {
+    "cycleway:left": "lane",
+    "cycleway:left:buffer": "no",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "through|none|none"
+  }
+},
+{
+  "type": "way",
+  "id": 535439126,
+  "bounds": {
+    "minlat": 45.5134131,
+    "minlon": -122.6816885,
+    "maxlat": 45.5137478,
+    "maxlon": -122.6815073
+  },
+  "geometry": [
+    { "lat": 45.5134131, "lon": -122.6816885 },
+    { "lat": 45.5136803, "lon": -122.6815439 },
+    { "lat": 45.5137478, "lon": -122.6815073 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "no",
+    "embedded_rails": "light_rail",
+    "highway": "secondary",
+    "lanes": "4",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "||designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "left|through||"
+  }
+},
+{
+  "type": "way",
+  "id": 535439127,
+  "bounds": {
+    "minlat": 45.5137478,
+    "minlon": -122.6815073,
+    "maxlat": 45.5142910,
+    "maxlon": -122.6812130
+  },
+  "geometry": [
+    { "lat": 45.5137478, "lon": -122.6815073 },
+    { "lat": 45.5138140, "lon": -122.6814714 },
+    { "lat": 45.5138240, "lon": -122.6814656 },
+    { "lat": 45.5142910, "lon": -122.6812130 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "no",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest 6th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 595610417,
+  "bounds": {
+    "minlat": 45.5162777,
+    "minlon": -122.6757525,
+    "maxlat": 45.5167865,
+    "maxlon": -122.6738477
+  },
+  "geometry": [
+    { "lat": 45.5162777, "lon": -122.6738477 },
+    { "lat": 45.5163829, "lon": -122.6742501 },
+    { "lat": 45.5164048, "lon": -122.6743347 },
+    { "lat": 45.5164284, "lon": -122.6744231 },
+    { "lat": 45.5166293, "lon": -122.6751653 },
+    { "lat": 45.5166607, "lon": -122.6752803 },
+    { "lat": 45.5166902, "lon": -122.6753940 },
+    { "lat": 45.5167865, "lon": -122.6757525 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Taylor Street",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 604854485,
+  "bounds": {
+    "minlat": 45.5147682,
+    "minlon": -122.6797302,
+    "maxlat": 45.5147900,
+    "maxlon": -122.6796481
+  },
+  "geometry": [
+    { "lat": 45.5147682, "lon": -122.6796481 },
+    { "lat": 45.5147900, "lon": -122.6797302 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 610838864,
+  "bounds": {
+    "minlat": 45.5157434,
+    "minlon": -122.6746996,
+    "maxlat": 45.5164048,
+    "maxlon": -122.6743347
+  },
+  "geometry": [
+    { "lat": 45.5164048, "lon": -122.6743347 },
+    { "lat": 45.5163355, "lon": -122.6743722 },
+    { "lat": 45.5158141, "lon": -122.6746608 },
+    { "lat": 45.5157434, "lon": -122.6746996 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxheight": "default",
+    "maxspeed": "20 mph",
+    "name": "Southwest 1st Avenue",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 633585104,
+  "bounds": {
+    "minlat": 45.5146320,
+    "minlon": -122.6796481,
+    "maxlat": 45.5147682,
+    "maxlon": -122.6791359
+  },
+  "geometry": [
+    { "lat": 45.5146320, "lon": -122.6791359 },
+    { "lat": 45.5147682, "lon": -122.6796481 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 633585105,
+  "bounds": {
+    "minlat": 45.5141109,
+    "minlon": -122.6800862,
+    "maxlat": 45.5141328,
+    "maxlon": -122.6800041
+  },
+  "geometry": [
+    { "lat": 45.5141328, "lon": -122.6800862 },
+    { "lat": 45.5141109, "lon": -122.6800041 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+},
+{
+  "type": "way",
+  "id": 681780787,
+  "bounds": {
+    "minlat": 45.5158647,
+    "minlon": -122.6789134,
+    "maxlat": 45.5161061,
+    "maxlon": -122.6780057
+  },
+  "geometry": [
+    { "lat": 45.5158647, "lon": -122.6780057 },
+    { "lat": 45.5158859, "lon": -122.6780855 },
+    { "lat": 45.5159009, "lon": -122.6781421 },
+    { "lat": 45.5161061, "lon": -122.6789134 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lanes:bus": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 696790081,
+  "bounds": {
+    "minlat": 45.5158647,
+    "minlon": -122.6780057,
+    "maxlat": 45.5178462,
+    "maxlon": -122.6769355
+  },
+  "geometry": [
+    { "lat": 45.5158647, "lon": -122.6780057 },
+    { "lat": 45.5159281, "lon": -122.6779715 },
+    { "lat": 45.5164688, "lon": -122.6776791 },
+    { "lat": 45.5165315, "lon": -122.6776456 },
+    { "lat": 45.5165936, "lon": -122.6776111 },
+    { "lat": 45.5171318, "lon": -122.6773207 },
+    { "lat": 45.5171987, "lon": -122.6772852 },
+    { "lat": 45.5172602, "lon": -122.6772520 },
+    { "lat": 45.5174601, "lon": -122.6771438 },
+    { "lat": 45.5175444, "lon": -122.6770982 },
+    { "lat": 45.5178109, "lon": -122.6769542 },
+    { "lat": 45.5178462, "lon": -122.6769355 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "primary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest 4th Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 706094611,
+  "bounds": {
+    "minlat": 45.5126653,
+    "minlon": -122.6774376,
+    "maxlat": 45.5133322,
+    "maxlon": -122.6770763
+  },
+  "geometry": [
+    { "lat": 45.5126653, "lon": -122.6774376 },
+    { "lat": 45.5127342, "lon": -122.6774003 },
+    { "lat": 45.5130950, "lon": -122.6772048 },
+    { "lat": 45.5132635, "lon": -122.6771135 },
+    { "lat": 45.5133322, "lon": -122.6770763 }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 2nd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 706094612,
+  "bounds": {
+    "minlat": 45.5126653,
+    "minlon": -122.6784652,
+    "maxlat": 45.5129396,
+    "maxlon": -122.6774376
+  },
+  "geometry": [
+    { "lat": 45.5126653, "lon": -122.6774376 },
+    { "lat": 45.5126767, "lon": -122.6774806 },
+    { "lat": 45.5129201, "lon": -122.6784022 },
+    { "lat": 45.5129396, "lon": -122.6784652 }
+  ],
+  "tags": {
+    "highway": "primary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Clay Street",
+    "name:etymology": "Henry Clay Senior",
+    "name:etymology:wikidata": "Q319630",
+    "name:etymology:wikipedia": "en:Henry Clay",
+    "old_name": "Sunset Highway #47 - Roadway #2",
+    "old_ref": "US 26",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 797121519,
+  "bounds": {
+    "minlat": 45.5133322,
+    "minlon": -122.6770763,
+    "maxlat": 45.5139895,
+    "maxlon": -122.6767203
+  },
+  "geometry": [
+    { "lat": 45.5133322, "lon": -122.6770763 },
+    { "lat": 45.5133907, "lon": -122.6770446 },
+    { "lat": 45.5139295, "lon": -122.6767528 },
+    { "lat": 45.5139895, "lon": -122.6767203 }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 2nd Avenue",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 797121520,
+  "bounds": {
+    "minlat": 45.5130835,
+    "minlon": -122.6770763,
+    "maxlat": 45.5133322,
+    "maxlon": -122.6761411
+  },
+  "geometry": [
+    { "lat": 45.5133322, "lon": -122.6770763 },
+    { "lat": 45.5133116, "lon": -122.6769985 },
+    { "lat": 45.5131081, "lon": -122.6762335 },
+    { "lat": 45.5130835, "lon": -122.6761411 }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 851897577,
+  "bounds": {
+    "minlat": 45.5146619,
+    "minlon": -122.6773743,
+    "maxlat": 45.5149327,
+    "maxlon": -122.6763561
+  },
+  "geometry": [
+    { "lat": 45.5149327, "lon": -122.6773743 },
+    { "lat": 45.5149000, "lon": -122.6772515 },
+    { "lat": 45.5148502, "lon": -122.6770640 },
+    { "lat": 45.5148384, "lon": -122.6770197 },
+    { "lat": 45.5146905, "lon": -122.6764648 },
+    { "lat": 45.5146619, "lon": -122.6763561 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "primary",
+    "lanes": "3",
+    "lanes:bus": "1",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 954875674,
+  "bounds": {
+    "minlat": 45.5143502,
+    "minlon": -122.6754209,
+    "maxlat": 45.5144131,
+    "maxlon": -122.6751869
+  },
+  "geometry": [
+    { "lat": 45.5144131, "lon": -122.6754209 },
+    { "lat": 45.5143904, "lon": -122.6753224 },
+    { "lat": 45.5143502, "lon": -122.6751869 }
+  ],
+  "tags": {
+    "cycleway:right": "lane",
+    "highway": "primary",
+    "lanes": "2",
+    "maxspeed": "30 mph",
+    "maxweight": "25 st",
+    "maxweight:hgv:conditional": "40 st @ (trailer)",
+    "maxweight:hgv_articulated": "40 st",
+    "name": "Hawthorne Bridge",
+    "name:etymology": "Hawthorne Boulevard",
+    "name:etymology:wikidata": "Q96418541",
+    "name:etymology:wikipedia": "en:Hawthorne Boulevard (Portland, Oregon)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 954875675,
+  "bounds": {
+    "minlat": 45.5141537,
+    "minlon": -122.6751869,
+    "maxlat": 45.5143502,
+    "maxlon": -122.6745726
+  },
+  "geometry": [
+    { "lat": 45.5143502, "lon": -122.6751869 },
+    { "lat": 45.5143081, "lon": -122.6750853 },
+    { "lat": 45.5141537, "lon": -122.6745726 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "foot": "use_sidepath",
+    "hgv": "yes",
+    "highway": "primary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "maxweight": "25 st",
+    "maxweight:hgv:conditional": "40 st @ (trailer)",
+    "maxweight:hgv_articulated": "40 st",
+    "name": "Hawthorne Bridge",
+    "name:etymology": "Hawthorne Boulevard",
+    "name:etymology:wikidata": "Q96418541",
+    "name:etymology:wikipedia": "en:Hawthorne Boulevard (Portland, Oregon)",
+    "oneway": "yes",
+    "psv": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1088720968,
+  "bounds": {
+    "minlat": 45.5151966,
+    "minlon": -122.6783666,
+    "maxlat": 45.5158647,
+    "maxlon": -122.6780057
+  },
+  "geometry": [
+    { "lat": 45.5151966, "lon": -122.6783666 },
+    { "lat": 45.5152619, "lon": -122.6783312 },
+    { "lat": 45.5158037, "lon": -122.6780387 },
+    { "lat": 45.5158647, "lon": -122.6780057 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "primary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest 4th Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1106535825,
+  "bounds": {
+    "minlat": 45.5155943,
+    "minlon": -122.6770082,
+    "maxlat": 45.5189240,
+    "maxlon": -122.6751843
+  },
+  "geometry": [
+    { "lat": 45.5189240, "lon": -122.6751843 },
+    { "lat": 45.5188573, "lon": -122.6752227 },
+    { "lat": 45.5185988, "lon": -122.6753603 },
+    { "lat": 45.5183125, "lon": -122.6755163 },
+    { "lat": 45.5182623, "lon": -122.6755403 },
+    { "lat": 45.5182386, "lon": -122.6755533 },
+    { "lat": 45.5182127, "lon": -122.6755675 },
+    { "lat": 45.5176434, "lon": -122.6758768 },
+    { "lat": 45.5176054, "lon": -122.6758970 },
+    { "lat": 45.5175701, "lon": -122.6759162 },
+    { "lat": 45.5175331, "lon": -122.6759363 },
+    { "lat": 45.5172444, "lon": -122.6760934 },
+    { "lat": 45.5171912, "lon": -122.6761224 },
+    { "lat": 45.5169864, "lon": -122.6762345 },
+    { "lat": 45.5169252, "lon": -122.6762678 },
+    { "lat": 45.5168643, "lon": -122.6763010 },
+    { "lat": 45.5163217, "lon": -122.6765915 },
+    { "lat": 45.5162571, "lon": -122.6766279 },
+    { "lat": 45.5161934, "lon": -122.6766640 },
+    { "lat": 45.5156720, "lon": -122.6769539 },
+    { "lat": 45.5155943, "lon": -122.6770082 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "secondary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 3rd Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1168886247,
+  "bounds": {
+    "minlat": 45.5156153,
+    "minlon": -122.6746996,
+    "maxlat": 45.5157434,
+    "maxlon": -122.6742226
+  },
+  "geometry": [
+    { "lat": 45.5157434, "lon": -122.6746996 },
+    { "lat": 45.5157157, "lon": -122.6745941 },
+    { "lat": 45.5156153, "lon": -122.6742226 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxheight": "default",
+    "maxspeed": "20 mph",
+    "name": "Southwest Salmon Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1197764520,
+  "bounds": {
+    "minlat": 45.5151044,
+    "minlon": -122.6817841,
+    "maxlat": 45.5153363,
+    "maxlon": -122.6809117
+  },
+  "geometry": [
+    { "lat": 45.5151044, "lon": -122.6809117 },
+    { "lat": 45.5152301, "lon": -122.6813743 },
+    { "lat": 45.5152785, "lon": -122.6815668 },
+    { "lat": 45.5153090, "lon": -122.6816813 },
+    { "lat": 45.5153363, "lon": -122.6817841 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Jefferson Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1363920825,
+  "bounds": {
+    "minlat": 45.5141328,
+    "minlon": -122.6800862,
+    "maxlat": 45.5146596,
+    "maxlon": -122.6798008
+  },
+  "geometry": [
+    { "lat": 45.5146596, "lon": -122.6798008 },
+    { "lat": 45.5142018, "lon": -122.6800489 },
+    { "lat": 45.5141328, "lon": -122.6800862 }
+  ],
+  "tags": {
+    "cycleway:left": "lane",
+    "cycleway:left:buffer": "no",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1369780666,
+  "bounds": {
+    "minlat": 45.5164481,
+    "minlon": -122.6803839,
+    "maxlat": 45.5165028,
+    "maxlon": -122.6801780
+  },
+  "geometry": [
+    { "lat": 45.5164481, "lon": -122.6801780 },
+    { "lat": 45.5165028, "lon": -122.6803839 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lanes:bus": "1",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:left": "separate",
+    "sidewalk:right": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1369780667,
+  "bounds": {
+    "minlat": 45.5144131,
+    "minlon": -122.6761588,
+    "maxlat": 45.5146098,
+    "maxlon": -122.6754209
+  },
+  "geometry": [
+    { "lat": 45.5146098, "lon": -122.6761588 },
+    { "lat": 45.5144425, "lon": -122.6755227 },
+    { "lat": 45.5144131, "lon": -122.6754209 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "primary",
+    "lanes": "3",
+    "maxspeed": "20 mph",
+    "name": "Southwest Madison Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1369780668,
+  "bounds": {
+    "minlat": 45.5162328,
+    "minlon": -122.6799592,
+    "maxlat": 45.5163842,
+    "maxlon": -122.6793898
+  },
+  "geometry": [
+    { "lat": 45.5162328, "lon": -122.6793898 },
+    { "lat": 45.5163842, "lon": -122.6799592 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Southwest Main Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1390885561,
+  "bounds": {
+    "minlat": 45.5151151,
+    "minlon": -122.6819039,
+    "maxlat": 45.5153363,
+    "maxlon": -122.6817841
+  },
+  "geometry": [
+    { "lat": 45.5153363, "lon": -122.6817841 },
+    { "lat": 45.5152834, "lon": -122.6818128 },
+    { "lat": 45.5151151, "lon": -122.6819039 }
+  ],
+  "tags": {
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "cycleway:right:lane": "exclusive",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 1390885563,
+  "bounds": {
+    "minlat": 45.5153363,
+    "minlon": -122.6817841,
+    "maxlat": 45.5155981,
+    "maxlon": -122.6816421
+  },
+  "geometry": [
+    { "lat": 45.5155981, "lon": -122.6816421 },
+    { "lat": 45.5154144, "lon": -122.6817409 },
+    { "lat": 45.5153363, "lon": -122.6817841 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "track",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Broadway",
+    "oneway": "yes",
+    "parking:both": "lane",
+    "parking:both:fee": "yes",
+    "parking:both:orientation": "parallel",
+    "sidewalk:both": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "||right",
+    "wikidata": "Q4972392",
+    "wikipedia": "en:Broadway (Portland, Oregon)"
+  }
+},
+{
+  "type": "way",
+  "id": 1470401688,
+  "bounds": {
+    "minlat": 45.5167937,
+    "minlon": -122.6797268,
+    "maxlat": 45.5170858,
+    "maxlon": -122.6786433
+  },
+  "geometry": [
+    { "lat": 45.5170858, "lon": -122.6797268 },
+    { "lat": 45.5170836, "lon": -122.6797181 },
+    { "lat": 45.5170482, "lon": -122.6795815 },
+    { "lat": 45.5168334, "lon": -122.6787979 },
+    { "lat": 45.5167987, "lon": -122.6786568 },
+    { "lat": 45.5167937, "lon": -122.6786433 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "tertiary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Salmon Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1470401689,
+  "bounds": {
+    "minlat": 45.5161287,
+    "minlon": -122.6790035,
+    "maxlat": 45.5167937,
+    "maxlon": -122.6786433
+  },
+  "geometry": [
+    { "lat": 45.5167937, "lon": -122.6786433 },
+    { "lat": 45.5167326, "lon": -122.6786763 },
+    { "lat": 45.5161959, "lon": -122.6789697 },
+    { "lat": 45.5161287, "lon": -122.6790035 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "sidewalk:both:surface": "paving_stones",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1470401690,
+  "bounds": {
+    "minlat": 45.5174620,
+    "minlon": -122.6782849,
+    "maxlat": 45.5179010,
+    "maxlon": -122.6780604
+  },
+  "geometry": [
+    { "lat": 45.5179010, "lon": -122.6780604 },
+    { "lat": 45.5175275, "lon": -122.6782494 },
+    { "lat": 45.5174620, "lon": -122.6782849 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "change:lanes": "no|yes|yes",
+    "embedded_rails": "light_rail",
+    "highway": "tertiary",
+    "lanes": "3",
+    "lanes:psv": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest 5th Avenue",
+    "oneway": "yes",
+    "parking:left": "no_stopping",
+    "parking:right": "no",
+    "psv:lanes": "|designated|designated",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1559799506,
+  "bounds": {
+    "minlat": 45.5144146,
+    "minlon": -122.6812591,
+    "maxlat": 45.5144449,
+    "maxlon": -122.6811460
+  },
+  "geometry": [
+    { "lat": 45.5144449, "lon": -122.6812591 },
+    { "lat": 45.5144146, "lon": -122.6811460 }
+  ],
+  "tags": {
+    "cycleway:right": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed": "20 mph",
+    "name": "Southwest Columbia Street",
+    "oneway": "yes",
+    "sidewalk:both": "separate",
+    "surface": "paving_stones"
+  }
+}
+
+  ]
+}

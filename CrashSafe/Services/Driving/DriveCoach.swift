@@ -69,13 +69,15 @@ final class DriveCoach {
     }
 
     private func speak(_ message: CoachingMessage) {
-        guard speaks, message.severity != .positive else { return }
+        // Only when over the speed limit; other advice stays on screen.
+        guard speaks, message.speaksAloud else { return }
         // Don't nag: the same warning at most once a minute.
         if let last = lastSpoken, last.title == message.title, Date.now.timeIntervalSince(last.at) < 60 { return }
         lastSpoken = (message.title, .now)
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .voicePrompt, options: [.duckOthers])
         try? AVAudioSession.sharedInstance().setActive(true)
         let utterance = AVSpeechUtterance(string: "\(message.title). \(message.body)")
+        utterance.voice = PulseVoice.preferred()
         utterance.rate = 0.5
         synthesizer.stopSpeaking(at: .word)
         synthesizer.speak(utterance)

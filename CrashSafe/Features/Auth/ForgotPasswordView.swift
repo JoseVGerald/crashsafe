@@ -14,8 +14,8 @@ struct ForgotPasswordView: View {
             VStack(alignment: .leading, spacing: Space.lg) {
                 if viewModel.sent {
                     VStack(spacing: Space.md) {
-                        IconBadge(systemName: "envelope.badge.fill", tint: Brand.green, size: 64)
-                        Text("Check your email").font(.title2.bold())
+                        IconBadge(systemName: "envelope.badge.fill", tint: Brand.blue, size: 64)
+                        Text("Check your email").font(.title2.bold()).foregroundStyle(Brand.textPrimary)
                         Text("If an account exists for \(viewModel.email), we sent a link to reset your password.")
                             .multilineTextAlignment(.center)
                             .foregroundStyle(Brand.textSecondary)
@@ -46,6 +46,7 @@ struct ForgotPasswordView: View {
                 }
             }
             .padding(Space.lg)
+            .background(BrandBackground())
             .animation(.spring(response: 0.4), value: viewModel.sent)
             .navigationTitle("Reset password")
             .navigationBarTitleDisplayMode(.inline)

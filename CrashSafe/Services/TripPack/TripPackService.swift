@@ -49,11 +49,14 @@ nonisolated struct TripPack: Codable, Sendable {
     /// Pre-generated guides/scripts the offline assistant can read.
     let guides: [String]
     let generatedAt: Date
+    /// Roads along the route with their speed limits (OpenStreetMap), so coaching works with no signal.
+    var roads: [RoadWay]? = nil
 
     var allPlaces: [HelpPlace] { hospitals + police + towCompanies }
 
     var summary: String {
         "\(towCompanies.count) tow · \(hospitals.count) hospitals · \(police.count) police · \(guides.count) guides"
+            + (roads.map { $0.isEmpty ? "" : " · speed limits" } ?? "")
     }
 }
 
@@ -74,32 +77,76 @@ final class MapKitTripPackService: TripPackService {
     private let fallback = MockTripPackService()
 
     func downloadPack(for request: TripPackRequest) async throws -> TripPack {
-        guard let from = request.originCoordinate, let to = request.destinationCoordinate else {
-            return try await fallback.downloadPack(for: request)
+        // Search around whatever real coordinates the trip has (start, middle, end) — never a default city.
+        var anchors = [request.originCoordinate, request.destinationCoordinate].compactMap { $0 }
+        if let from = request.originCoordinate, let to = request.destinationCoordinate {
+            anchors.insert(CLLocationCoordinate2D(latitude: (from.latitude + to.latitude) / 2,
+                                                  longitude: (from.longitude + to.longitude) / 2), at: 1)
         }
-        let middle = CLLocationCoordinate2D(latitude: (from.latitude + to.latitude) / 2,
-                                            longitude: (from.longitude + to.longitude) / 2)
+        guard !anchors.isEmpty else { return try await fallback.downloadPack(for: request) }
         var found: [HelpPlace] = []
-        for anchor in [from, middle, to] {
+        for anchor in anchors {
             found += await PlaceSearch.helpPlaces(near: anchor, radiusMeters: 20_000, perCategory: 3)
         }
         let unique = Array(Set(found))
         guard !unique.isEmpty else { return try await fallback.downloadPack(for: request) }
-        return TripPack(
+        var pack = TripPack(
             towCompanies: unique.filter { $0.category == .towing },
             hospitals: unique.filter { $0.category == .hospital },
             police: unique.filter { $0.category == .police },
             guides: TripPack.standardGuides,
             generatedAt: .now
         )
+        // Best effort: a pack without speed limits is still useful.
+        if let from = request.originCoordinate, let to = request.destinationCoordinate {
+            pack.roads = try? await RouteRoads.fetch(from: from, to: to)
+        }
+        return pack
     }
 }
 
-/// Returns fake places after a short delay (no coordinates / no network).
+/// Speed-limit data for a whole planned route, downloaded once (e.g. at home on Wi-Fi).
+enum RouteRoads {
+    static func fetch(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D,
+                      source: any RoadDataSource = FallbackRoadSource.standard()) async throws -> [RoadWay] {
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: from))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: to))
+        request.transportType = .automobile
+        guard let route = try await MKDirections(request: request).calculate().routes.first else { return [] }
+        return try await source.roads(along: samples(of: route.polyline), radiusMeters: 60)
+    }
+
+    /// Points along the route at least `spacing` apart, capped so the query stays small.
+    static func samples(of polyline: MKPolyline, spacing: Double = 400, cap: Int = 400) -> [CLLocationCoordinate2D] {
+        var points = [CLLocationCoordinate2D](repeating: .init(), count: polyline.pointCount)
+        polyline.getCoordinates(&points, range: NSRange(location: 0, length: polyline.pointCount))
+        var kept: [CLLocationCoordinate2D] = []
+        for point in points {
+            guard let last = kept.last else { kept.append(point); continue }
+            if TransportFeatures.haversine(last.latitude, last.longitude, point.latitude, point.longitude) >= spacing {
+                kept.append(point)
+            }
+        }
+        if let end = points.last { kept.append(end) }
+        guard kept.count > cap else { return kept }
+        let stride = Double(kept.count - 1) / Double(cap - 1)
+        return (0..<cap).map { kept[Int((Double($0) * stride).rounded())] }
+    }
+}
+
+enum TripPackError: LocalizedError {
+    case noLocation
+
+    var errorDescription: String? { "Choose a start or destination on the map first." }
+}
+
+/// Returns sample places after a short delay, placed around the trip's real coordinates.
+/// Without any coordinates it fails instead of inventing a location.
 final class MockTripPackService: TripPackService {
     func downloadPack(for request: TripPackRequest) async throws -> TripPack {
         try await Task.sleep(for: .seconds(1.2))
-        let base = request.originCoordinate ?? CLLocationCoordinate2D(latitude: 47.61, longitude: -122.20)
+        guard let base = request.originCoordinate ?? request.destinationCoordinate else { throw TripPackError.noLocation }
         func place(_ name: String, _ phone: String, _ category: HelpPlace.Category, _ dLat: Double, _ dLon: Double) -> HelpPlace {
             HelpPlace(name: name, phone: phone, category: category,
                       latitude: base.latitude + dLat, longitude: base.longitude + dLon)
