@@ -89,6 +89,17 @@ struct SensorHubTests {
         #expect(hub.health.rejectedLocationSamples == 1)
     }
 
+    @Test func watchdogDoesNotTurnUnreliableGpsIntoReliableGps() {
+        let location = TestLocationSource()
+        let hub = SensorHub(motion: TestMotionSource(), location: location, now: { 10 }, useWatchdog: false)
+        hub.acquire(owner: UUID(), background: false)
+        location.emit(LocationSample(uptime: 10, date: Date(), latitude: 47, longitude: -122,
+                                     horizontalAccuracy: 5, speedMPS: 20, speedAccuracy: -1))
+        #expect(hub.health.locationUnavailable)
+        hub.checkFreshness()
+        #expect(hub.health.locationUnavailable)
+    }
+
     private func sample(_ time: Double) -> MotionSample {
         MotionSample(uptime: time, date: Date(timeIntervalSince1970: time), accelerationG: .zero,
                      gravityG: SensorVector(x: 0, y: 0, z: -1), rotationRate: .zero)

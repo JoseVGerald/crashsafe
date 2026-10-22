@@ -29,6 +29,7 @@ final class SensorHub {
     @ObservationIgnored private var watchdog: Task<Void, Never>?
     @ObservationIgnored private var lastMotion: TimeInterval?
     @ObservationIgnored private var lastLocation: TimeInterval?
+    @ObservationIgnored private var latestLocation: LocationSample?
     @ObservationIgnored private var rateStart: TimeInterval?
     @ObservationIgnored private var rateCount = 0
     @ObservationIgnored private var startedAt: TimeInterval = 0
@@ -56,9 +57,10 @@ final class SensorHub {
         location.setBackgroundUpdates(owners.values.contains(true))
         guard !wasRunning else { return }
         health = SensorHealth(state: motion.isAvailable ? .starting : .unavailable,
-                              locationUnavailable: location.isDenied)
+                              locationUnavailable: true)
         lastMotion = nil
         lastLocation = nil
+        latestLocation = nil
         rateStart = nil
         rateCount = 0
         startedAt = now()
@@ -99,7 +101,7 @@ final class SensorHub {
 
     func checkFreshness() {
         guard isRunning else { return }
-        health.locationUnavailable = location.isDenied || (lastLocation.map { now() - $0 > 5 } ?? true)
+        health.locationUnavailable = location.isDenied || !(latestLocation?.hasReliableSpeed(at: now(), maximumAge: 5) ?? false)
         guard health.state == .active || health.state == .starting else { return }
         if now() - (lastMotion ?? startedAt) > 0.5 { health.state = .stale }
     }
@@ -131,6 +133,7 @@ final class SensorHub {
             return
         }
         lastLocation = sample.uptime
+        latestLocation = sample
         health.locationUnavailable = !sample.hasReliableSpeed(at: now(), maximumAge: 5)
         for receive in Array(observers.values) { receive(.location(sample)) }
     }
