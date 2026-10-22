@@ -156,6 +156,53 @@ nonisolated enum RoadMatcher {
         return d > 180 ? 360 - d : d
     }
 
+    /// RoadKind-style highway tag for a Valhalla road class (`motorway`, `residential`, …; ramps are links).
+    static func highway(valhallaClass roadClass: String?, use: String?) -> String? {
+        guard let roadClass else { return nil }
+        if use == "living_street" { return "living_street" }
+        let known = ["motorway", "trunk", "primary", "secondary", "tertiary", "unclassified", "residential"]
+        guard known.contains(roadClass) else { return use == "ramp" ? "primary_link" : nil }
+        if use == "ramp", ["motorway", "trunk", "primary", "secondary", "tertiary"].contains(roadClass) { return roadClass + "_link" }
+        return roadClass
+    }
+
+    /// Parses Valhalla's `trace_attributes` (the OpenStreetMap community's routing server): the road the
+    /// last point of a short GPS trace matched, with its posted limit. Valhalla reports `speed_limit` in
+    /// km/h only where the road has a posted `maxspeed` tag, so a missing value falls back to the typical
+    /// limit for the road class, marked not posted.
+    static func decodeValhallaTrace(_ data: Data, maxDistance: Double = 35) throws -> SpeedLimitReading? {
+        struct Response: Decodable {
+            struct Edge: Decodable {
+                var speed_limit: Double?
+                var names: [String]?
+                var way_id: Int64?
+                var road_class: String?
+                var use: String?
+            }
+            struct Matched: Decodable {
+                var type: String?
+                var edge_index: Int?
+                var distance_from_trace_point: Double?
+            }
+            var edges: [Edge]?
+            var matched_points: [Matched]?
+        }
+        let response = try JSONDecoder().decode(Response.self, from: data)
+        let edges = response.edges ?? []
+        guard let point = response.matched_points?.last(where: { $0.type == "matched" && ($0.edge_index ?? -1) < edges.count && ($0.edge_index ?? -1) >= 0 }),
+              let index = point.edge_index else { return nil }
+        let distance = point.distance_from_trace_point ?? 0
+        guard distance <= maxDistance else { return nil }
+        let edge = edges[index]
+        let highway = highway(valhallaClass: edge.road_class, use: edge.use)
+        // 255 means "no limit" in Valhalla; 0 or missing means none posted.
+        let posted = edge.speed_limit.flatMap { $0 > 0 && $0 < 250 ? ($0 * 0.621371).rounded() : nil }
+        // No posted limit on a service road or parking aisle: don't guess one.
+        guard let mph = posted ?? highway.flatMap(typicalLimitMPH(for:)) else { return nil }
+        return SpeedLimitReading(mph: mph, isPosted: posted != nil, roadName: edge.names?.first, highway: highway ?? "service",
+                                 wayID: edge.way_id ?? 0, distanceMeters: distance)
+    }
+
     /// Parses an Overpass JSON response (`out tags geom`).
     static func decodeOverpass(_ data: Data) throws -> [RoadWay] {
         struct Response: Decodable {

@@ -63,3 +63,35 @@ struct SpeedLimitTests {
         #expect(RoadMatcher.match(lat: 45.5005, lon: -122.6, heading: 180, ways: [split])?.mph == 25)
     }
 }
+
+struct ValhallaTraceTests {
+    static func fixture(_ name: String) throws -> Data {
+        let url = try #require(Bundle.module.url(forResource: name, withExtension: "json", subdirectory: "Fixtures"))
+        return try Data(contentsOf: url)
+    }
+
+    @Test func realResponsesGiveThePostedLimit() throws {
+        let i5 = try #require(try RoadMatcher.decodeValhallaTrace(Self.fixture("valhalla_i5_north")))
+        #expect(i5.mph == 50 && i5.isPosted)            // 80 km/h in Valhalla = the "50 mph" OSM tag
+        #expect(i5.environment == .highway && i5.roadName == "I 5 North")
+        let main = try #require(try RoadMatcher.decodeValhallaTrace(Self.fixture("valhalla_sw_main_west")))
+        #expect(main.mph == 20 && main.isPosted && main.environment == .city)
+        #expect(main.roadName == "Southwest Main Street")
+    }
+
+    @Test func untaggedRoadsAreTypicalAndServiceRoadsAreNotGuessed() throws {
+        func decode(_ edge: String, distance: Double = 4) throws -> SpeedLimitReading? {
+            try RoadMatcher.decodeValhallaTrace(Data("""
+            {"edges":[\(edge)],"matched_points":[{"type":"matched","edge_index":0,"distance_from_trace_point":\(distance)}]}
+            """.utf8))
+        }
+        let residential = try #require(try decode(#"{"road_class":"residential","use":"road","names":["NE 7th Ave"],"way_id":1}"#))
+        #expect(residential.mph == 25 && !residential.isPosted)
+        let ramp = try #require(try decode(#"{"road_class":"motorway","use":"ramp","way_id":2}"#))
+        #expect(ramp.mph == 35 && !ramp.isPosted && ramp.highway == "motorway_link")
+        #expect(try decode(#"{"road_class":"service_other","use":"parking_aisle","way_id":3}"#) == nil)
+        #expect(try decode(#"{"road_class":"motorway","speed_limit":255,"way_id":4}"#)?.isPosted == false) // "no limit"
+        #expect(try decode(#"{"road_class":"primary","speed_limit":56,"way_id":5}"#, distance: 80) == nil)  // too far to trust
+        #expect(try RoadMatcher.decodeValhallaTrace(Data(#"{"edges":[],"matched_points":[{"type":"unmatched"}]}"#.utf8)) == nil)
+    }
+}

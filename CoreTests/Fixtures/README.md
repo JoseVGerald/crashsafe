@@ -12,3 +12,6 @@
 - `motionsense_wlk7_sub24_60-70s.csv`: 10 s of brisk walking (iPhone 6s Core Motion, 50 Hz) from the
   MotionSense dataset (MIT license; Malekzadeh et al., "Mobile Sensor Data Anonymization", IoTDI'19,
   https://github.com/mmalekzadeh/motion-sense). It once caused a false crash check-in.
+- `valhalla_i5_north.json`, `valhalla_sw_main_west.json`: real `trace_attributes` responses from the
+  OpenStreetMap community's Valhalla server (valhalla1.openstreetmap.de) for short traces on I-5 and
+  SW Main Street, fetched 2026-10-22. Data © OpenStreetMap contributors, ODbL.

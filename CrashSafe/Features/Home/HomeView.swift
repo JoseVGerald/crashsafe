@@ -123,6 +123,10 @@ struct HomeView: View {
             }
             .task(id: env.location.location.map { Int($0.coordinate.latitude * 100) }) {
                 guard env.driving.scenario == nil else { return }
+                // Have the roads around here on the phone before "Drive this car" needs their limits.
+                if let here = env.location.location?.coordinate {
+                    env.driving.speedLimits?.prefetch(lat: here.latitude, lon: here.longitude)
+                }
                 await env.conditions.refresh(for: env.location.location)
             }
         }
@@ -169,28 +173,10 @@ struct HomeView: View {
             Text("Stay safe. We're looking out for you.")
                 .font(.body)
                 .foregroundStyle(Brand.textSecondary)
-            activityChip
+            ActivityChip()
                 .padding(.top, 4)
         }
         .accessibilityElement(children: .combine)
-    }
-
-    /// What the motion model thinks you're doing right now (updates every 2.5 s while on screen).
-    @ViewBuilder
-    private var activityChip: some View {
-        let intelligence = env.intelligence
-        if let current = intelligence.current, let mode = current.transportClass {
-            StatusChip(text: "\(mode.title) · \(Int((current.probability * 100).rounded()))%",
-                       systemImage: mode.systemImage, tint: Brand.blueInk)
-                .contentTransition(.opacity)
-                .animation(.easeOut, value: mode)
-        } else if intelligence.current != nil {
-            StatusChip(text: "Figuring out what you're doing…", systemImage: "waveform.path.ecg", tint: Brand.textSecondary)
-        } else if env.sensors.health.state == .unavailable {
-            StatusChip(text: "Motion sensors unavailable here", systemImage: "sensor.fill", tint: Brand.textSecondary)
-        } else if intelligence.isSensingActivity {
-            StatusChip(text: "Sensing your motion…", systemImage: "waveform.path.ecg", tint: Brand.textSecondary)
-        }
     }
 
     private var isProtected: Bool { viewModel.isMonitoring || isDriving }
@@ -599,5 +585,27 @@ struct DriveVehiclePicker: View {
         if let selected { profile.makePrimary(selected) }
         onConfirm(trip)
         dismiss()
+    }
+}
+
+/// What the motion model thinks you're doing right now. Its own view: it updates every 2.5 s while on
+/// screen, and only the chip should redraw, not all of Home.
+private struct ActivityChip: View {
+    @Environment(AppEnvironment.self) private var env
+
+    var body: some View {
+        let intelligence = env.intelligence
+        if let current = intelligence.current, let mode = current.transportClass {
+            StatusChip(text: "\(mode.title) · \(Int((current.probability * 100).rounded()))%",
+                       systemImage: mode.systemImage, tint: Brand.blueInk)
+                .contentTransition(.opacity)
+                .animation(.easeOut, value: mode)
+        } else if intelligence.current != nil {
+            StatusChip(text: "Figuring out what you're doing…", systemImage: "waveform.path.ecg", tint: Brand.textSecondary)
+        } else if env.sensors.health.state == .unavailable {
+            StatusChip(text: "Motion sensors unavailable here", systemImage: "sensor.fill", tint: Brand.textSecondary)
+        } else if intelligence.isSensingActivity {
+            StatusChip(text: "Sensing your motion…", systemImage: "waveform.path.ecg", tint: Brand.textSecondary)
+        }
     }
 }
