@@ -1,0 +1,696 @@
+{
+  "schema_version": 1,
+  "readiness": "prototype_not_professionally_approved",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "Calling 911",
+      "publisher": "National 911 Program",
+      "url": "https://www.911.gov/calling-911/",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S02",
+      "title": "Frequently asked questions about calling 911",
+      "publisher": "National 911 Program",
+      "url": "https://www.911.gov/calling-911/frequently-asked-questions/",
+      "jurisdiction": "U.S.; availability varies locally",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S03",
+      "title": "First Aid Steps",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/first-aid/performing-first-aid/first-aid-steps",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S04",
+      "title": "Head Neck and Spinal Injury",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/head-neck-spinal-injury",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S05",
+      "title": "Unresponsive and Breathing Person",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/unresponsive-and-breathing-person",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page retrieved; checked during implementation",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S06",
+      "title": "Life Threatening External Bleeding",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/bleeding-life-threatening-external",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S07",
+      "title": "Shock",
+      "publisher": "American Red Cross",
+      "url": "https://www.redcross.org/take-a-class/resources/learn-first-aid/shock",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S08",
+      "title": "Symptoms of Mild TBI and Concussion",
+      "publisher": "CDC",
+      "url": "https://www.cdc.gov/traumatic-brain-injury/signs-symptoms/index.html",
+      "jurisdiction": "U.S.; adults and children",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S09",
+      "title": "Signs and Symptoms of Concussion",
+      "publisher": "CDC HEADS UP",
+      "url": "https://www.cdc.gov/heads-up/signs-symptoms/index.html",
+      "jurisdiction": "U.S.; pediatric emphasis",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S10",
+      "title": "Vehicle Fire Safety",
+      "publisher": "U.S. Fire Administration",
+      "url": "https://www.usfa.fema.gov/prevention/vehicle-fires/",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S11",
+      "title": "Electric and Hybrid Vehicles",
+      "publisher": "NHTSA",
+      "url": "https://www.nhtsa.gov/vehicle-safety/electric-and-hybrid-vehicles",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S12",
+      "title": "Car Seat Use After a Crash",
+      "publisher": "NHTSA",
+      "url": "https://www.nhtsa.gov/car-seats-and-booster-seats/car-seat-use-after-crash",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page retrieved; checked during implementation",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S13",
+      "title": "Psychological First Aid Guide for Field Workers",
+      "publisher": "WHO War Trauma Foundation and World Vision",
+      "url": "https://www.who.int/publications/i/item/9789241548205",
+      "jurisdiction": "International; 2011 publication",
+      "access_status": "Publication page; linked PDF blocked",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S14",
+      "title": "Psychological First Aid Field Operations Guide",
+      "publisher": "VA National Center for PTSD and NCTSN",
+      "url": "https://www.ptsd.va.gov/disaster_events/for_providers/psychological_first_aid.asp",
+      "jurisdiction": "U.S.; disaster response context",
+      "access_status": "Full overview and contents; chapters not downloaded",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S15",
+      "title": "Common Reactions After Trauma",
+      "publisher": "VA National Center for PTSD",
+      "url": "https://www.ptsd.va.gov/understand/isitptsd/common_reactions.asp",
+      "jurisdiction": "U.S.",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S16",
+      "title": "Coping With Traumatic Events",
+      "publisher": "NIMH",
+      "url": "https://www.nimh.nih.gov/health/topics/coping-with-traumatic-events",
+      "jurisdiction": "U.S.",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S17",
+      "title": "Trauma Informed Approaches and Programs",
+      "publisher": "SAMHSA",
+      "url": "https://www.samhsa.gov/mental-health/trauma-violence/trauma-informed-approaches-programs",
+      "jurisdiction": "U.S.",
+      "access_status": "Search extract; page blocked",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S18",
+      "title": "Recommendations for PTSD NG116",
+      "publisher": "NICE",
+      "url": "https://www.nice.org.uk/guidance/ng116/chapter/recommendations",
+      "jurisdiction": "UK clinical guidance; not U.S. law",
+      "access_status": "Search extract; page blocked",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S19",
+      "title": "Skills for Psychological Recovery Field Operations Guide",
+      "publisher": "VA National Center for PTSD and NCTSN",
+      "url": "https://www.ptsd.va.gov/disaster_events/for_providers/skills_psych_recovery.asp",
+      "jurisdiction": "U.S.; later recovery",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S20",
+      "title": "Helping Children and Adolescents Cope With Traumatic Events",
+      "publisher": "NIMH",
+      "url": "https://www.nimh.nih.gov/health/publications/helping-children-and-adolescents-cope-with-disasters-and-other-traumatic-events",
+      "jurisdiction": "U.S.; children and adolescents",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S21",
+      "title": "RCW 46.52.020 Duties After a Collision",
+      "publisher": "Washington Legislature",
+      "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=46.52.020",
+      "jurisdiction": "Washington",
+      "access_status": "Full statute",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S22",
+      "title": "RCW 46.52.030 Accident Reports",
+      "publisher": "Washington Legislature",
+      "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=46.52.030",
+      "jurisdiction": "Washington",
+      "access_status": "Full statute",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S23",
+      "title": "Online Motor Vehicle Collision Reporting",
+      "publisher": "Washington State Patrol",
+      "url": "https://wrecr.wsp.wa.gov/omvcr",
+      "jurisdiction": "Washington",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S24",
+      "title": "Reporting Collision Damage",
+      "publisher": "Washington Department of Licensing",
+      "url": "https://dol.wa.gov/driver-licenses-and-permits/driver-safety/reporting-collision-damage",
+      "jurisdiction": "Washington",
+      "access_status": "Search extract; full page unavailable",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S25",
+      "title": "Filing an Auto Insurance Claim",
+      "publisher": "Washington Office of the Insurance Commissioner",
+      "url": "https://www.insurance.wa.gov/insurance-resources/auto-insurance/auto-insurance-claims/filing-auto-insurance-claim",
+      "jurisdiction": "Washington",
+      "access_status": "Search extract; full page unavailable",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S26",
+      "title": "Personal Injury Protection",
+      "publisher": "Washington Office of the Insurance Commissioner",
+      "url": "https://www.insurance.wa.gov/insurance-resources/auto-insurance/how-auto-insurance-works/personal-injury-protection-pip",
+      "jurisdiction": "Washington",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S27",
+      "title": "What Happens After Your Car Gets Totaled",
+      "publisher": "Washington Office of the Insurance Commissioner",
+      "url": "https://www.insurance.wa.gov/insurance-resources/auto-insurance/auto-insurance-claims/what-happens-after-your-car-gets-totaled",
+      "jurisdiction": "Washington",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S28",
+      "title": "File a Complaint or Check Complaint Status",
+      "publisher": "Washington Office of the Insurance Commissioner",
+      "url": "https://www.insurance.wa.gov/complaints-appeals-fraud/complaints/file-complaint-or-check-your-complaint-status",
+      "jurisdiction": "Washington",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S29",
+      "title": "What You Should Know About Filing an Auto Claim",
+      "publisher": "NAIC",
+      "url": "https://content.naic.org/article/what-you-should-know-about-filing-auto-claim",
+      "jurisdiction": "U.S.; state variation",
+      "access_status": "Full page",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S30",
+      "title": "So You Have Had an Accident What Is Next",
+      "publisher": "California Department of Insurance",
+      "url": "https://www.insurance.ca.gov/01-consumers/105-type/95-guides/01-auto/hadaccident.cfm",
+      "jurisdiction": "California; general process reference only",
+      "access_status": "Full page; numerical legal details quarantined",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S31",
+      "title": "Auto Insurance",
+      "publisher": "NAIC",
+      "url": "https://content.naic.org/insurance-topics/auto-insurance",
+      "jurisdiction": "U.S.",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S32",
+      "title": "Car Repair Laws",
+      "publisher": "Washington Attorney General",
+      "url": "https://www.atg.wa.gov/car-repair-laws",
+      "jurisdiction": "Washington",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S33",
+      "title": "Mobile Health App Developers FTC Best Practices",
+      "publisher": "FTC",
+      "url": "https://www.ftc.gov/business-guidance/resources/mobile-health-app-developers-ftc-best-practices",
+      "jurisdiction": "U.S.; applicability review required",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S34",
+      "title": "Complying With the Health Breach Notification Rule",
+      "publisher": "FTC",
+      "url": "https://www.ftc.gov/business-guidance/resources/complying-ftcs-health-breach-notification-rule-0",
+      "jurisdiction": "U.S.; applicability review required",
+      "access_status": "Search extract",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    },
+    {
+      "id": "S35",
+      "title": "Protecting Washingtonians Personal Health Data and Privacy",
+      "publisher": "Washington Attorney General",
+      "url": "https://www.atg.wa.gov/protecting-washingtonians-personal-health-data-and-privacy",
+      "jurisdiction": "Washington; applicability review required",
+      "access_status": "Search extract; page blocked",
+      "checked": "2026-10-21",
+      "professional_review": "pending"
+    }
+  ],
+  "cards": [
+    {
+      "id": "CALL_911",
+      "title": "What to tell the emergency call-taker",
+      "terms": "911 emergency address location callback ambulance dispatcher",
+      "body": "Tell the 911 call-taker your location, callback number, what happened, and the injuries or hazards you can observe. Answer their questions, follow their instructions, and stay on the line until told to hang up. This assistant does not place the call or confirm dispatch.",
+      "source_ids": [
+        "S01"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "TEXT_911",
+      "title": "Calling versus texting 911",
+      "terms": "text deaf hearing speech cannot call emergency",
+      "body": "Call 911 by voice if you can. Text-to-911 availability varies; do not assume it works at your location. If you cannot speak, use an available local emergency text option and provide the location and type of emergency.",
+      "source_ids": [
+        "S02"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "MOVEMENT",
+      "title": "Possible neck back or head injury",
+      "terms": "neck back spine spinal hurt get out exit stand walk move injured",
+      "body": "With a possible head, neck or back injury, do not move the person simply to make them more comfortable. An immediate safety threat or essential lifesaving care can change what is necessary. Follow emergency-call instructions; do not use an automatic always-exit or always-stay rule.",
+      "source_ids": [
+        "S04",
+        "S05"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "BLEEDING",
+      "title": "Serious external bleeding",
+      "terms": "bleed blood wound bleeding pressure",
+      "body": "For life-threatening external bleeding, call 911 and follow emergency instructions. If it is safe to help, apply firm direct pressure to the wound. Do not remove an embedded object; pressure is applied around it. Advanced measures require appropriate training.",
+      "source_ids": [
+        "S06"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "HEAD_INJURY",
+      "title": "Head injury symptoms and danger signs",
+      "terms": "head concussion headache vomiting dizzy dizziness confusion pupil seizure sleepy symptoms",
+      "body": "After a possible head injury, worsening headache, repeated vomiting, seizures, unusual confusion or difficulty waking require emergency medical care. Symptoms can appear later. Being able to talk does not establish that someone is uninjured.",
+      "source_ids": [
+        "S08"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "FIRE",
+      "title": "Vehicle on fire",
+      "terms": "fire flames burning smoke car hood trunk",
+      "body": "If the vehicle catches fire, get out if you can, stay at least 100 feet away and away from traffic, and call 911. Do not return for belongings, fight the fire yourself or open a hood or trunk where you suspect fire.",
+      "source_ids": [
+        "S10"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "EV",
+      "title": "Electric and hybrid vehicle damage and towing",
+      "terms": "electric hybrid ev high voltage battery tow towing",
+      "body": "Damaged electric or hybrid high-voltage systems may remain energized, and fire or hazardous gases can occur later. Do not touch exposed electrical parts or attempt repairs. Tell responders and towing personnel the vehicle type. Follow the correct owner's manual for towing requirements.",
+      "source_ids": [
+        "S11"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CAR_SEAT",
+      "title": "Car seat replacement after a collision",
+      "terms": "child infant baby booster car seat replace replacement",
+      "body": "NHTSA recommends replacing car seats after moderate or severe crashes. A minor-crash exception requires all five conditions: vehicle driven away; nearest door undamaged; no occupant injuries; no deployed airbags; no visible seat damage. Always follow the seat manufacturer's instructions.",
+      "source_ids": [
+        "S12"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CALM_SUPPORT",
+      "title": "Support when overwhelmed",
+      "terms": "panic scared afraid crying overwhelmed nervous terrified emotional kindness calm",
+      "body": "A frightening event can leave people anxious, upset or unable to concentrate. Once immediate safety needs are addressed, focus on one manageable task and consider contacting someone you trust. You do not have to recount the event in detail to receive practical help.",
+      "source_ids": [
+        "S16",
+        "S13"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "FOLLOWUP_EMOTION",
+      "title": "When to seek emotional support after a crash",
+      "terms": "nightmares sleep sleeping flashbacks anxiety trauma ptsd weeks mental health therapist",
+      "body": "If distress does not improve, worsens or interferes with daily life, talk with a qualified health professional. Supportive friends or relatives and ordinary routines can help during recovery. This assistant does not diagnose PTSD or provide trauma therapy.",
+      "source_ids": [
+        "S16"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_EXCHANGE",
+      "title": "Washington required exchange of information",
+      "terms": "wa washington exchange details license policy number name address other driver",
+      "body": "In Washington, collision duties include exchanging name, address, insurance company and policy number, vehicle license number, and showing a driver's license as required by RCW 46.52.020. The law also describes stopping, remaining at the appropriate location and providing reasonable assistance to injured people.",
+      "source_ids": [
+        "S21"
+      ],
+      "scope": "WA",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_MOVE",
+      "title": "Washington moving vehicles after property damage only",
+      "terms": "wa washington move moving vehicle traffic lane shoulder property damage only fender bender",
+      "body": "Washington's property-damage-only branch requires moving the vehicle from the roadway to a suitable location as soon as possible and remaining there to fulfill the required duties. The statute says moving the vehicle does not determine fault. Injury crashes have a separate branch; do not move an injured person just to reposition a car.",
+      "source_ids": [
+        "S21"
+      ],
+      "scope": "WA",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "WA_REPORT",
+      "title": "Washington collision report conditions and deadline",
+      "terms": "wa washington report reporting file deadline days four 4 1000 thousand officer police paperwork",
+      "body": "For qualifying Washington collisions, a driver report is generally due within four days unless a law-enforcement report is to be made. WSP's portal identifies injury or at least $1,000 damage to any one unit, with an exception when the officer indicates they will file. Confirm that an officer will submit it; attendance alone is not that confirmation.",
+      "source_ids": [
+        "S22",
+        "S23"
+      ],
+      "scope": "WA",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "DOCUMENT",
+      "title": "Information and photographs for an insurance claim",
+      "terms": "document documentation evidence photographs photos pictures witness weather dashcam plate damage",
+      "body": "Once it is safe, record the time, date, location, vehicle information, witness contacts and responding officer or report details. Photograph the scene and damage only from safe positions. Record what you actually observed and distinguish unknown details from estimates.",
+      "source_ids": [
+        "S29"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "CLAIM_NOTICE",
+      "title": "Notify your insurer and keep a claim record",
+      "terms": "insurance notify notification report claim contact adjuster investigation notes receipts",
+      "body": "Notify your insurer as soon as possible and cooperate with the claim investigation. Keep notes of conversations, dates and decisions. Ask for written explanations when you do not understand a claim decision.",
+      "source_ids": [
+        "S29"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "STATEMENT",
+      "title": "Recorded statement and cooperation questions",
+      "terms": "recorded statement recording insurer adjuster refuse never must own other insurance",
+      "body": "Before answering a statement request, establish which insurer the person represents and check your own policy's cooperation requirements. A claims investigation may include a written or recorded statement. There is no universal rule to refuse every statement. If obligations or release terms are unclear, seek qualified advice.",
+      "source_ids": [
+        "S29",
+        "S30"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "TRUTHFUL",
+      "title": "Accurate accounts and uncertain details",
+      "terms": "fault blame admit truth truthful lie lying hide phone using speed guess unsure remember don't know",
+      "body": "Describe what you actually saw and did. Do not invent a precise speed, guess at legal responsibility, hide relevant facts or exaggerate injuries. If you do not know a detail, say so; identify a genuine estimate as an estimate and correct mistakes when you discover them.",
+      "source_ids": [
+        "S29",
+        "S30"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "COVERAGE",
+      "title": "Coverage cannot be inferred from a generic guide",
+      "terms": "insurance coverage cover covered policy deductible rental rent tow medical reimbursement benefits",
+      "body": "Check the actual policy and endorsements for coverage, exclusions, limits, deductibles and duties after a loss. A generic guide cannot establish that towing, a rental vehicle, repairs or medical costs are covered. Ask the insurer to identify the applicable terms in writing.",
+      "source_ids": [
+        "S30"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "DISPUTE",
+      "title": "Disputed settlement or claim decision",
+      "terms": "settlement offer deny denied denial dispute unfair pay payout release sign written complaint",
+      "body": "You do not need to feel rushed into an insurance settlement you do not understand. Ask for a written explanation of the decision and review the relevant policy terms. If a claim-handling dispute remains unresolved, contact your state insurance department; legal questions may need a qualified lawyer.",
+      "source_ids": [
+        "S29"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "SILENCE",
+      "title": "No response does not prove unconsciousness",
+      "terms": "silence silent not responding microphone sensor unconscious unconsciousness detection passed out",
+      "body": "No response from a phone user does not establish that the person is unconscious. Communication can fail. This prototype cannot determine consciousness or automatically dispatch emergency services; a real system needs separately validated detection and escalation procedures.",
+      "source_ids": [
+        "S01",
+        "S03"
+      ],
+      "scope": "US",
+      "stage": "any",
+      "status": "source_verified",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "DRAFT_PIP",
+      "title": "Washington personal injury protection details",
+      "terms": "pip personal injury protection hospital wages",
+      "body": "Full-text verification and policy-specific limits are still needed. Do not use this discovery note as a coverage determination.",
+      "source_ids": [
+        "S26"
+      ],
+      "scope": "WA",
+      "stage": "followup",
+      "status": "discovery_only",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    },
+    {
+      "id": "DRAFT_PRIVACY",
+      "title": "Health data law discovery notes",
+      "terms": "privacy health data consent sell selling",
+      "body": "Obtain full-text and legal review before making claims about health-data collection or sharing compliance.",
+      "source_ids": [
+        "S33",
+        "S34",
+        "S35"
+      ],
+      "scope": "US",
+      "stage": "followup",
+      "status": "discovery_only",
+      "verified": "2026-10-21",
+      "expires": "2027-01-19",
+      "professional_review": "pending"
+    }
+  ]
+}
