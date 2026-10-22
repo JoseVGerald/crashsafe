@@ -7,17 +7,17 @@ struct SplashView: View {
 
     var body: some View {
         ZStack {
-            Theme.accent.ignoresSafeArea()
+            Brand.background.ignoresSafeArea()
             VStack(spacing: 20) {
                 ZStack {
                     Circle()
-                        .stroke(.white.opacity(0.35), lineWidth: 3)
+                        .stroke(Brand.blueInk.opacity(0.4), lineWidth: 3)
                         .frame(width: 150, height: 150)
                         .scaleEffect(pulse ? 1.35 : 0.9)
                         .opacity(pulse ? 0 : 1)
                     Image(systemName: "checkmark.shield.fill")
                         .font(.system(size: 84, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Brand.blueInk)
                         .scaleEffect(appeared ? 1 : 0.6)
                 }
                 VStack(spacing: 6) {
@@ -25,9 +25,9 @@ struct SplashView: View {
                         .font(.largeTitle.bold())
                     Text("Help for what happens next.")
                         .font(.headline)
-                        .opacity(0.85)
+                        .foregroundStyle(Brand.textSecondary)
                 }
-                .foregroundStyle(.white)
+                .foregroundStyle(Brand.textPrimary)
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 12)
             }

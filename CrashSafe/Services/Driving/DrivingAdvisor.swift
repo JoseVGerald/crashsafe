@@ -9,6 +9,8 @@ struct DrivingAdvice: Equatable {
     }
 
     let headline: String
+    /// Why the headline matters right now, in one plain sentence.
+    let reason: String
     let speedFactor: Double
     let followingSeconds: Int
     let tips: [Tip]
@@ -58,7 +60,21 @@ struct DrivingAdvice: Equatable {
         case .freezingRain: "Ice risk — drive only if you must"
         }
 
-        return DrivingAdvice(headline: headline, speedFactor: factor, followingSeconds: following, tips: tips)
+        var reason: String = switch condition {
+        case .clear, .partlyCloudy, .cloudy:
+            isNight ? "It's dark out, so people, animals and debris are harder to see and other drivers react later."
+                : "Roads look clear and dry. Keep your eyes up and your phone down."
+        case .fog: "Fog cuts how far ahead you can see, so hazards appear with less warning."
+        case .drizzle, .rain: "Wet pavement takes longer to stop on, especially in the first rain after a dry spell."
+        case .heavyRain, .thunderstorm: "Heavy rain hides lane lines and can make tires hydroplane on standing water."
+        case .snow: "Snow hides lane lines and makes stopping and turning slower than usual."
+        case .freezingRain: "Ice can form where you can't see it, especially on bridges and in shade."
+        }
+        if isNight, condition != .clear, condition != .partlyCloudy, condition != .cloudy {
+            reason += " Darkness makes it harder still."
+        }
+
+        return DrivingAdvice(headline: headline, reason: reason, speedFactor: factor, followingSeconds: following, tips: tips)
     }
 }
 
