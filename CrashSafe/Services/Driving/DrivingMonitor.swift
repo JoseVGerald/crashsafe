@@ -1,5 +1,3 @@
-import CoreLocation
-import CoreMotion
 import Foundation
 import Observation
 
@@ -110,7 +108,7 @@ struct DrivingSnapshot: Equatable, Sendable {
 
 /// Watches speed (GPS) and forces (accelerometer) while driving.
 ///
-/// `live` uses real sensors and can keep running in the background during a drive.
+/// `live` uses the shared sensor hub; background availability must be tested on a device.
 /// `demo` plays a scripted `DriveScenario` — the simulator has no accelerometer or real motion.
 @Observable
 final class DrivingMonitor {
@@ -125,15 +123,17 @@ final class DrivingMonitor {
     /// Recent g-force readings for the live sparkline.
     private(set) var gHistory: [Double] = Array(repeating: 0, count: 40)
 
-    @ObservationIgnored private let location: LocationService
-    @ObservationIgnored private let motion = CMMotionManager()
+    @ObservationIgnored private let sensors: SensorHub
+    @ObservationIgnored private let sensorOwner = UUID()
+    @ObservationIgnored private var sensorObserver: UUID?
     @ObservationIgnored private var demoTask: Task<Void, Never>?
     @ObservationIgnored private var lastSpeed: (mph: Double, at: Date)?
-    @ObservationIgnored private var speedSamples: [Double] = []
+    @ObservationIgnored private var movingSpeedSum = 0.0
+    @ObservationIgnored private var movingSpeedCount = 0
     @ObservationIgnored private var startedAt: Date?
 
-    init(location: LocationService) {
-        self.location = location
+    init(sensors: SensorHub) {
+        self.sensors = sensors
     }
 
     var isActive: Bool { mode != .idle }
@@ -142,7 +142,8 @@ final class DrivingMonitor {
         if case .demo(let scenario) = mode { scenario } else { nil }
     }
 
-    var hasAccelerometer: Bool { motion.isDeviceMotionAvailable }
+    var hasAccelerometer: Bool { sensors.hasMotionHardware }
+    var sensorHealth: SensorHealth { sensors.health }
 
     // MARK: Control
 
@@ -150,17 +151,16 @@ final class DrivingMonitor {
         stop()
         reset(environment: .city, limit: nil)
         mode = .live
-        location.onUpdate = { [weak self] update in self?.ingest(update) }
-        location.setBackgroundUpdates(background)
-        location.start()
-        if motion.isDeviceMotionAvailable {
-            motion.deviceMotionUpdateInterval = 1.0 / 20
-            motion.startDeviceMotionUpdates(to: .main) { [weak self] data, _ in
-                guard let data else { return }
-                let a = data.userAcceleration
-                self?.ingest(g: (a.x * a.x + a.y * a.y + a.z * a.z).squareRoot())
+        sensorObserver = sensors.addObserver { [weak self] reading in
+            switch reading {
+            case .motion(let sample): self?.ingest(g: sample.accelerationG.magnitude)
+            case .location(let sample):
+                if sample.hasReliableSpeed(at: ProcessInfo.processInfo.systemUptime) {
+                    self?.ingest(speedMPH: sample.speedMPS * 2.23694, at: sample.date)
+                }
             }
         }
+        sensors.acquire(owner: sensorOwner, background: background)
     }
 
     func startDemo(_ scenario: DriveScenario) {
@@ -187,9 +187,9 @@ final class DrivingMonitor {
         demoTask?.cancel()
         demoTask = nil
         if mode == .live {
-            location.onUpdate = nil
-            location.setBackgroundUpdates(false)
-            motion.stopDeviceMotionUpdates()
+            if let sensorObserver { sensors.removeObserver(sensorObserver) }
+            sensorObserver = nil
+            sensors.release(owner: sensorOwner)
         }
         mode = .idle
     }
@@ -199,14 +199,10 @@ final class DrivingMonitor {
     private func reset(environment: RoadEnvironment, limit: Double?) {
         snapshot = DrivingSnapshot(speedLimitMPH: limit, environment: environment)
         gHistory = Array(repeating: 0, count: gHistory.count)
-        speedSamples = []
+        movingSpeedSum = 0
+        movingSpeedCount = 0
         lastSpeed = nil
         startedAt = .now
-    }
-
-    private func ingest(_ update: CLLocation) {
-        guard update.speed >= 0 else { return }
-        ingest(speedMPH: update.speed * 2.23694, at: update.timestamp)
     }
 
     private func ingest(speedMPH: Double, at date: Date) {
@@ -220,11 +216,13 @@ final class DrivingMonitor {
             }
         }
         lastSpeed = (speedMPH, date)
-        speedSamples.append(speedMPH)
+        if speedMPH > 3 {
+            movingSpeedSum += speedMPH
+            movingSpeedCount += 1
+        }
         snapshot.speedMPH = speedMPH
         snapshot.maxSpeedMPH = max(snapshot.maxSpeedMPH, speedMPH)
-        let moving = speedSamples.filter { $0 > 3 }
-        snapshot.averageSpeedMPH = moving.isEmpty ? 0 : moving.reduce(0, +) / Double(moving.count)
+        snapshot.averageSpeedMPH = movingSpeedCount == 0 ? 0 : movingSpeedSum / Double(movingSpeedCount)
         snapshot.elapsed = startedAt.map { Date.now.timeIntervalSince($0) } ?? 0
     }
 
