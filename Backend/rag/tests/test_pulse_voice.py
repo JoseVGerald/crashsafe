@@ -128,5 +128,33 @@ class PulseVoiceTests(unittest.TestCase):
             server.shutdown()
 
 
+class LanAccessTests(PulseVoiceTests):
+    def test_other_devices_need_the_lan_token(self):
+        server = rag.make_server(self.engine, 0, lan_token="t" * 40, trusted=())  # treat even this Mac as "another device"
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        url = f"http://127.0.0.1:{server.server_port}/health"
+        try:
+            with self.assertRaises(urllib.error.HTTPError) as denied:
+                urllib.request.urlopen(url, timeout=5)
+            self.assertEqual(denied.exception.code, 401)
+            with self.assertRaises(urllib.error.HTTPError):
+                urllib.request.urlopen(urllib.request.Request(url, headers={"X-Pulse-Token": "wrong"}), timeout=5)
+            ok = urllib.request.urlopen(urllib.request.Request(url, headers={"X-Pulse-Token": "t" * 40}), timeout=5)
+            self.assertEqual(ok.status, 200)
+        finally:
+            server.shutdown()
+
+    def test_without_a_token_nothing_off_this_machine_gets_in(self):
+        server = rag.make_server(self.engine, 0, trusted=())
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            with self.assertRaises(urllib.error.HTTPError) as denied:
+                urllib.request.urlopen(urllib.request.Request(f"http://127.0.0.1:{server.server_port}/health",
+                                                              headers={"X-Pulse-Token": ""}), timeout=5)
+            self.assertEqual(denied.exception.code, 401)
+        finally:
+            server.shutdown()
+
+
 if __name__ == "__main__":
     unittest.main()

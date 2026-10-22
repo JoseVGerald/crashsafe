@@ -37,6 +37,11 @@ targets:
         NSLocationAlwaysAndWhenInUseUsageDescription: "During trips, CrashSafe keeps watching your drive in the background so it can coach you and check on you after a crash."
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
+        NSLocalNetworkUsageDescription: "In development builds, CrashSafe talks to the Pulse server on your Mac over Wi-Fi."
+        # Debug phone builds: the Mac's Wi-Fi name and the backend's LAN token (pass as build settings;
+        # never committed). Empty in normal builds.
+        PulseLANHost: "$(PULSE_LAN_HOST)"
+        PulseLANToken: "$(PULSE_LAN_TOKEN)"
         NSMotionUsageDescription: "CrashSafe uses motion data to notice hard braking and possible crashes."
         UIBackgroundModes: [location, audio]
         UIApplicationSceneManifest:

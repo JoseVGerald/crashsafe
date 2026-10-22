@@ -144,15 +144,7 @@ nonisolated struct BackendRoadSource: RoadDataSource {
 
     /// Same server as Pulse: an HTTPS `RAGEndpoint`, or the Mac running a Debug simulator.
     static func configured() -> BackendRoadSource? {
-        if let configured = Bundle.main.object(forInfoDictionaryKey: "RAGEndpoint") as? String,
-           let url = URL(string: configured), url.scheme == "https" {
-            return BackendRoadSource(endpoint: url)
-        }
-        #if DEBUG && targetEnvironment(simulator)
-        return BackendRoadSource(endpoint: URL(string: "http://127.0.0.1:8787")!)
-        #else
-        return nil
-        #endif
+        PulseBackend.endpoint().map { BackendRoadSource(endpoint: $0) }
     }
 
     private struct Response: Decodable { var ways: [RoadWay] }
@@ -162,11 +154,14 @@ nonisolated struct BackendRoadSource: RoadDataSource {
         components.queryItems = [URLQueryItem(name: "lat", value: String(format: "%.3f", lat)),
                                  URLQueryItem(name: "lon", value: String(format: "%.3f", lon)),
                                  URLQueryItem(name: "radius", value: String(Int(radiusMeters)))]
-        return try await decode(URLRequest(url: components.url!, timeoutInterval: 90))
+        var request = URLRequest(url: components.url!, timeoutInterval: 90)
+        PulseBackend.authorize(&request)
+        return try await decode(request)
     }
 
     func roads(along path: [CLLocationCoordinate2D], radiusMeters: Double) async throws -> [RoadWay] {
         var request = URLRequest(url: endpoint.appending(path: "v1/roads/route"), timeoutInterval: 180)
+        PulseBackend.authorize(&request)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: [

@@ -436,6 +436,7 @@ final class RAGAssistantService: AssistantService {
             var request = URLRequest(url: endpoint.appendingPathComponent("v1/assist"))
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            PulseBackend.authorize(&request)
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
             request.httpBody = try encoder.encode(Request(query: query,
@@ -462,6 +463,7 @@ final class RAGAssistantService: AssistantService {
             var request = URLRequest(url: endpoint.appendingPathComponent("v1/converse"))
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            PulseBackend.authorize(&request)
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
             let turns = history.suffix(12).map { ConverseRequest.Turn(role: $0.role == .user ? "user" : "assistant", text: $0.text) }
