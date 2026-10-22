@@ -20,6 +20,7 @@ struct RootView: View {
             }
         }
         .tint(Brand.blueInk)
+        .preferredColorScheme(.dark) // the Pulse brand is a dark, night-driving theme
         .animation(.easeInOut(duration: 0.35), value: env.session.phase)
         .task { await env.session.restore() }
         .task { await listenForCrashes() }

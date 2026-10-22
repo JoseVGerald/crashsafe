@@ -9,6 +9,7 @@ struct TripPlannerView: View {
     @State private var picking: LocationPickerSheet.Field?
     @State private var position: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var packs: TripPackViewModel?
+    @State private var showingDetectionInfo = false
     @Query private var trips: [Trip]
 
     init(userID: String) {
@@ -20,15 +21,24 @@ struct TripPlannerView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.md + 4) {
-                    Text("Plan a trip")
+                    Text("Plan a drive")
                         .font(.largeTitle.bold())
                         .foregroundStyle(Brand.textPrimary)
                         .padding(.top, Space.sm)
                         .fadeUp()
 
-                    mapCard.fadeUp(delay: 0.05)
+                    VStack(spacing: Space.sm) {
+                        mapCard
+                        ScenicRoadArt()
+                            .frame(height: 84)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
+                    }
+                    .fadeUp(delay: 0.05)
                     routeCard.fadeUp(delay: 0.1)
-                    datesCard.fadeUp(delay: 0.15)
+                    datesCard.fadeUp(delay: 0.13)
+                    crashDetectionRow.fadeUp(delay: 0.16)
 
                     VStack(spacing: 10) {
                         Button {
@@ -60,6 +70,7 @@ struct TripPlannerView: View {
             .navigationDestination(for: Trip.self) { trip in
                 TripDetailView(trip: trip, viewModel: TripPackViewModel(service: env.tripPacks))
             }
+            .sheet(isPresented: $showingDetectionInfo) { CrashDetectionInfoSheet() }
             .sheet(item: $picking) { field in
                 LocationPickerSheet(field: field) { selection in
                     switch field {
@@ -92,22 +103,30 @@ struct TripPlannerView: View {
             UserAnnotation()
             if let route = viewModel.route {
                 MapPolyline(route.polyline)
-                    .stroke(Brand.blue, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
+                    .stroke(Brand.blueInk, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
             }
             if let origin = viewModel.origin, !origin.isCurrentLocation {
-                Marker(origin.title, systemImage: "circle.fill", coordinate: origin.coordinate).tint(Brand.green)
+                Annotation(origin.title, coordinate: origin.coordinate) {
+                    Circle().fill(Brand.blue).frame(width: 18, height: 18)
+                        .overlay(Circle().strokeBorder(.white, lineWidth: 3))
+                }
             }
             if let destination = viewModel.destination {
-                Marker(destination.title, systemImage: "flag.checkered", coordinate: destination.coordinate).tint(Brand.red)
+                Annotation(destination.title, coordinate: destination.coordinate, anchor: .bottom) {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.system(size: 30))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(Brand.navy, .white)
+                }
             }
         }
-        .mapStyle(.standard(pointsOfInterest: .excludingAll))
+        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
         .frame(height: 240)
         .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
-        .overlay(alignment: .bottomLeading) {
+        .overlay(alignment: .bottomTrailing) {
             if viewModel.isRouting || viewModel.routeSummary != nil {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     if viewModel.isRouting {
                         ProgressView().controlSize(.small)
                         Text("Finding route…")
@@ -118,9 +137,10 @@ struct TripPlannerView: View {
                 }
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Brand.textPrimary)
-                .padding(.horizontal, 12)
-                .frame(minHeight: 34)
-                .background(.regularMaterial, in: Capsule())
+                .padding(.horizontal, 14)
+                .frame(minHeight: 36)
+                .background(Brand.navy.opacity(0.88), in: Capsule())
+                .overlay(Capsule().strokeBorder(Brand.stroke))
                 .padding(12)
                 .transition(.scale(scale: 0.9).combined(with: .opacity))
             }
@@ -130,20 +150,40 @@ struct TripPlannerView: View {
 
     private var routeCard: some View {
         HStack(spacing: 12) {
-            VStack(spacing: 0) {
-                placeRow(field: .origin, icon: "circle.circle.fill", tint: Brand.greenInk, label: "From",
-                         value: viewModel.origin, placeholder: "Choose a starting point", error: viewModel.originError)
-                Divider().overlay(Brand.stroke).padding(.leading, 40)
-                placeRow(field: .destination, icon: "mappin.circle.fill", tint: Brand.redInk, label: "To",
-                         value: viewModel.destination, placeholder: "Search or drop a pin", error: viewModel.destinationError)
+            VStack(alignment: .leading, spacing: 0) {
+                placeRow(field: .origin, label: "From", value: viewModel.origin,
+                         placeholder: "Choose a starting point", error: viewModel.originError) {
+                    Circle()
+                        .strokeBorder(Brand.blueInk, lineWidth: 3)
+                        .frame(width: 28, height: 28)
+                        .overlay(Circle().fill(Brand.blueInk).frame(width: 10, height: 10))
+                }
+                HStack(spacing: 12) {
+                    Line()
+                        .stroke(Brand.textSecondary, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0.5, 5]))
+                        .frame(width: 2, height: 22)
+                        .frame(width: 32)
+                    Rectangle().fill(Brand.stroke).frame(height: 1)
+                }
+                .accessibilityHidden(true)
+                placeRow(field: .destination, label: "To", value: viewModel.destination,
+                         placeholder: "Search destination", error: viewModel.destinationError) {
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(Brand.navy)
+                        .frame(width: 28, height: 28)
+                        .background(Color(hex: 0xF4EEDF), in: Circle())
+                }
             }
             Button {
                 withAnimation(.spring(response: 0.35)) { viewModel.swap() }
             } label: {
                 Image(systemName: "arrow.up.arrow.down")
-                    .font(.body.weight(.semibold))
-                    .frame(width: 44, height: 44)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Brand.blueInk)
+                    .frame(width: 56, height: 56)
                     .background(Brand.fieldFill, in: Circle())
+                    .overlay(Circle().strokeBorder(Brand.stroke))
             }
             .disabled(viewModel.origin == nil && viewModel.destination == nil)
             .accessibilityLabel("Swap start and destination")
@@ -151,30 +191,29 @@ struct TripPlannerView: View {
         .card(padding: Space.md)
     }
 
-    private func placeRow(field: LocationPickerSheet.Field, icon: String, tint: Color, label: String,
-                          value: PlaceSelection?, placeholder: String, error: String?) -> some View {
+    private func placeRow<Glyph: View>(field: LocationPickerSheet.Field, label: String, value: PlaceSelection?,
+                                       placeholder: String, error: String?, @ViewBuilder glyph: () -> Glyph) -> some View {
         HStack(spacing: 12) {
             Button {
                 picking = field
             } label: {
                 HStack(spacing: 12) {
-                    Image(systemName: icon)
-                        .font(.title2)
-                        .foregroundStyle(tint)
-                        .frame(width: 28)
+                    glyph()
+                        .frame(width: 32)
+                        .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(label).font(.caption.weight(.semibold)).foregroundStyle(Brand.textSecondary)
+                        Text(label).font(.subheadline).foregroundStyle(Brand.textSecondary)
                         if let value {
                             Text(value.isCurrentLocation ? "Current location" : value.title)
-                                .font(.body.weight(.medium))
-                                .foregroundStyle(Brand.textPrimary)
+                                .font(.title3.weight(.medium))
+                                .foregroundStyle(field == .origin ? Brand.blueInk : Brand.textPrimary)
                                 .lineLimit(1)
                             if !value.subtitle.isEmpty {
-                                Text(value.subtitle).font(.caption).foregroundStyle(Brand.textSecondary).lineLimit(1)
+                                Text(value.subtitle).font(.subheadline).foregroundStyle(Brand.textSecondary).lineLimit(1)
                             }
                         } else {
                             Text(error ?? placeholder)
-                                .font(.body)
+                                .font(.title3)
                                 .foregroundStyle(error == nil ? Brand.textSecondary : Brand.redInk)
                         }
                     }
@@ -196,6 +235,34 @@ struct TripPlannerView: View {
                 .accessibilityLabel("Use current location")
             }
         }
+    }
+
+    private var crashDetectionRow: some View {
+        Button {
+            showingDetectionInfo = true
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "shield.lefthalf.filled")
+                    .font(.title2)
+                    .foregroundStyle(Brand.amberInk)
+                    .frame(width: 32)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Crash detection ready")
+                        .font(.headline)
+                        .foregroundStyle(Brand.textPrimary)
+                    Text("We'll monitor your drive for severe crashes.")
+                        .font(.footnote)
+                        .foregroundStyle(Brand.textSecondary)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Brand.textSecondary)
+            }
+            .card(padding: Space.md)
+        }
+        .buttonStyle(.pressable)
+        .accessibilityHint("How crash detection works")
     }
 
     private var datesCard: some View {
@@ -246,6 +313,53 @@ struct TripPlannerView: View {
     private func save() {
         guard let trip = viewModel.save(in: context) else { return }
         Task { await packs?.download(for: trip) }
+    }
+}
+
+/// Vertical line used for the dotted From → To connector.
+private nonisolated struct Line: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { $0.move(to: CGPoint(x: rect.midX, y: rect.minY)); $0.addLine(to: CGPoint(x: rect.midX, y: rect.maxY)) }
+    }
+}
+
+/// What "Crash detection ready" means, in plain words.
+private struct CrashDetectionInfoSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    private let points: [(String, String)] = [
+        ("play.circle.fill", "Turns on when your trip starts and off when it ends."),
+        ("waveform.path.ecg", "Watches motion and GPS together for a sudden, severe impact."),
+        ("questionmark.bubble.fill", "Asks if you're okay. If you don't answer, your family contacts get your location."),
+        ("antenna.radiowaves.left.and.right", "Tow, hospital and insurance info for your route is saved for offline use."),
+    ]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Space.lg) {
+                    ForEach(points, id: \.1) { icon, text in
+                        Label {
+                            Text(text).foregroundStyle(Brand.textPrimary).fixedSize(horizontal: false, vertical: true)
+                        } icon: {
+                            Image(systemName: icon).foregroundStyle(Brand.blueInk).frame(width: 28)
+                        }
+                    }
+                    SafetyNotice()
+                }
+                .padding(Space.lg)
+            }
+            .background(BrandBackground())
+            .navigationTitle("Crash detection")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }.fontWeight(.semibold)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationCornerRadius(28)
     }
 }
 

@@ -1,7 +1,7 @@
 import Observation
 import SwiftUI
 
-/// Hold-to-talk with Pulse. Proof of concept: the voice and AI services are the mocks for now.
+/// Tap-to-talk with Pulse. Proof of concept: the voice and AI services are the mocks for now.
 @Observable
 final class PressToTalkViewModel {
     enum Phase: Equatable {
@@ -56,95 +56,97 @@ final class PressToTalkViewModel {
     }
 }
 
+/// Tap the mic, speak, tap again. Centered like a big, easy target for a stressed driver.
 struct PressToTalkCard: View {
     @State var viewModel: PressToTalkViewModel
     var onOpenChat: () -> Void
 
     var body: some View {
         VStack(spacing: Space.md) {
-            AdaptiveStack(spacing: Space.sm) {
-                Label("Pulse", systemImage: "sparkles")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                Spacer(minLength: 0)
-                Button("Open chat", action: onOpenChat)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.85))
-                    .frame(minHeight: 44)
-            }
+            orb
+                .padding(.top, Space.sm)
 
-            AdaptiveStack(spacing: Space.md) {
-                orb
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(title)
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(.white)
-                        .contentTransition(.opacity)
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.8))
-                        .contentTransition(.opacity)
-                }
-                Spacer(minLength: 0)
+            VStack(spacing: 4) {
+                Text(title)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Brand.textPrimary)
+                    .contentTransition(.opacity)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(Brand.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .contentTransition(.opacity)
             }
 
             if case .answered(_, let reply) = viewModel.phase {
                 Text(reply)
                     .font(.callout)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Brand.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(14)
-                    .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .background(Brand.surfaceRaised, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onTapGesture { viewModel.reset() }
             }
+
+            Button(action: onOpenChat) {
+                Label("Open chat", systemImage: "bubble.left.and.text.bubble.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Brand.blueInk)
+                    .frame(minHeight: 44)
+            }
         }
-        .padding(Space.md + 4)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Brand.blue, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, Space.md)
+        .padding(.vertical, Space.sm)
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: viewModel.phase)
     }
 
     private var orb: some View {
-        ZStack {
-            PulseRings(color: .white, count: 3, active: viewModel.isListening)
-                .frame(width: 78, height: 78)
-            Circle()
-                .fill(.white)
-                .frame(width: 78, height: 78)
-                .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
-            if viewModel.isListening {
-                WaveformBars()
-                    .foregroundStyle(Brand.blue)
-                    .frame(width: 34, height: 26)
-            } else if case .thinking = viewModel.phase {
-                ProgressView().tint(Brand.blue)
-            } else {
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 30, weight: .semibold))
-                    .foregroundStyle(Brand.blue)
+        Button(action: toggle) {
+            ZStack {
+                PulseRings(color: Brand.blueInk, count: 3, active: viewModel.isListening)
+                    .frame(width: 96, height: 96)
+                Circle()
+                    .fill(Brand.surface)
+                    .frame(width: 124, height: 124)
+                    .overlay(Circle().strokeBorder(Brand.stroke))
+                Circle()
+                    .fill(Brand.blue)
+                    .frame(width: 96, height: 96)
+                if viewModel.isListening {
+                    WaveformBars()
+                        .foregroundStyle(.white)
+                        .frame(width: 38, height: 30)
+                } else if case .thinking = viewModel.phase {
+                    ProgressView().tint(.white)
+                } else {
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 36, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
             }
+            .scaleEffect(viewModel.isListening ? 1.06 : 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.isListening)
+            .contentShape(Circle())
         }
-        .scaleEffect(viewModel.isListening ? 1.12 : 1)
-        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.isListening)
-        .contentShape(Circle())
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: 80, perform: {}, onPressingChanged: { pressing in
-            pressing ? viewModel.pressBegan() : viewModel.pressEnded()
-        })
+        .buttonStyle(.pressable)
         .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.isListening)
-        .accessibilityElement()
-        .accessibilityLabel("Talk to Pulse")
-        .accessibilityHint("Press and hold, then speak.")
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction {
-            viewModel.pressBegan()
+        .accessibilityLabel(viewModel.isListening ? "Stop and send" : "Talk to Pulse")
+        .accessibilityHint(viewModel.isListening ? "Sends what you said." : "Starts listening.")
+    }
+
+    private func toggle() {
+        if viewModel.isListening {
             viewModel.pressEnded()
+        } else {
+            viewModel.pressBegan()
         }
     }
 
     private var title: String {
         switch viewModel.phase {
-        case .idle: "Hold to talk"
+        case .idle: "Tap to talk"
         case .listening: "Listening…"
         case .thinking: "Thinking…"
         case .answered: "Pulse"
@@ -153,8 +155,8 @@ struct PressToTalkCard: View {
 
     private var subtitle: String {
         switch viewModel.phase {
-        case .idle: "Ask about the road, your trip, or what to do after a crash."
-        case .listening: "Let go when you're done."
+        case .idle: "Ask for help or get road support"
+        case .listening: "Tap again when you're done."
         case .thinking(let transcript), .answered(let transcript, _): "“\(transcript)”"
         }
     }
