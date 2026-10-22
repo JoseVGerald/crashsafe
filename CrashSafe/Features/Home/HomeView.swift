@@ -1,3 +1,4 @@
+import MapKit
 import SwiftData
 import SwiftUI
 
@@ -8,7 +9,6 @@ struct HomeView: View {
     @State private var viewModel: HomeViewModel
     @State private var talk: PressToTalkViewModel
     @State private var showingTripPicker = false
-    @State private var showingNearbyHelp = false
 
     @Query private var trips: [Trip]
     @Query private var checkIns: [CheckInRecord]
@@ -41,32 +41,9 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.md + 4) {
-                    header.fadeUp()
-
-                    PressToTalkCard(viewModel: talk) { env.router.selectedTab = .assistant }
-                        .fadeUp(delay: 0.05)
-
-                    ConditionsCard(
-                        placeName: env.location.placeName,
-                        weather: env.conditions.weather,
-                        isNight: isNight,
-                        advice: advice,
-                        isLoading: env.conditions.isLoading || (env.location.isAuthorized && env.location.location == nil),
-                        locationDenied: !env.location.isAuthorized,
-                        demoTitle: env.driving.scenario.map { "Demo · \($0.title)" },
-                        onEnableLocation: enableLocation
-                    )
-                    .fadeUp(delay: 0.1)
-
-                    DrivingComparisonCard(
-                        snapshot: env.driving.snapshot,
-                        comparison: DrivingComparison.make(snapshot: env.driving.snapshot, advice: advice, isDriving: isDriving),
-                        isDriving: isDriving,
-                        scenario: env.driving.scenario,
-                        onDemo: { viewModel.startDemo($0) },
-                        onStopDemo: { Task { await viewModel.stopDemo(location: env.location) } }
-                    )
-                    .fadeUp(delay: 0.15)
+                    topBar.fadeUp()
+                    header.fadeUp(delay: 0.03)
+                    heroCard.fadeUp(delay: 0.06)
 
                     if let sensorNotice {
                         Label(sensorNotice, systemImage: "exclamationmark.triangle")
@@ -75,9 +52,23 @@ struct HomeView: View {
                             .card(padding: Space.md)
                     }
 
-                    tripCard.fadeUp(delay: 0.2)
-                    quickActions.fadeUp(delay: 0.25)
-                    lastCheckIn.fadeUp(delay: 0.3)
+                    locationCard.fadeUp(delay: 0.09)
+
+                    RoadAlertCard(
+                        advice: advice,
+                        isNight: isNight,
+                        isLoading: env.conditions.weather == nil && env.conditions.isLoading,
+                        windMph: env.conditions.weather?.windMph,
+                        demoTitle: env.driving.scenario.map { "Demo · \($0.title)" },
+                        showsAttribution: env.conditions.weather != nil && env.driving.scenario == nil
+                    )
+                    .fadeUp(delay: 0.12)
+
+                    PressToTalkCard(viewModel: talk) { env.router.selectedTab = .assistant }
+                        .fadeUp(delay: 0.15)
+
+                    tripCard.fadeUp(delay: 0.18)
+                    lastCheckIn.fadeUp(delay: 0.21)
                 }
                 .padding(.horizontal, Space.md)
                 .padding(.bottom, Space.lg)
@@ -98,9 +89,6 @@ struct HomeView: View {
                 Button("Plan a new trip") { env.router.selectedTab = .trips }
             } message: {
                 Text("Crash detection and coaching run while a trip is active.")
-            }
-            .fullScreenCover(isPresented: $showingNearbyHelp) {
-                RecoveryView(user: user, outcome: nil)
             }
             .onAppear {
                 viewModel.resumeIfNeeded(activeTrip: activeTrip, profile: profile)
@@ -127,32 +115,119 @@ struct HomeView: View {
         }
     }
 
-    private var header: some View {
-        AdaptiveStack(spacing: Space.sm) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(greeting)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Brand.textSecondary)
-                Text(user.firstName)
-                    .font(.largeTitle.bold())
-                    .foregroundStyle(Brand.textPrimary)
-            }
+    private var topBar: some View {
+        HStack {
+            PulseWordmark()
             Spacer()
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(viewModel.isMonitoring || isDriving ? Brand.greenInk : Brand.textSecondary.opacity(0.6))
-                    .frame(width: 8, height: 8)
-                Text(viewModel.isMonitoring || isDriving ? "Protected" : "Not driving")
-                    .font(.footnote.weight(.semibold))
+            Button {
+                env.router.selectedTab = .profile
+            } label: {
+                Image(systemName: "person")
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(Brand.textPrimary)
+                    .frame(width: 44, height: 44)
+                    .background(Brand.surface, in: Circle())
+                    .overlay(Circle().strokeBorder(Brand.stroke))
             }
-            .padding(.horizontal, 12)
-            .frame(minHeight: 34)
-            .background(Brand.surface, in: Capsule())
-            .overlay(Capsule().strokeBorder(Brand.stroke))
-            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Profile")
         }
         .padding(.top, Space.sm)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(user.firstName.isEmpty ? "\(greeting)," : "\(greeting), \(user.firstName)")
+                .font(.largeTitle.weight(.semibold))
+                .foregroundStyle(Brand.textPrimary)
+            Text("Stay safe. We're looking out for you.")
+                .font(.body)
+                .foregroundStyle(Brand.textSecondary)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var isProtected: Bool { viewModel.isMonitoring || isDriving }
+
+    /// Scenic hero with the crash-detection status underneath (mockup: "Crash detection active").
+    private var heroCard: some View {
+        Button {
+            if activeTrip == nil { showingTripPicker = true } else { env.router.selectedTab = .trips }
+        } label: {
+            VStack(spacing: 0) {
+                ScenicRoadArt()
+                    .frame(height: 150)
+                    .frame(maxWidth: .infinity)
+                HStack(spacing: 14) {
+                    Circle()
+                        .fill(isProtected ? Brand.greenInk : Brand.textSecondary.opacity(0.6))
+                        .frame(width: 14, height: 14)
+                        .overlay {
+                            if isProtected { PulseRings(color: Brand.greenInk, count: 2).frame(width: 14, height: 14) }
+                        }
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(isProtected ? "Crash detection active" : "Crash detection ready")
+                            .font(.headline)
+                            .foregroundStyle(Brand.textPrimary)
+                        Text(isProtected ? "Sensors enabled · Ready to assist" : "Turns on when you start a drive")
+                            .font(.footnote)
+                            .foregroundStyle(Brand.textSecondary)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Brand.textSecondary)
+                }
+                .padding(Space.md)
+            }
+            .background(Brand.surface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
+        }
+        .buttonStyle(.pressable)
+        .accessibilityHint(activeTrip == nil ? "Start a trip" : "Opens your trips")
+    }
+
+    private var locationCard: some View {
+        Button(action: openLocation) {
+            VStack(spacing: 0) {
+                Map(initialPosition: .userLocation(fallback: .automatic), interactionModes: []) {
+                    UserAnnotation()
+                }
+                .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+                .frame(height: 92)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+                HStack(spacing: 14) {
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.title2)
+                        .foregroundStyle(Brand.amberInk)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Your location")
+                            .font(.headline)
+                            .foregroundStyle(Brand.textPrimary)
+                        Text(locationText)
+                            .font(.footnote)
+                            .foregroundStyle(Brand.textSecondary)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Brand.textSecondary)
+                }
+                .padding(Space.md)
+            }
+            .background(Brand.surface)
+            .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
+        }
+        .buttonStyle(.pressable)
+        .accessibilityHint(env.location.isAuthorized ? "Opens Maps" : "Turns on location")
+    }
+
+    private var locationText: String {
+        if !env.location.isAuthorized { return "Location off · Tap to turn on" }
+        return env.location.placeName ?? "Locating…"
     }
 
     private var greeting: String {
@@ -215,20 +290,6 @@ struct HomeView: View {
         .card(padding: Space.md + 4)
     }
 
-    private var quickActions: some View {
-        AdaptiveStack(spacing: 12, horizontalAlignment: .center) {
-            QuickAction(title: "CarPlay", systemImage: "car.rear.fill", tint: Brand.teal) {
-                env.router.showingCarPlay = true
-            }
-            QuickAction(title: "Nearby help", systemImage: "cross.case.fill", tint: Brand.green) {
-                showingNearbyHelp = true
-            }
-            QuickAction(title: "Test crash", systemImage: "car.side.rear.and.collision.and.car.side.front", tint: Brand.red) {
-                viewModel.simulateCrash()
-            }
-        }
-    }
-
     @ViewBuilder
     private var lastCheckIn: some View {
         if let last = checkIns.first {
@@ -249,36 +310,13 @@ struct HomeView: View {
         }
     }
 
-    private func enableLocation() {
-        if env.location.isDenied, let url = URL(string: "app-settings:") {
+    private func openLocation() {
+        if env.location.isAuthorized {
+            MKMapItem.forCurrentLocation().openInMaps()
+        } else if env.location.isDenied, let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
         } else {
             env.location.requestPermission()
         }
-    }
-}
-
-struct QuickAction: View {
-    let title: String
-    let systemImage: String
-    let tint: Color
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                IconBadge(systemName: systemImage, tint: tint, size: 44)
-                Text(title)
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Brand.textPrimary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(Brand.surface, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).strokeBorder(Brand.stroke))
-        }
-        .buttonStyle(.pressable)
     }
 }
