@@ -162,7 +162,7 @@ final class SensorHub {
 
     func checkFreshness() {
         guard isRunning else { return }
-        health.locationUnavailable = location.isDenied || !(latestLocation?.hasReliableSpeed(at: now(), maximumAge: 5) ?? false)
+        setLocationUnavailable(location.isDenied || !(latestLocation?.hasReliableSpeed(at: now(), maximumAge: 5) ?? false))
         guard health.state == .active || health.state == .starting else { return }
         if now() - (lastMotion ?? startedAt) > 0.5 { health.state = .stale }
     }
@@ -196,11 +196,14 @@ final class SensorHub {
         lastMotion = sample.uptime
         rateCount += 1
         if let rateStart, sample.uptime - rateStart >= 1 {
-            health.measuredHz = Double(rateCount - 1) / (sample.uptime - rateStart)
+            let hz = Double(rateCount - 1) / (sample.uptime - rateStart)
+            if abs(hz - health.measuredHz) >= 0.5 { health.measuredHz = hz }
             self.rateStart = sample.uptime
             rateCount = 1
         } else if rateStart == nil { rateStart = sample.uptime }
-        health.state = .active
+        // `health` is observed by Home, Profile and CarPlay: write it only when something changed.
+        // Writing it on every sample (100 a second) redrew those screens 100 times a second on a phone.
+        if health.state != .active { health.state = .active }
         for receive in Array(observers.values) { receive(.motion(sample)) }
     }
 
@@ -214,7 +217,11 @@ final class SensorHub {
         lastLocation = sample.uptime
         latestLocation = sample
         noteOffScreen(motion: false, gap: nil)
-        health.locationUnavailable = !sample.hasReliableSpeed(at: now(), maximumAge: 5)
+        setLocationUnavailable(!sample.hasReliableSpeed(at: now(), maximumAge: 5))
         for receive in Array(observers.values) { receive(.location(sample)) }
+    }
+
+    private func setLocationUnavailable(_ unavailable: Bool) {
+        if health.locationUnavailable != unavailable { health.locationUnavailable = unavailable }
     }
 }

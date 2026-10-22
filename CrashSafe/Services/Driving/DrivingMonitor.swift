@@ -133,6 +133,12 @@ final class DrivingMonitor {
     @ObservationIgnored private var sensorObserver: UUID?
     @ObservationIgnored private var demoTask: Task<Void, Never>?
     @ObservationIgnored private var lastSpeed: (mph: Double, at: Date)?
+    /// Strongest reading since the screen was last updated (motion arrives 100 times a second).
+    @ObservationIgnored private var pendingG = 0.0
+    @ObservationIgnored private var lastGUpdate: TimeInterval = -.infinity
+    /// How often g-force reaches the screen: 10 times a second is smooth; 100 made every screen that
+    /// shows the drive redraw 100 times a second.
+    static let gUpdateInterval: TimeInterval = 0.1
     @ObservationIgnored private var movingSpeedSum = 0.0
     @ObservationIgnored private var movingSpeedCount = 0
     @ObservationIgnored private var startedAt: Date?
@@ -156,10 +162,11 @@ final class DrivingMonitor {
     func startLive(background: Bool) {
         stop()
         reset(environment: .city, limit: nil)
+        speedLimits?.startDrive()
         mode = .live
         sensorObserver = sensors.addObserver { [weak self] reading in
             switch reading {
-            case .motion(let sample): self?.ingest(g: sample.accelerationG.magnitude)
+            case .motion(let sample): self?.ingest(g: sample.accelerationG.magnitude, at: sample.uptime)
             case .location(let sample):
                 self?.applySpeedLimit(from: sample)
                 if let mps = Self.displaySpeedMPS(sample, now: ProcessInfo.processInfo.systemUptime) {
@@ -235,6 +242,8 @@ final class DrivingMonitor {
         movingSpeedSum = 0
         movingSpeedCount = 0
         lastSpeed = nil
+        pendingG = 0
+        lastGUpdate = -.infinity
         startedAt = .now
     }
 
@@ -259,10 +268,14 @@ final class DrivingMonitor {
         snapshot.elapsed = startedAt.map { Date.now.timeIntervalSince($0) } ?? 0
     }
 
-    private func ingest(g: Double) {
-        snapshot.currentG = g
-        snapshot.peakG = max(snapshot.peakG, g)
+    private func ingest(g: Double, at uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
+        pendingG = max(pendingG, g)
+        if g > snapshot.peakG { snapshot.peakG = g }
+        guard uptime - lastGUpdate >= Self.gUpdateInterval else { return }
+        lastGUpdate = uptime
+        snapshot.currentG = pendingG
         gHistory.removeFirst()
-        gHistory.append(g)
+        gHistory.append(pendingG)
+        pendingG = 0
     }
 }

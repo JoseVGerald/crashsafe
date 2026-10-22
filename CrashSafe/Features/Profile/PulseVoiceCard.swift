@@ -7,8 +7,9 @@ import SwiftUI
 /// no cost in Settings (apps can use them once installed, but can't download them themselves). They
 /// work offline, with the phone locked, and on silent, unlike cloud voices.
 struct PulseVoiceCard: View {
-    @State private var voices: [AVSpeechSynthesisVoice] = []
-    @State private var selected: String?
+    /// From the list read at launch; never read from iOS while drawing (slow on a phone).
+    @State private var voices: [PulseVoice.Option] = PulseVoice.cachedOptions
+    @State private var selected: String? = UserDefaults.standard.string(forKey: PulseVoice.defaultsKey)
     @State private var synthesizer = AVSpeechSynthesizer()
     @State private var showingHowTo = false
     @State private var clipPlayer: AVAudioPlayer?
@@ -19,14 +20,14 @@ struct PulseVoiceCard: View {
                 Text("Pulse's voice").font(.headline).foregroundStyle(Brand.textPrimary)
                 Spacer()
                 if let voice = current {
-                    StatusChip(text: PulseVoice.qualityLabel(voice),
-                               systemImage: voice.quality == .default ? "waveform" : "sparkles",
-                               tint: voice.quality == .default ? Brand.amberInk : Brand.greenInk)
+                    StatusChip(text: voice.qualityLabel,
+                               systemImage: voice.isNatural ? "sparkles" : "waveform",
+                               tint: voice.isNatural ? Brand.greenInk : Brand.amberInk)
                 }
             }
-            Picker("Voice", selection: Binding(get: { selected ?? current?.identifier ?? "" }, set: choose)) {
-                ForEach(voices, id: \.identifier) { voice in
-                    Text("\(voice.name) · \(PulseVoice.qualityLabel(voice)) · \(voice.language)").tag(voice.identifier)
+            Picker("Voice", selection: Binding(get: { current?.id ?? "" }, set: choose)) {
+                ForEach(voices) { voice in
+                    Text("\(voice.name) · \(voice.qualityLabel) · \(voice.language)").tag(voice.id)
                 }
             }
             .pickerStyle(.menu)
@@ -50,30 +51,32 @@ struct PulseVoiceCard: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Brand.blueInk)
             }
-            if !PulseVoice.hasNaturalVoice {
+            if !voices.isEmpty && !voices.contains(where: \.isNatural) {
                 Text("Only the basic voice is installed. A free Premium voice sounds far more natural, works offline and while locked.")
                     .font(.footnote).foregroundStyle(Brand.amberInk).fixedSize(horizontal: false, vertical: true)
             }
         }
         .card(padding: Space.md)
-        .onAppear(perform: reload)
+        .task { await reload() }
         // Coming back from Settings with a new voice downloaded.
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in reload() }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            Task { await reload() }
+        }
         .sheet(isPresented: $showingHowTo) { howTo }
     }
 
-    private var current: AVSpeechSynthesisVoice? {
-        selected.flatMap(AVSpeechSynthesisVoice.init(identifier:)) ?? PulseVoice.preferred()
+    private var current: PulseVoice.Option? {
+        voices.first { $0.id == selected } ?? voices.first
     }
 
-    private func reload() {
-        voices = PulseVoice.available()
+    private func reload() async {
+        await PulseVoice.reload()
+        voices = PulseVoice.cachedOptions
         selected = UserDefaults.standard.string(forKey: PulseVoice.defaultsKey)
     }
 
     private func choose(_ identifier: String) {
-        let voice = AVSpeechSynthesisVoice(identifier: identifier)
-        PulseVoice.choose(voice)
+        PulseVoice.choose(identifier)
         selected = identifier
         preview()
     }
@@ -89,7 +92,7 @@ struct PulseVoiceCard: View {
         clipPlayer?.stop()
         synthesizer.stopSpeaking(at: .immediate)
         let utterance = AVSpeechUtterance(string: "Hi, I'm Pulse. You're doing 42 in a 30. Imagine a child running out 110 feet ahead.")
-        utterance.voice = current
+        utterance.voice = current.flatMap { AVSpeechSynthesisVoice(identifier: $0.id) }
         utterance.rate = 0.48
         synthesizer.speak(utterance)
     }
