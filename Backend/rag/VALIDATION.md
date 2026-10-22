@@ -39,3 +39,13 @@ Built in the session's permitted workspace. E:\test was readable but outside the
 ## Repository integration validation
 
 60 Python tests passed after integrating typed incident context, isolated repository retrieval and real upstream behavior-module invocation. See tests/integration-results.txt and INTEGRATION.md. Four Swift tests were added but not executed on Windows. The developer index contains 66 excerpts from 15 selected files.
+
+## Source expansion verification — October 22, 2026
+
+- Corpus: 48 source records; 47 answerable editorial cards; 2 discovery-only cards excluded. Thirteen new sources and one full-page source upgrade.
+- Python: 67 tests passed, including actual upstream adapter tests using local checked-out repositories. Clean CI skips repository-dependent tests when the generated local manifest is absent.
+- Authored retrieval examples: 43/43 expected cards found in the top four. This is a regression set, not an independent clinical or generalization evaluation.
+- Local lexical retrieval, 500 varied requests: median 0.640 ms; p95 0.858 ms. No embedding model configured. Excludes language-model, voice, device and network latency.
+- Offline Swift arrays and readable source catalog generated from the corpus; parity checked by Python and CI. Generation consistency does not execute or validate Swift behavior.
+- State and stage isolation regression tests added. Washington regulation cards explicitly use the version effective October 18, 2026.
+- Xcode/iOS build, real-device offline ranking, and live embedding/generation remain untested on this Windows environment. Source review remains editorial; clinical and legal review are pending.

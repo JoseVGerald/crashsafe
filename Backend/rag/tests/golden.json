@@ -68,5 +68,150 @@
     "query": "What to tell the emergency dispatcher about my location?",
     "jurisdiction": "UNKNOWN",
     "expected": "CALL_911"
+  },
+  {
+    "query": "Can I drive again after a concussion?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "CONCUSSION_RETURN"
+  },
+  {
+    "query": "The air bags deployed, do they need replacing?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "AIRBAG_REPLACE"
+  },
+  {
+    "query": "No airbag deployment, does that measure injury?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "AIRBAG_LIMIT"
+  },
+  {
+    "query": "Can internal bleeding show up days later?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "INTERNAL_BLEED"
+  },
+  {
+    "query": "Severe rib bruising and coughing blood",
+    "jurisdiction": "UNKNOWN",
+    "expected": "CHEST_INJURY"
+  },
+  {
+    "query": "How do I ask a trusted friend for help with paperwork?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "ASK_SUPPORT"
+  },
+  {
+    "query": "Breathing relaxation exercises make my distress worse",
+    "jurisdiction": "UNKNOWN",
+    "expected": "OPTIONAL_CALM"
+  },
+  {
+    "query": "Grounding when I am reliving the crash",
+    "jurisdiction": "UNKNOWN",
+    "expected": "GROUNDING"
+  },
+  {
+    "query": "Using alcohol to get to sleep after the wreck",
+    "jurisdiction": "UNKNOWN",
+    "expected": "AVOID_SELF_MEDICATING"
+  },
+  {
+    "query": "My child is crying and scared after the accident",
+    "jurisdiction": "UNKNOWN",
+    "expected": "CHILD_SUPPORT"
+  },
+  {
+    "query": "My teenager has nightmares and is withdrawn at school",
+    "jurisdiction": "UNKNOWN",
+    "expected": "CHILD_FOLLOWUP"
+  },
+  {
+    "query": "Oregon report deadline if my car has 3000 dollars damage",
+    "jurisdiction": "OR",
+    "expected": "OR_REPORT"
+  },
+  {
+    "query": "Can a police report replace my Oregon DMV report?",
+    "jurisdiction": "OR",
+    "expected": "OR_REPORT"
+  },
+  {
+    "query": "Oregon DMV2U eligibility and keeping a copy",
+    "jurisdiction": "OR",
+    "expected": "OR_FILE"
+  },
+  {
+    "query": "Oregon police notification and exchange details",
+    "jurisdiction": "OR",
+    "expected": "OR_SCENE"
+  },
+  {
+    "query": "California SR1 reporting deadline",
+    "jurisdiction": "CA",
+    "expected": "CA_REPORT"
+  },
+  {
+    "query": "California minor injury but no property damage",
+    "jurisdiction": "CA",
+    "expected": "CA_REPORT"
+  },
+  {
+    "query": "What information goes on my California DMV SR1 form?",
+    "jurisdiction": "CA",
+    "expected": "CA_FILE"
+  },
+  {
+    "query": "I hit a parked unattended car in Washington, leave a note?",
+    "jurisdiction": "WA",
+    "expected": "WA_UNATTENDED"
+  },
+  {
+    "query": "Written repair authorization and diagnostic fees",
+    "jurisdiction": "UNKNOWN",
+    "expected": "REPAIR_ESTIMATE"
+  },
+  {
+    "query": "OEM versus salvage replacement parts warranty",
+    "jurisdiction": "UNKNOWN",
+    "expected": "REPAIR_PARTS"
+  },
+  {
+    "query": "Collision versus liability coverage for my own car",
+    "jurisdiction": "UNKNOWN",
+    "expected": "COLLISION_COVERAGE"
+  },
+  {
+    "query": "Totaled car loan balance and GAP insurance",
+    "jurisdiction": "UNKNOWN",
+    "expected": "GAP_LOAN"
+  },
+  {
+    "query": "Other driver uninsured, what about UM UIM?",
+    "jurisdiction": "UNKNOWN",
+    "expected": "UM_UIM"
+  },
+  {
+    "query": "Rental reimbursement and roadside towing coverage limits",
+    "jurisdiction": "UNKNOWN",
+    "expected": "RENTAL_TOW"
+  },
+  {
+    "query": "Washington PIP written rejection",
+    "jurisdiction": "WA",
+    "expected": "WA_PIP"
+  },
+  {
+    "query": "Washington photo estimate disagreement in person inspection",
+    "jurisdiction": "WA",
+    "expected": "WA_INSPECTION"
+  },
+  {
+    "query": "Washington first party storage towing written explanation",
+    "jurisdiction": "WA",
+    "expected": "WA_TOW_FEES"
+  },
+  {
+    "query": "Washington supplemental damage repair estimate difference",
+    "jurisdiction": "WA",
+    "expected": "WA_REPAIR_DIFFERENCE"
   }
 ]
