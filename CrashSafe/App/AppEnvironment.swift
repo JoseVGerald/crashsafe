@@ -8,6 +8,7 @@ final class AppEnvironment {
     let router: AppRouter
     let connectivity: ConnectivityMonitor
     let location: LocationService
+    let sensors: SensorHub
     let conditions: ConditionsStore
     let driving: DrivingMonitor
     let coach: DriveCoach
@@ -19,7 +20,7 @@ final class AppEnvironment {
     @ObservationIgnored let alerts: any EmergencyAlertService
 
     init(auth: any AuthService,
-         crashDetector: any CrashDetector,
+         crashDetector: (any CrashDetector)?,
          assistant: any AssistantService,
          voiceInput: any VoiceInputService,
          tripPacks: any TripPackService,
@@ -32,11 +33,13 @@ final class AppEnvironment {
         self.connectivity = connectivity
         self.location = location
         let conditions = ConditionsStore(service: weather)
-        let driving = DrivingMonitor(location: location)
+        let sensors = SensorHub(location: location)
+        self.sensors = sensors
+        let driving = DrivingMonitor(sensors: sensors)
         self.conditions = conditions
         self.driving = driving
         self.coach = DriveCoach(driving: driving, conditions: conditions)
-        self.crashDetector = crashDetector
+        self.crashDetector = crashDetector ?? CoreMotionCrashDetector(sensors: sensors)
         self.assistant = assistant
         self.voiceInput = voiceInput
         self.tripPacks = tripPacks
@@ -47,7 +50,7 @@ final class AppEnvironment {
     static func live() -> AppEnvironment {
         AppEnvironment(
             auth: makeAuthService(),
-            crashDetector: MockCrashDetector(),       // DETECTION TEAM: CoreMotionCrashDetector()
+            crashDetector: nil,                       // Live shared sensors + experimental evidence rules
             assistant: MockAssistantService(),        // AI TEAM: Cloud / on-device assistant
             voiceInput: MockVoiceInputService(),      // AI TEAM: speech recognizer
             tripPacks: MapKitTripPackService(),       // Apple Maps search (mock fallback without coordinates)
