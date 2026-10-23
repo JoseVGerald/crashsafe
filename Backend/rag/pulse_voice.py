@@ -43,8 +43,9 @@ CORE = (HERE / "pulse_core/core.md").read_text(encoding="utf-8")
 HARD_LINES = (HERE / "pulse_core/hard_lines.md").read_text(encoding="utf-8")
 
 COREY = "630ed21c-2c5c-41cf-9d82-10a7fd668370"  # Cartesia "Corey - Supportive Buddy"
-# The key has a $0 limit: free models only (as the team's provider.json pins), first that answers wins.
-FREE_MODELS = ("nvidia/nemotron-3.5-lightning:free", "openai/gpt-oss-20b:free")
+# The key has a $0 limit: free models only, both screened by the team (pulse_agent/config/model_profiles.json);
+# first that answers wins. OpenRouter's free plan allows 50 requests a day across all free models.
+FREE_MODELS = ("nvidia/nemotron-3.5-lightning:free", "google/gemma-4-26b-a4b-it:free")
 APP_CONTEXT = """[APP_CONTEXT]
 You are speaking through the CrashSafe iPhone app. Replies are read aloud by a text-to-speech voice: two to four
 short spoken sentences, at most one question and one instruction. The app shows a Call 911 button; you cannot
@@ -299,8 +300,7 @@ class PulseVoice:
         for model in self.models:
             body = {"model": model, "max_tokens": 220, "temperature": 0,  # as the team's model profiles
                     "messages": [{"role": "system", "content": system}] + turns}
-            if "nemotron" in model:
-                body["reasoning"] = {"enabled": False}
+            body["reasoning"] = {"enabled": False, "exclude": True}  # as the team's model profiles
             try:
                 raw = _post_json("https://openrouter.ai/api/v1/chat/completions", body,
                                  {"Authorization": "Bearer " + key, "HTTP-Referer": "https://github.com/JoseVGerald/crashsafe",
