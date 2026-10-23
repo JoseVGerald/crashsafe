@@ -117,7 +117,7 @@ final class AppEnvironment {
             auth: makeAuthService(),
             crashDetector: nil,                       // Live shared sensors + experimental evidence rules
             assistant: RAGAssistantService.configured(),        // AI TEAM: Cloud / on-device assistant
-            voiceInput: MockVoiceInputService(),      // AI TEAM: speech recognizer
+            voiceInput: SpeechVoiceInput(),           // Apple speech recognition, on-device when possible
             tripPacks: MapKitTripPackService(),       // Apple Maps search (mock fallback without coordinates)
             alerts: BackendEmergencyAlertService.configured(  // Texts + automated calls via /v1/alerts
                 driverName: { SharedEnvironment.current?.session.user?.name ?? "" },

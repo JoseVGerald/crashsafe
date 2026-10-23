@@ -1,4 +1,5 @@
 import CoreMotion
+import Speech
 import Foundation
 import Testing
 @testable import CrashSafe
@@ -91,6 +92,37 @@ struct OnDeviceSensorTests {
         let (audio, audioResponse) = try await URLSession.shared.data(for: speak)
         #expect((audioResponse as? HTTPURLResponse)?.value(forHTTPHeaderField: "Content-Type") == "audio/mpeg")
         #expect(audio.count > 5_000)
+    }
+
+    /// Apple's speech recognizer on this phone understands Pulse's own Corey clip (the same engine the
+    /// mic buttons use; asks for Speech Recognition permission the first time).
+    @Test(.enabled(if: hasHardware)) func speechRecognitionUnderstandsSpokenWords() async throws {
+        try #require(await Self.speechAllowed(), "Speech Recognition permission")
+        let clip = try #require(PulseVoiceClips.url(for: CrashResponseCenter.promptText(remaining: 30)))
+        let text = try await Self.transcribe(clip)
+        #expect(text.lowercased().contains("are you ok"), "heard: \(text)") // "OK" or "okay"
+    }
+
+    // Speech callbacks arrive on background queues: these helpers run off the main actor so their
+    // closures aren't main-actor isolated (that trapped this test the first time).
+    @concurrent nonisolated static func speechAllowed() async -> Bool {
+        await withCheckedContinuation { (c: CheckedContinuation<Bool, Never>) in
+            SFSpeechRecognizer.requestAuthorization { c.resume(returning: $0 == .authorized) }
+        }
+    }
+
+    @concurrent nonisolated static func transcribe(_ url: URL) async throws -> String {
+        guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US")) else { throw URLError(.unsupportedURL) }
+        let request = SFSpeechURLRecognitionRequest(url: url)
+        if recognizer.supportsOnDeviceRecognition { request.requiresOnDeviceRecognition = true }
+        return try await withCheckedThrowingContinuation { continuation in
+            nonisolated(unsafe) var done = false
+            recognizer.recognitionTask(with: request) { result, error in
+                guard !done else { return }
+                if let result, result.isFinal { done = true; continuation.resume(returning: result.bestTranscription.formattedString) }
+                else if let error { done = true; continuation.resume(throwing: error) }
+            }
+        }
     }
 
     /// The Sensor Lab on real sensors: live samples, then a replayed clip in their place, then live again.

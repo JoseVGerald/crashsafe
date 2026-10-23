@@ -70,3 +70,48 @@ struct PulseConversationTests {
         #expect(PulseSpeaker.spokenPart(of: "Turn on your hazards. [HAZARDS]\n\nSources:\nWSDOT: https://x") == "Turn on your hazards.")
     }
 }
+
+/// Says a scripted sentence each time it "listens".
+final class ScriptedVoice: VoiceInputService {
+    var lines: [String]
+    private(set) var partial = ""
+    init(_ lines: [String]) { self.lines = lines }
+    func start() async throws { partial = "" }
+    func finish() async throws -> String { lines.removeFirst() }
+    func listen() async throws -> String { lines.removeFirst() }
+    func cancel() {}
+}
+
+/// Answers with what it was asked, so the test can see the history Pulse received.
+final class EchoAssistant: AssistantService {
+    private(set) var lastHistory: [ChatMessage] = []
+    func greeting(for context: AssistantContext) -> String { "" }
+    func reply(to history: [ChatMessage], context: AssistantContext) async throws -> String {
+        lastHistory = history
+        return "Pulse heard: \(history.last?.text ?? "")"
+    }
+}
+
+@MainActor
+struct TapToTalkTests {
+    @Test func whatYouSayGoesToPulseAndFollowUpsKeepTheConversation() async throws {
+        let voice = ScriptedVoice(["Someone hit my bumper", "Do I call the police?"])
+        let assistant = EchoAssistant()
+        let talk = PressToTalkViewModel(assistant: assistant, voice: voice) {
+            AssistantContext(userName: "Test", isOnline: true, scenario: .general, carDescription: "", insurer: "",
+                             medicalNotes: "", familyContactNames: [])
+        }
+        talk.pressBegan()
+        talk.pressEnded()
+        for _ in 0..<50 where !(talk.phase.isAnswered) { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(talk.phase == .answered(transcript: "Someone hit my bumper", reply: "Pulse heard: Someone hit my bumper"))
+        talk.pressBegan()
+        talk.pressEnded()
+        for _ in 0..<50 where assistant.lastHistory.count < 3 { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(assistant.lastHistory.map(\.text) == ["Someone hit my bumper", "Pulse heard: Someone hit my bumper", "Do I call the police?"])
+    }
+}
+
+extension PressToTalkViewModel.Phase {
+    var isAnswered: Bool { if case .answered = self { true } else { false } }
+}

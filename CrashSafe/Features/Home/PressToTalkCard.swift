@@ -1,7 +1,8 @@
 import Observation
 import SwiftUI
 
-/// Tap-to-talk with Pulse. Proof of concept: the voice and AI services are the mocks for now.
+/// Tap-to-talk with Pulse: the microphone (on-device speech recognition) → Pulse on the backend (the
+/// team's Pulse core) → spoken back as Corey. Follow-up questions keep the conversation.
 @Observable
 final class PressToTalkViewModel {
     enum Phase: Equatable {
@@ -9,23 +10,23 @@ final class PressToTalkViewModel {
         case listening
         case thinking(transcript: String)
         case answered(transcript: String, reply: String)
+        case failed(String)
     }
 
     private(set) var phase: Phase = .idle
     @ObservationIgnored private let assistant: any AssistantService
+    @ObservationIgnored private let voice: any VoiceInputService
+    @ObservationIgnored private let speaker: PulseSpeaker?
     @ObservationIgnored private let contextProvider: () -> AssistantContext
     @ObservationIgnored private var task: Task<Void, Never>?
-    @ObservationIgnored private var promptIndex = 0
+    /// This conversation's turns, so "what about the other driver?" makes sense to Pulse.
+    @ObservationIgnored private var history: [ChatMessage] = []
 
-    private let prompts = [
-        "Is it safe to drive right now?",
-        "What do I do if I get a flat tire?",
-        "What should I tell my insurance after a crash?",
-        "I'm feeling nervous about this drive.",
-    ]
-
-    init(assistant: any AssistantService, contextProvider: @escaping () -> AssistantContext) {
+    init(assistant: any AssistantService, voice: any VoiceInputService, speaker: PulseSpeaker? = nil,
+         contextProvider: @escaping () -> AssistantContext) {
         self.assistant = assistant
+        self.voice = voice
+        self.speaker = speaker
         self.contextProvider = contextProvider
     }
 
@@ -33,25 +34,45 @@ final class PressToTalkViewModel {
 
     func pressBegan() {
         task?.cancel()
+        speaker?.stop()
         phase = .listening
+        task = Task {
+            do {
+                try await voice.start()
+            } catch {
+                voice.cancel()
+                phase = .failed(error.localizedDescription)
+            }
+        }
     }
 
     func pressEnded() {
         guard phase == .listening else { return }
-        let transcript = prompts[promptIndex % prompts.count]
-        promptIndex += 1
-        phase = .thinking(transcript: transcript)
+        phase = .thinking(transcript: voice.partial)
+        let starting = task
         task = Task {
-            let history = [ChatMessage(role: .user, text: transcript)]
-            let reply = (try? await assistant.reply(to: history, context: contextProvider()))
-                ?? "I couldn't answer that right now."
-            guard !Task.isCancelled else { return }
-            phase = .answered(transcript: transcript, reply: reply)
+            await starting?.value
+            do {
+                let transcript = try await voice.finish()
+                phase = .thinking(transcript: transcript)
+                history.append(ChatMessage(role: .user, text: transcript))
+                let reply = (try? await assistant.reply(to: Array(history.suffix(12)), context: contextProvider()))
+                    ?? "I couldn't answer that right now."
+                guard !Task.isCancelled else { return }
+                history.append(ChatMessage(role: .assistant, text: reply))
+                phase = .answered(transcript: transcript, reply: reply)
+                speaker?.speak(PulseSpeaker.spokenPart(of: reply))
+            } catch {
+                phase = .failed(error.localizedDescription)
+            }
         }
     }
 
     func reset() {
         task?.cancel()
+        voice.cancel()
+        speaker?.stop()
+        history = []
         phase = .idle
     }
 }
@@ -125,7 +146,7 @@ struct PressToTalkCard: View {
 
     private var mood: PulseOrbMood {
         switch viewModel.phase {
-        case .idle, .answered: .idle
+        case .idle, .answered, .failed: .idle
         case .listening: .listening
         case .thinking: .thinking
         }
@@ -145,6 +166,7 @@ struct PressToTalkCard: View {
         case .listening: "Listening…"
         case .thinking: "Thinking…"
         case .answered: "Pulse"
+        case .failed: "Tap to talk"
         }
     }
 
@@ -152,7 +174,8 @@ struct PressToTalkCard: View {
         switch viewModel.phase {
         case .idle: "Ask for help or get road support"
         case .listening: "Tap again when you're done."
-        case .thinking(let transcript), .answered(let transcript, _): "“\(transcript)”"
+        case .thinking(let transcript), .answered(let transcript, _): transcript.isEmpty ? "…" : "“\(transcript)”"
+        case .failed(let message): message
         }
     }
 }
