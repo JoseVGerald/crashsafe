@@ -129,12 +129,12 @@ final class DirectPulseService: AssistantService {
     private(set) var lastModel: String?
     /// Set when OpenRouter's daily free limit is used up: until then Pulse goes straight to the phone's model.
     private(set) var cloudPausedUntil: Date?
-    private let onDevice: ([ChatMessage], [(id: String, text: String, sources: [String])]) async -> String?
+    private let onDevice: ([ChatMessage], [(id: String, text: String, sources: [String])], String) async -> String?
 
     private struct DailyLimitReached: Error { let resetsAt: Date }
 
     init(key: String, fallback: any AssistantService, session: URLSession? = nil,
-         onDevice: @escaping ([ChatMessage], [(id: String, text: String, sources: [String])]) async -> String? = OnDevicePulse.reply) {
+         onDevice: @escaping ([ChatMessage], [(id: String, text: String, sources: [String])], String) async -> String? = OnDevicePulse.reply) {
         self.key = key
         self.fallback = fallback
         self.onDevice = onDevice
@@ -173,9 +173,12 @@ final class DirectPulseService: AssistantService {
         }
         // The phone's own model: free, unlimited, and works with no signal.
         let evidence = LocalEvidenceAssistant.evidence(for: query, context: context, limit: 2)
-        if let raw = await onDevice(history, evidence),
-           let spoken = Self.spoken(raw, medicationQuestion: Self.asksAboutMedication(query)) {
+        if let raw = await onDevice(history, evidence, context.situation),
+           let spoken = Self.spoken(OnDevicePulse.finished(raw, query: query, context: context),
+                                    medicationQuestion: Self.asksAboutMedication(query)) {
             lastModel = OnDevicePulse.modelName
+            // The phone's model has no tools: when it tells them to call 911, the app shows the button it names.
+            if Self.saysToCall911(spoken) { requestedActions = ["emergency_call_prompt"] }
             return spoken
         }
         let answer = try await fallback.reply(to: history, context: context)
@@ -185,7 +188,7 @@ final class DirectPulseService: AssistantService {
 
     private func converse(_ history: [ChatMessage], query: String, context: AssistantContext) async throws -> String? {
         let evidence = LocalEvidenceAssistant.evidence(for: query, context: context, limit: 3)
-        var system = Self.prompt + "\n\n" + Self.appContext + "\n\n[EVIDENCE]\n"
+        var system = Self.prompt + "\n\n" + Self.appContext + "\n\n[SITUATION]\n" + context.situation + "\n\n[EVIDENCE]\n"
             + Self.json(evidence.map { ["id": $0.id, "text": $0.text] })
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
@@ -289,6 +292,10 @@ final class DirectPulseService: AssistantService {
         let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         let headers = ((json?["error"] as? [String: Any])?["metadata"] as? [String: Any])?["headers"] as? [String: Any]
         return headers?["X-RateLimit-Reset"] as? String
+    }
+
+    static func saysToCall911(_ reply: String) -> Bool {
+        reply.range(of: #"\bcall(?:ing)?\s+911\b"#, options: [.regularExpression, .caseInsensitive]) != nil
     }
 
     static func asksAboutMedication(_ query: String) -> Bool {

@@ -25,6 +25,24 @@ struct AssistantContext: Sendable {
     var activity: AssistantActivity? = nil
     /// One per conversation, so Pulse's agent on the backend remembers earlier turns (random, not tied to the person).
     var conversationID: String? = nil
+
+    /// What has happened, for a model to read: without it, a crash companion treats "I stubbed my toe" from
+    /// the Home screen as a crash emergency.
+    var situation: String {
+        var text = switch scenario {
+        case .general:
+            "The phone has not detected a crash. The person opened Pulse from the app; respond to what they tell you."
+        case .afterCrash(.ok):
+            "The phone detected a possible crash, and the person answered the check-in that they are OK. Being able to answer does not mean they are uninjured."
+        case .afterCrash(.needsHelp):
+            "The phone detected a possible crash, and the person answered the check-in that they need help."
+        case .afterCrash(.noResponse):
+            "The phone detected a possible crash, and no answer to the check-in was recorded."
+        }
+        if incident?.isSimulated == true { text += " It was a test crash with simulated sensor data." }
+        if !isOnline { text += " The phone has no internet connection right now." }
+        return text
+    }
 }
 
 /// Derived from the rolling sensor history by `MotionIntelligence`; no raw telemetry.

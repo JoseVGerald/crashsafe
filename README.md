@@ -146,8 +146,16 @@ Shared sensor acquisition and experimental crash-evidence evaluation, their test
 Pulse needs no Mac and no server: the phone asks OpenRouter (free models, with the team's Pulse core prompt,
 the app's verified evidence cards and the team's sentence filter) and has Cartesia speak the reply as "Corey".
 911 rules run on the phone first. OpenRouter's free plan allows 50 requests a day (adding $10 of credit raises
-that to 1,000); past the limit, or with no signal, Pulse answers with the phone's own Apple Intelligence model using
-the team's short prompt (`core_mini`), and without that the on-device guides and an Apple voice answer.
+that to 1,000); past the limit, or with no signal, Pulse answers with the phone's own Apple Intelligence model, and
+without that the on-device guides and an Apple voice answer.
+
+The phone's model is small (about 3B parameters), so it has its own prompt, `CrashSafe/Resources/Pulse/pulse_on_device.txt`,
+written the way Apple recommends for it: a role, a reply length, a few steps for how serious a message is, a handful
+of DO NOT rules and three short examples. It is also told whether a crash was detected. With the team's dense
+`core_mini` prompt and no situation it read "I stubbed my toe" from the Home screen as a crash emergency ("You are
+hurt. Call 911."). It still misses some real emergencies in testing, so clear danger signs in what the person said (a
+car in water, a weapon or bomb, or confusion, dizziness, numbness or neck or back pain after a crash) always get a
+911 line, and when its reply says to call 911 the app shows the Call 911 button.
 
 To build with the keys (they stay out of git):
 
