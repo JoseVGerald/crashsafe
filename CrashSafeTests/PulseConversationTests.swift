@@ -187,7 +187,7 @@ struct DirectPulseTests {
     @Test func pulseAnswersFromOpenRouterWithTheTeamsCoreAndFilter() async throws {
         StubBackend.reset()
         StubBackend.routes[completions] = chat(#"{"content":"I'm right here with you. Calm down. Take 400 mg of ibuprofen. Help is on the way. Turn on your hazard lights if you can... Exchange insurance details."}"#)
-        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _ in nil })
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _, _ in nil })
         let history = [ChatMessage(role: .user, text: "I got rear-ended"), ChatMessage(role: .assistant, text: "Are you somewhere safe?"),
                        ChatMessage(role: .user, text: "yes. what do I tell my insurance?")]
         let reply = try await service.reply(to: history, context: context())
@@ -202,6 +202,7 @@ struct DirectPulseTests {
         let messages = try #require(body["messages"] as? [[String: Any]])
         let system = try #require(messages.first?["content"] as? String)
         #expect(system.contains("[PULSE_CORE]") && system.contains("[EVIDENCE]") && system.contains("DOCUMENT"))
+        #expect(system.contains("[SITUATION]\nThe phone has not detected a crash."))
         #expect(messages.dropFirst().compactMap { $0["role"] as? String } == ["user", "assistant", "user"])   // the conversation so far
     }
 
@@ -210,7 +211,7 @@ struct DirectPulseTests {
         StubBackend.queued[completions] = [
             chat(#"{"content":null,"tool_calls":[{"id":"c1","type":"function","function":{"name":"emergency_call_prompt","arguments":"{}"}}]}"#),
             chat(#"{"content":"Tap Call 911 now. I'm staying right here with you."}"#)]
-        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _ in nil })
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _, _ in nil })
         let reply = try await service.reply(to: [ChatMessage(role: .user, text: "my friend hit her head and seems confused")], context: context())
         #expect(PulseSpeaker.spokenPart(of: reply) == "Tap Call 911 now. I'm staying right here with you.")
         #expect(service.requestedActions == ["emergency_call_prompt"])
@@ -223,7 +224,7 @@ struct DirectPulseTests {
     @Test func emergenciesAndOutagesNeverWaitOnTheModel() async throws {
         StubBackend.reset()
         StubBackend.routes[completions] = (503, Data(), "application/json")
-        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _ in nil })
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _, _ in nil })
         let urgent = try await service.reply(to: [ChatMessage(role: .user, text: "the car is on fire")], context: context())
         #expect(urgent.hasPrefix("Call 911") && StubBackend.log.isEmpty && service.requestedActions == ["emergency_call_prompt"])
         let answer = try await service.reply(to: [ChatMessage(role: .user, text: "what photographs should I take for documentation")], context: context())
@@ -239,7 +240,7 @@ struct DirectPulseTests {
         StubBackend.routes[completions] = (429, Data(#"{"error":{"message":"Rate limit exceeded: free-models-per-day","code":429,"metadata":{"headers":{"X-RateLimit-Limit":"50","X-RateLimit-Remaining":"0","X-RateLimit-Reset":"1792800000000"}}}}"#.utf8), "application/json")
         var asked: [[ChatMessage]] = []
         let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(),
-                                         onDevice: { history, _ in asked.append(history); return "I'm here with you. Calm down. Are you somewhere safe?" })
+                                         onDevice: { history, _, _ in asked.append(history); return "I'm here with you. Calm down. Are you somewhere safe?" })
         let first = [ChatMessage(role: .user, text: "someone rear-ended me")]
         let reply = try await service.reply(to: first, context: context())
         #expect(reply == "I'm here with you. Are you somewhere safe?")   // the team's filter still applies
@@ -257,7 +258,57 @@ struct DirectPulseTests {
         let prompt = OnDevicePulse.prompt(history: history, query: "what color was the truck?")
         #expect(prompt.hasSuffix("Reply to the latest:\nPerson: what color was the truck?"))
         #expect(prompt.contains("Pulse: turn 11") && !prompt.contains("turn 3\n"))   // the last eight turns
-        #expect(OnDevicePulse.instructions(evidence: []).hasPrefix("[PULSE_MINI]"))
+        let instructions = OnDevicePulse.instructions(evidence: [], situation: context().situation)
+        #expect(instructions.hasPrefix("You are Pulse") && instructions.hasSuffix("Right now: " + context().situation))
+    }
+
+    /// Replies like the ones the phone's model gave with the old prompt: Home-screen messages with no crash, read as
+    /// emergencies, telling the person to press a Call 911 button that wasn't there.
+    @Test func phonesModelKnowsTheSituationAndClearDangerAlwaysGets911() async throws {
+        StubBackend.reset()
+        StubBackend.routes[completions] = (503, Data(), "application/json")
+        var situations: [String] = []
+        var raw = "Pulse: Ouch, that smarts. Something cool on it for a few minutes can help."
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(),
+                                         onDevice: { _, _, situation in situations.append(situation); return raw })
+        let toe = try await service.reply(to: [ChatMessage(role: .user, text: "I stubbed my toe")], context: context())
+        #expect(toe == "Ouch, that smarts. Something cool on it for a few minutes can help.")   // no "Pulse:" label
+        #expect(service.requestedActions.isEmpty)
+        #expect(situations.last?.hasPrefix("The phone has not detected a crash.") == true)
+
+        // The model missed the danger: the 911 line comes first, and the button it names is shown.
+        raw = "That sounds frightening. I'm here with you."
+        let bomb = try await service.reply(to: [ChatMessage(role: .user, text: "I think a bomb is coming towards me")], context: context())
+        #expect(bomb == "Please get away from the danger if you safely can, and call 911 now with the Call 911 button. That sounds frightening. I'm here with you.")
+        #expect(service.requestedActions == ["emergency_call_prompt"])
+
+        // The model said it already: no second 911 line, and the button still shows.
+        raw = "Chest pain needs help right away, so please call 911 now. I'm right here with you."
+        _ = try await service.reply(to: [ChatMessage(role: .user, text: "my chest feels tight after the crash")], context: context())
+        #expect(service.requestedActions == ["emergency_call_prompt"])
+        raw = "Keep still. I'm right here with you."
+        var afterCrash = context()
+        afterCrash.scenario = .afterCrash(.ok)
+        let neck = try await service.reply(to: [ChatMessage(role: .user, text: "my neck really hurts")], context: afterCrash)
+        #expect(neck.hasPrefix("Please call 911 now with the Call 911 button. Keep still."))
+        #expect(situations.last?.contains("answered the check-in that they are OK") == true)
+    }
+
+    @Test func dangerSignsStayNarrow() {
+        let home = context()
+        var afterCrash = context()
+        afterCrash.scenario = .afterCrash(.ok)
+        for calm in ["I stubbed my toe", "I cut my finger with a knife while cooking", "I had to gun it to merge",
+                     "my back is sore from gardening", "I feel a bit dizzy", "I spilled my water bottle", "the movie bombed"] {
+            #expect(OnDevicePulse.safetyLine(for: calm, context: home)?.line == nil, "\(calm)")
+        }
+        #expect(OnDevicePulse.safetyLine(for: "I'm confused about what to do next", context: afterCrash)?.line == nil)
+        #expect(OnDevicePulse.safetyLine(for: "I feel a bit dizzy", context: afterCrash)?.line != nil)
+        #expect(OnDevicePulse.safetyLine(for: "my friend hit her head and seems confused", context: home)?.line != nil)
+        #expect(OnDevicePulse.safetyLine(for: "a man with a gun is outside my car", context: home)?.line != nil)
+        // In water, getting out comes first, even when the model said to call 911.
+        let water = OnDevicePulse.finished("Emergency: Please call 911 now.", query: "my car went into a canal and water is coming in", context: home)
+        #expect(water == "Get out of the car now if you can, then call 911 with the Call 911 button. Please call 911 now.")
     }
 
     /// The same cases as the team's Python filter tests (Backend/rag/tests/test_pulse_voice.py).
@@ -290,7 +341,7 @@ struct DirectPulseTests {
     /// The app's copy of the team's prompt is the same as the backend's (both unchanged from the team's repo).
     @Test func bundledCoreMatchesTheTeamsFiles() throws {
         let repo = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-        for (bundled, original) in [("pulse_core", "core.md"), ("pulse_hard_lines", "hard_lines.md"), ("pulse_core_mini", "core_mini.md")] {
+        for (bundled, original) in [("pulse_core", "core.md"), ("pulse_hard_lines", "hard_lines.md")] {
             let app = try String(contentsOf: try #require(Bundle.main.url(forResource: bundled, withExtension: "txt")), encoding: .utf8)
             #expect(app == (try String(contentsOf: repo.appending(path: "Backend/rag/pulse_core/\(original)"), encoding: .utf8)))
         }

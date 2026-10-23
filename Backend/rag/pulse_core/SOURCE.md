@@ -5,8 +5,9 @@ Copied from https://github.com/udaykamboj/pulse-voice-assistant at commit 85af5f
 
 - `core.md`: Pulse's persona and safety rules (calm first, 911 first when there is danger, one step at a time,
   no medication doses, no false "help is on the way").
-- `core_mini.md`: the short version the team wrote for the phone's own model (the app uses it with Apple's
-  on-device model when OpenRouter can't answer).
+- `core_mini.md`: the short version the team wrote for the phone's own model. The app no longer uses it: on Apple's
+  ~3B on-device model its packed rules and no examples gave replies like "You are hurt. Call 911." for a stubbed toe,
+  so the app has its own prompt for that model (`CrashSafe/Resources/Pulse/pulse_on_device.txt`).
 - `hard_lines.md`: never delay emergency help, never certify someone is fine, never diagnose.
 - `sentence_filter.py`: deterministic check on every sentence before it is spoken.
 
