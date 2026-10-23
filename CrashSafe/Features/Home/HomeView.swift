@@ -7,7 +7,6 @@ struct HomeView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(\.modelContext) private var context
     @State private var viewModel: HomeViewModel
-    @State private var talk: PulseCallViewModel
     @State private var showingDrivePicker = false
     /// Set when a drive starts from the picker; CarPlay mode opens once the picker has closed.
     @State private var openCarPlayAfterPicker = false
@@ -17,10 +16,9 @@ struct HomeView: View {
     @State private var openReport: CheckInRecord?
     @Query private var profiles: [Profile]
 
-    init(user: AuthUser, viewModel: HomeViewModel, talk: PulseCallViewModel) {
+    init(user: AuthUser, viewModel: HomeViewModel) {
         self.user = user
         _viewModel = State(initialValue: viewModel)
-        _talk = State(initialValue: talk)
         let id = user.id
         _trips = Query(filter: #Predicate<Trip> { $0.ownerID == id }, sort: \Trip.startDate)
         var latest = FetchDescriptor<CheckInRecord>(
@@ -77,16 +75,6 @@ struct HomeView: View {
                         appleMarkURL: env.conditions.appleMarkURL
                     )
                     .fadeUp(delay: 0.12)
-
-                    PulseCallCard(
-                        viewModel: talk,
-                        onCall: {
-                            env.router.selectedTab = .pulseVoice
-                            if !talk.inCall { talk.startCall() }
-                        },
-                        onOpenChat: { env.router.selectedTab = .assistant }
-                    )
-                    .fadeUp(delay: 0.15)
 
                     tripCard.fadeUp(delay: 0.18)
                     lastCheckIn.fadeUp(delay: 0.21)
