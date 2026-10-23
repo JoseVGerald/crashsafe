@@ -31,14 +31,14 @@ final class SpeechVoiceInput: VoiceInputService {
 
     // MARK: VoiceInputService
 
-    /// One question: listens until the speaker pauses (1.4 s), up to 15 s.
+    /// One turn: listens until the speaker pauses (1 s, about a conversational beat), up to 15 s.
     func listen() async throws -> String {
         try await start()
         let began = Date.now
         while isRecording {
-            try? await Task.sleep(for: .milliseconds(150))
+            try? await Task.sleep(for: .milliseconds(100))
             let quiet = Date.now.timeIntervalSince(lastChange)
-            if !partial.isEmpty && quiet > 1.4 { break }
+            if !partial.isEmpty && quiet > 1.0 { break }
             if partial.isEmpty && Date.now.timeIntervalSince(began) > 7 { break }
             if Date.now.timeIntervalSince(began) > 15 { break }
         }
@@ -83,8 +83,9 @@ final class SpeechVoiceInput: VoiceInputService {
         guard isRecording || request != nil else { throw Failure.heardNothing }
         stopAudio()
         request?.endAudio()
-        // The final transcript follows endAudio shortly; don't wait long for it.
-        for _ in 0..<12 where finalText == nil { try? await Task.sleep(for: .milliseconds(100)) }
+        // The final transcript follows endAudio shortly, but the live one is already complete after a pause:
+        // wait at most 0.3 s for it.
+        for _ in 0..<6 where finalText == nil { try? await Task.sleep(for: .milliseconds(50)) }
         let text = (finalText ?? partial).trimmingCharacters(in: .whitespacesAndNewlines)
         task?.cancel()
         task = nil

@@ -51,6 +51,7 @@ targets:
         # Config/Pulse.xcconfig.local; empty without it.
         PulseOpenRouterKey: "$(PULSE_OPENROUTER_KEY)"
         PulseCartesiaKey: "$(PULSE_CARTESIA_KEY)"
+        PulseCartesiaBackupKey: "$(PULSE_CARTESIA_BACKUP_KEY)"
         NSMotionUsageDescription: "CrashSafe uses motion data to notice hard braking and possible crashes."
         UIBackgroundModes: [location, audio]
         UIApplicationSceneManifest:
