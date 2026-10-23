@@ -38,14 +38,18 @@ nonisolated enum PulseBackend {
 }
 
 /// Speaks for Pulse in its voice, Cartesia's "Corey": straight from Cartesia when this build has a Cartesia key
-/// (`PulseKeys`), otherwise through the backend (`POST /v1/tts`). When neither answers in time (offline, or
-/// nothing configured), the best installed Apple voice says it instead, so nothing Pulse needs to say is lost.
+/// (`PulseKeys`; the backup key takes over if the main one is refused), otherwise through the backend
+/// (`POST /v1/tts`). When neither answers in time (offline, or nothing configured), the best installed Apple
+/// voice says it instead, so nothing Pulse needs to say is lost. To start sooner, the first sentence is
+/// voiced on its own and plays while the rest is still being fetched.
 @MainActor
 final class PulseSpeaker {
     private static let log = Logger(subsystem: "org.cac.crashsafe", category: "voice")
     static let corey = "630ed21c-2c5c-41cf-9d82-10a7fd668370"  // Cartesia "Corey - Supportive Buddy"
     private let endpoint: URL?
-    private let cartesiaKey: String?
+    private let cartesiaKeys: [String]
+    /// The key that answered last, tried first next time.
+    private var workingKey = 0
     private let session: URLSession
     private let isOnline: () -> Bool
     private let synthesizer = AVSpeechSynthesizer()
@@ -56,9 +60,10 @@ final class PulseSpeaker {
     private var cacheOrder: [String] = []
 
     init(endpoint: URL? = PulseBackend.endpoint(), cartesiaKey: String? = PulseKeys.cartesia(),
+         backupKey: String? = PulseKeys.cartesiaBackup(),
          isOnline: @escaping () -> Bool = { true }, timeout: TimeInterval = 4, session: URLSession? = nil) {
         self.endpoint = endpoint
-        self.cartesiaKey = cartesiaKey
+        self.cartesiaKeys = [cartesiaKey, backupKey].compactMap { $0 }
         self.isOnline = isOnline
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = timeout
@@ -84,16 +89,41 @@ final class PulseSpeaker {
         await task?.value
     }
 
+    /// Fetches a line ahead of time (e.g. the call greeting), so saying it later is instant.
+    func prefetch(_ text: String) {
+        Task { _ = await corey(text) }
+    }
+
     private func play(_ text: String, rate: Float) async {
-        if let audio = await corey(text), !Task.isCancelled, let player = try? AVAudioPlayer(data: audio) {
-            player.volume = 1
-            player.play()
-            self.player = player
-            Self.log.info("Pulse spoke as Corey (\(audio.count, privacy: .public) bytes)")
-            while player.isPlaying, !Task.isCancelled { try? await Task.sleep(for: .milliseconds(80)) }
-            return
+        // The first sentence alone comes back sooner; the rest is fetched while it plays.
+        let sentences = PulseSentenceFilter.sentences(text)
+        let first = sentences.count > 1 ? sentences[0] : text
+        let rest = sentences.count > 1 ? sentences.dropFirst().joined(separator: " ") : ""
+        let later = rest.isEmpty ? nil : Task { await corey(rest) }
+        if let audio = await corey(first), !Task.isCancelled {
+            await playClip(audio)
+            if let later, let audio = await later.value, !Task.isCancelled {
+                await playClip(audio)
+                return
+            }
+            guard !rest.isEmpty, !Task.isCancelled else { return }
+            return await sayWithAppleVoice(rest, rate: rate)
         }
+        later?.cancel()
         guard !Task.isCancelled else { return }
+        await sayWithAppleVoice(text, rate: rate)
+    }
+
+    private func playClip(_ audio: Data) async {
+        guard let player = try? AVAudioPlayer(data: audio) else { return }
+        player.volume = 1
+        player.play()
+        self.player = player
+        Self.log.info("Pulse spoke as Corey (\(audio.count, privacy: .public) bytes)")
+        while player.isPlaying, !Task.isCancelled { try? await Task.sleep(for: .milliseconds(50)) }
+    }
+
+    private func sayWithAppleVoice(_ text: String, rate: Float) async {
         Self.log.info("Pulse spoke with the Apple voice (Corey unavailable)")
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = PulseVoice.preferred()
@@ -113,21 +143,31 @@ final class PulseSpeaker {
 
     func corey(_ text: String) async -> Data? {
         if let cached = cache[text] { return cached }
-        guard isOnline(), text.count <= 1200, let request = coreyRequest(text) else { return nil }
-        guard let (data, response) = try? await session.data(for: request),
-              (response as? HTTPURLResponse)?.statusCode == 200,
-              (response as? HTTPURLResponse)?.value(forHTTPHeaderField: "Content-Type")?.hasPrefix("audio/") == true,
-              data.count > 1000 else { return nil }
-        cache[text] = data
-        cacheOrder.append(text)
-        if cacheOrder.count > 32 { cache[cacheOrder.removeFirst()] = nil }
-        return data
+        guard isOnline(), text.count <= 1200 else { return nil }
+        // Cartesia keys in order, starting with the one that worked last; then the backend.
+        let keys = cartesiaKeys.indices.map { (workingKey + $0) % cartesiaKeys.count }
+        for index in keys.isEmpty ? [-1] : keys {
+            guard let request = coreyRequest(text, key: index >= 0 ? cartesiaKeys[index] : nil),
+                  let (data, response) = try? await session.data(for: request) else { continue }
+            guard (response as? HTTPURLResponse)?.statusCode == 200,
+                  (response as? HTTPURLResponse)?.value(forHTTPHeaderField: "Content-Type")?.hasPrefix("audio/") == true,
+                  data.count > 1000 else {
+                Self.log.info("Corey request refused (\((response as? HTTPURLResponse)?.statusCode ?? 0, privacy: .public)); trying the next key")
+                continue
+            }
+            if index >= 0 { workingKey = index }
+            cache[text] = data
+            cacheOrder.append(text)
+            if cacheOrder.count > 32 { cache[cacheOrder.removeFirst()] = nil }
+            return data
+        }
+        return nil
     }
 
-    /// Cartesia itself when this build has its key, else the backend.
-    private func coreyRequest(_ text: String) -> URLRequest? {
+    /// Cartesia itself when this build has a key, else the backend.
+    private func coreyRequest(_ text: String, key: String?) -> URLRequest? {
         var request: URLRequest
-        if let cartesiaKey {
+        if let cartesiaKey = key {
             request = URLRequest(url: URL(string: "https://api.cartesia.ai/tts/bytes")!)
             request.setValue(cartesiaKey, forHTTPHeaderField: "X-API-Key")
             request.setValue("2025-04-16", forHTTPHeaderField: "Cartesia-Version")
