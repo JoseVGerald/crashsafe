@@ -31,7 +31,7 @@ final class PulseCallViewModel {
     @ObservationIgnored private let assistant: any AssistantService
     @ObservationIgnored let voice: any VoiceInputService
     @ObservationIgnored private let speaker: PulseSpeaker?
-    @ObservationIgnored private let contextProvider: () -> AssistantContext
+    @ObservationIgnored var contextProvider: () -> AssistantContext
     @ObservationIgnored private var call: Task<Void, Never>?
     /// This call's turns, so "what about the other driver?" makes sense to Pulse.
     @ObservationIgnored private(set) var history: [ChatMessage] = []
@@ -57,7 +57,7 @@ final class PulseCallViewModel {
         speaker?.prefetch(Self.greeting)
     }
 
-    func startCall() {
+    func startCall(initialTopic: String? = nil) {
         guard !inCall else { return }
         history = []
         lastReply = ""
@@ -67,7 +67,7 @@ final class PulseCallViewModel {
         conversationID = UUID().uuidString
         startedAt = .now
         phase = .connecting
-        call = Task { await run() }
+        call = Task { await run(initialTopic: initialTopic) }
     }
 
     func endCall() {
@@ -90,8 +90,14 @@ final class PulseCallViewModel {
         if case .speaking = phase { speaker?.stop() }
     }
 
-    private func run() async {
-        await say(Self.greeting, heard: "")
+    private func run(initialTopic: String? = nil) async {
+        let greetingText: String
+        if let initialTopic, !initialTopic.isEmpty {
+            greetingText = "I'm here. Let's talk about \(initialTopic). What's happening?"
+        } else {
+            greetingText = Self.greeting
+        }
+        await say(greetingText, heard: "")
         while !Task.isCancelled {
             phase = .listening
             if isMuted {
@@ -139,31 +145,38 @@ final class PulseCallViewModel {
     }
 }
 
-/// The card on Home: tap to call Pulse. The call itself opens full screen (`PulseCallScreen`).
+/// The card on Home: tap to call Pulse. The call itself opens full screen (`PulseCallScreen`) or routes to the Pulse Voice tab.
 struct PulseCallCard: View {
     @State var viewModel: PulseCallViewModel
+    var onCall: (() -> Void)? = nil
     var onOpenChat: () -> Void
 
     var body: some View {
         VStack(spacing: Space.md) {
-            Button(action: viewModel.startCall) {
+            Button(action: {
+                if let onCall {
+                    onCall()
+                } else {
+                    viewModel.startCall()
+                }
+            }) {
                 ZStack {
                     Circle()
                         .fill(Brand.surface)
                         .frame(width: 124, height: 124)
                         .overlay(Circle().strokeBorder(Brand.stroke))
-                    PulseVoiceFace(mood: .idle, diameter: 96, badge: "phone.fill")
+                    PulseVoiceFace(mood: viewModel.inCall ? .listening : .idle, diameter: 96, badge: "phone.fill")
                 }
                 .contentShape(Circle())
             }
             .buttonStyle(.pressable)
             .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.inCall)
-            .accessibilityLabel("Call Pulse")
+            .accessibilityLabel(viewModel.inCall ? "Active Call with Pulse" : "Call Pulse")
             .accessibilityHint("Starts a hands-free call. Pulse answers out loud.")
             .padding(.top, Space.sm)
 
             VStack(spacing: 4) {
-                Text("Call Pulse")
+                Text(viewModel.inCall ? "Pulse Call Active" : "Call Pulse")
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(Brand.textPrimary)
                 Text(subtitle)
@@ -183,13 +196,17 @@ struct PulseCallCard: View {
         .padding(.horizontal, Space.md)
         .padding(.vertical, Space.sm)
         .onAppear { viewModel.prepare() }
-        .fullScreenCover(isPresented: Binding(get: { viewModel.inCall }, set: { if !$0 { viewModel.endCall() } })) {
+        .fullScreenCover(isPresented: Binding(
+            get: { onCall == nil && viewModel.inCall },
+            set: { if !$0 { viewModel.endCall() } }
+        )) {
             PulseCallScreen(viewModel: viewModel)
         }
     }
 
     private var subtitle: String {
         if case .failed(let message) = viewModel.phase { return message }
+        if viewModel.inCall { return "Call active · Tap to open" }
         return "Tap to talk hands-free. Pulse answers out loud."
     }
 }

@@ -205,6 +205,74 @@ struct PulseCallTests {
         #expect(!pulse.offersEmergencyCall && pulse.history.count <= 1)
         pulse.endCall()
     }
+
+    @Test func callStartsDedicatedTopic() async throws {
+        let assistant = EchoAssistant()
+        let pulse = call(CallScriptVoice(["I was just hit"]), assistant)
+        pulse.startCall(initialTopic: "Accident Checklist")
+        #expect(pulse.inCall)
+        for _ in 0..<100 where assistant.lastHistory.isEmpty { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(pulse.history.first?.text.contains("Accident Checklist") == true)
+        pulse.endCall()
+        #expect(!pulse.inCall)
+    }
+}
+
+@MainActor
+struct AppRouterTabTests {
+    @Test func allFiveTabsExistAndRouteCorrectly() {
+        let router = AppRouter()
+        #expect(router.selectedTab == .home)
+
+        router.selectedTab = .trips
+        #expect(router.selectedTab == .trips)
+
+        router.openPulseVoice()
+        #expect(router.selectedTab == .pulseVoice)
+
+        router.selectedTab = .assistant
+        #expect(router.selectedTab == .assistant)
+
+        router.selectedTab = .profile
+        #expect(router.selectedTab == .profile)
+
+        let allTabs: Set<AppRouter.Tab> = [.home, .trips, .pulseVoice, .assistant, .profile]
+        #expect(allTabs.count == 5)
+    }
+
+    @Test func pulseCallStateIsPreservedAcrossTabChanges() async throws {
+        let assistant = EchoAssistant()
+        let voice = CallScriptVoice(["Check my driving score"])
+        let pulse = PulseCallViewModel(assistant: assistant, voice: voice) {
+            AssistantContext(userName: "Test", isOnline: true, scenario: .general, carDescription: "", insurer: "",
+                             medicalNotes: "", familyContactNames: [])
+        }
+        let router = AppRouter()
+
+        // User starts call from Pulse Voice tab
+        router.openPulseVoice()
+        #expect(router.selectedTab == .pulseVoice)
+        pulse.startCall()
+        #expect(pulse.inCall)
+
+        // User switches to Trips tab while call is ongoing
+        router.selectedTab = .trips
+        #expect(router.selectedTab == .trips)
+        #expect(pulse.inCall) // Call stays alive!
+
+        // User switches to Profile tab
+        router.selectedTab = .profile
+        #expect(router.selectedTab == .profile)
+        #expect(pulse.inCall)
+
+        // User switches back to Pulse Voice tab
+        router.openPulseVoice()
+        #expect(router.selectedTab == .pulseVoice)
+        #expect(pulse.inCall)
+
+        pulse.endCall()
+        #expect(!pulse.inCall)
+    }
 }
 
 
