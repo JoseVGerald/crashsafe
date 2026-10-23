@@ -94,7 +94,27 @@ struct OnDeviceSensorTests {
         #expect(audio.count > 5_000)
     }
 
-    /// The team's Pulse agent on the Mac answers the phone and remembers the conversation (needs
+    /// Pulse with no server at all: this phone asks OpenRouter for the reply and Cartesia for Corey's voice,
+    /// over whatever internet it has. Runs on builds with keys (Config/Pulse.xcconfig.local), on a phone or, in
+    /// the simulator, with `TEST_RUNNER_PULSE_LIVE=1` (it uses the real services).
+    @Test(.enabled(if: (hasHardware || ProcessInfo.processInfo.environment["PULSE_LIVE"] == "1")
+                   && PulseKeys.openRouter() != nil && PulseKeys.cartesia() != nil))
+    func pulseTalksAndSpeaksStraightFromThePhone() async throws {
+        let pulse = try #require(DirectPulseService.configured() as? DirectPulseService)
+        var context = AssistantContext(userName: "Test", isOnline: true, scenario: .general, carDescription: "", insurer: "",
+                                       medicalNotes: "", familyContactNames: [])
+        context.assistanceStage = "active"
+        let first = [ChatMessage(role: .user, text: "A white truck just sideswiped me on the freeway. I pulled over and I'm okay.")]
+        let reply = try await pulse.reply(to: first, context: context)
+        #expect(pulse.lastModel != nil, "answered by: \(reply)")
+        let followUp = first + [ChatMessage(role: .assistant, text: reply), ChatMessage(role: .user, text: "What color was the truck?")]
+        let second = try await pulse.reply(to: followUp, context: context)
+        #expect(second.lowercased().contains("white"), "\(second)")
+        let audio = await PulseSpeaker().corey(PulseSpeaker.spokenPart(of: second))
+        #expect((audio?.count ?? 0) > 5_000)
+    }
+
+
     /// `run_pulse_agent.py` running next to the backend).
     @Test(.enabled(if: hasHardware && PulseBackend.endpoint() != nil)) func pulseAgentRemembersTheConversationOverWiFi() async throws {
         let endpoint = try #require(PulseBackend.endpoint())

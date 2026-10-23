@@ -1,0 +1,11 @@
+# Only the API and the agent go into the image; never secrets, environments or datasets.
+*
+!rag
+!external/pulse-voice-assistant/pulse_agent
+**/.env
+**/.venv
+**/__pycache__
+rag/tests
+external/pulse-voice-assistant/pulse_agent/runtime/data
+external/pulse-voice-assistant/pulse_agent/runtime/tmp
+external/pulse-voice-assistant/pulse_agent/tests

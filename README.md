@@ -75,7 +75,7 @@ Every service is swapped in one place: `AppEnvironment.live()` in [`CrashSafe/Ap
 | Team | Protocol | Mock today | What to build |
 |---|---|---|---|
 | Detection | `CrashDetector` — `Services/CrashDetection/CrashDetector.swift` | `CoreMotionCrashDetector`: shared sensor acquisition, bounded history, experimental evidence evaluation; mocks remain in previews | Validate/calibrate rules and integrate the transportation classifier and team's step 4 candidate detector. See [implementation notes](docs/crash-detection.md). |
-| AI | `AssistantService` — `Services/Assistant/AssistantService.swift` | `RAGAssistantService` (local source cards and optional RAG backend) | Cloud assistant (calls **our server**; never ship API keys in the app) + on-device assistant (Apple Foundation Models + trip pack). Pick based on `ConnectivityMonitor.isOnline`. `AssistantContext` already carries profile, trip and scenario. |
+| AI | `AssistantService` — `Services/Assistant/AssistantService.swift` | `DirectPulseService` (OpenRouter from the phone, see "Pulse without a server"), falling back to `RAGAssistantService` (local source cards and optional RAG backend) | For a public release, route the model through our server so no keys ship in the app; on-device assistant (Apple Foundation Models + trip pack) when offline. |
 | AI | `VoiceInputService` — `Services/Assistant/VoiceInputService.swift` | `MockVoiceInputService` (canned phrases) | On-device speech-to-text. Add mic + speech usage descriptions to the Info.plist settings in `project.yml`. |
 | Maps | `TripPackService` — `Services/TripPack/TripPackService.swift` | `MockTripPackService` (fake tow companies/hospitals) | `MKLocalSearch` along the route; persist packs to disk for airplane mode. |
 | Backend | `EmergencyAlertService` — `Services/Alerts/EmergencyAlertService.swift` | `MockEmergencyAlertService` (`.sent` online, `.queued` offline) | Push/SMS via our backend; persist a queue when offline. 911 stays with Apple's built-in Crash Detection. |
@@ -140,6 +140,22 @@ Several CAC districts require disclosing AI use. Keep a running list here. Start
 
 Shared sensor acquisition and experimental crash-evidence evaluation, their tests, the macOS/iOS verification workflow, and implementation notes were developed with OpenAI Codex. Automated core and iPhone simulator tests were run through GitHub Actions. Real-device and crash-dataset validation remain to be done by the team.
 
+
+## Pulse without a server
+
+Pulse needs no Mac and no server: the phone asks OpenRouter (free models, with the team's Pulse core prompt,
+the app's verified evidence cards and the team's sentence filter) and has Cartesia speak the reply as "Corey".
+911 rules run on the phone first, and without a connection the on-device guides and an Apple voice answer.
+
+To build with the keys (they stay out of git):
+
+```
+Tools/Pulse/write_app_keys.sh   # Backend/rag/.env -> Config/Pulse.xcconfig.local (git-ignored)
+xcodegen
+```
+
+The keys are readable inside builds made this way, so keep those builds on your own phones. For TestFlight or
+the App Store, leave the keys out and deploy `Backend/` (Dockerfile) so the keys stay on a server.
 
 ## Source-backed assistant integration
 

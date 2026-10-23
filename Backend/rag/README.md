@@ -202,3 +202,18 @@ Optional: `PULSE_MODEL` (a free OpenRouter model to try first), `PULSE_AGENT_URL
 phone over Wi-Fi with `serve --lan`, or an HTTPS `RAGEndpoint`), and otherwise falls back to the on-device
 guides and the best Apple voice.
 The crash check-in's fixed lines are bundled in Corey's voice (`Tools/Voice/render_prompts_corey.py`).
+
+## Hosting the backend in the cloud (optional)
+
+The app no longer needs this server for Pulse (see "Pulse without a server" in the top-level README). To host
+it anyway, for example so no keys ship in the app, `Backend/Dockerfile` builds one container with our API and
+the team's agent (`cloud.py` starts both). Run `python run_pulse_agent.py setup` first; the team's repository
+is private, so the image is built from that checkout:
+
+```
+docker build --platform linux/amd64 -t pulse-backend Backend/
+```
+
+Give the host these secrets: `OPENROUTER_API_KEY`, `CARTESIA_API_KEY`, `PULSE_AUTH_SECRET`, `PULSE_APP_TOKEN`.
+Every request needs `X-Pulse-Token: <PULSE_APP_TOKEN>` except `GET /healthz`. Point the app at it with an
+HTTPS `RAGEndpoint`.

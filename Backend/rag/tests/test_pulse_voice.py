@@ -236,6 +236,9 @@ class LanAccessTests(PulseVoiceTests):
                 urllib.request.urlopen(urllib.request.Request(url, headers={"X-Pulse-Token": "wrong"}), timeout=5)
             ok = urllib.request.urlopen(urllib.request.Request(url, headers={"X-Pulse-Token": "t" * 40}), timeout=5)
             self.assertEqual(ok.status, 200)
+            # The cloud host's liveness check needs no token and reveals nothing.
+            alive = urllib.request.urlopen(url.replace("/health", "/healthz"), timeout=5)
+            self.assertEqual(json.loads(alive.read()), {"ok": True})
         finally:
             server.shutdown()
 
