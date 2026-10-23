@@ -4,4 +4,5 @@
 // Without it, builds have no keys and Pulse falls back to the backend / on-device guides.
 PULSE_OPENROUTER_KEY =
 PULSE_CARTESIA_KEY =
+PULSE_CARTESIA_BACKUP_KEY =
 #include? "Pulse.xcconfig.local"

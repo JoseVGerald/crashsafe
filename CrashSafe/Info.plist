@@ -35,6 +35,8 @@
 	<string>CrashSafe uses motion data to notice hard braking and possible crashes.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Pulse turns what you say into text to answer you. On supported iPhones this happens on the phone.</string>
+	<key>PulseCartesiaBackupKey</key>
+	<string>$(PULSE_CARTESIA_BACKUP_KEY)</string>
 	<key>PulseCartesiaKey</key>
 	<string>$(PULSE_CARTESIA_KEY)</string>
 	<key>PulseLANHost</key>

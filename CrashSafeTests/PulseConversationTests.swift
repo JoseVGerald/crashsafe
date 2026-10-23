@@ -178,6 +178,21 @@ struct PulseCallTests {
         #expect(pulse.phase == .idle && !pulse.inCall && pulse.startedAt == nil)
     }
 
+    /// Muted: Pulse hears nothing (no turn is sent) until you unmute; then the call carries on.
+    @Test func muteKeepsTheMicClosedUntilUnmuted() async throws {
+        let assistant = EchoAssistant()
+        let pulse = call(CallScriptVoice(["Can you hear me?"]), assistant)
+        pulse.startCall()
+        pulse.toggleMute()
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(pulse.isMuted && assistant.lastHistory.isEmpty && pulse.phase == .listening)
+        pulse.toggleMute()
+        for _ in 0..<100 where assistant.lastHistory.count < 2 { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(assistant.lastHistory.last?.text == "Can you hear me?")
+        pulse.endCall()
+        #expect(!pulse.isMuted)
+    }
+
     @Test func pulsesCallPromptShowsDuringTheCall() async throws {
         let assistant = EchoAssistant()
         assistant.requestedActions = ["emergency_call_prompt"]
@@ -340,6 +355,20 @@ struct DirectPulseTests {
         #expect(request.headers["X-API-Key"] == "sk_car_test_0123456789")
         #expect((request.body?["voice"] as? [String: Any])?["id"] as? String == PulseSpeaker.corey)
         #expect(request.body?["transcript"] as? String == "I'm right here with you.")
+    }
+
+    /// When the main Cartesia key is refused (e.g. out of credits), the backup key speaks, and is tried first after.
+    @Test func backupCartesiaKeyTakesOver() async throws {
+        StubBackend.reset()
+        StubBackend.queued["/tts/bytes"] = [(402, Data(#"{"error":"credits"}"#.utf8), "application/json"),
+                                            (200, Data(repeating: 7, count: 4000), "audio/mpeg"),
+                                            (200, Data(repeating: 8, count: 4000), "audio/mpeg")]
+        let speaker = PulseSpeaker(endpoint: nil, cartesiaKey: "sk_car_main_0123456789", backupKey: "sk_car_backup_0123456789",
+                                   session: StubBackend.session())
+        #expect(await speaker.corey("First line.")?.count == 4000)
+        #expect(StubBackend.log.map { $0.headers["X-API-Key"] } == ["sk_car_main_0123456789", "sk_car_backup_0123456789"])
+        #expect(await speaker.corey("Second line.")?.first == 8)
+        #expect(StubBackend.log.last?.headers["X-API-Key"] == "sk_car_backup_0123456789")
     }
 
     #if targetEnvironment(simulator)
