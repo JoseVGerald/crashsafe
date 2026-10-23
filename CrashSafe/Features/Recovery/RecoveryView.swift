@@ -69,6 +69,7 @@ struct RecoveryView: View {
 
     @Query private var profiles: [Profile]
     @Query private var activeTrips: [Trip]
+    @Query private var checkIns: [CheckInRecord]
 
     init(user: AuthUser, outcome: CheckInOutcome?, banner: RecoveryBanner? = nil) {
         self.user = user
@@ -77,6 +78,10 @@ struct RecoveryView: View {
         let id = user.id
         _profiles = Query(filter: #Predicate<Profile> { $0.ownerID == id })
         _activeTrips = Query(filter: #Predicate<Trip> { $0.ownerID == id && $0.isActive })
+        var latest = FetchDescriptor<CheckInRecord>(predicate: #Predicate { $0.ownerID == id },
+                                                    sortBy: [SortDescriptor(\.date, order: .reverse)])
+        latest.fetchLimit = 1
+        _checkIns = Query(latest)
     }
 
     private var profile: Profile? { profiles.first }
@@ -114,6 +119,9 @@ struct RecoveryView: View {
                     }
 
                     emergencyActions.fadeUp(delay: 0.03)
+                    if let record = checkIns.first, record.snapshot != nil, record.date > .now.addingTimeInterval(-12 * 3600) {
+                        impactReportCard(record).fadeUp(delay: 0.05)
+                    }
                     mapCard.fadeUp(delay: 0.06)
                     nearbyHelp.fadeUp(delay: 0.1)
                     shareLocation.fadeUp(delay: 0.14)
@@ -182,6 +190,28 @@ struct RecoveryView: View {
             }
             .buttonStyle(.pill(.primary, height: 60))
         }
+    }
+
+    /// The crash's impact report: one copy for you, one to show or send to the police and your insurer.
+    private func impactReportCard(_ record: CheckInRecord) -> some View {
+        NavigationLink {
+            ImpactReportView(record: record, profile: profile, driverName: user.name)
+        } label: {
+            HStack(spacing: 14) {
+                IconBadge(systemName: "doc.text.fill", tint: Brand.blue, size: 46)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Impact report").font(.headline).foregroundStyle(Brand.textPrimary)
+                    Text("What happened, for you, and a copy to show the police or send your insurer.")
+                        .font(.subheadline)
+                        .foregroundStyle(Brand.textSecondary)
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").foregroundStyle(Brand.textSecondary)
+            }
+            .card(padding: Space.md)
+        }
+        .buttonStyle(.pressable)
     }
 
     /// No answer: the siren is sounding for anyone nearby, and the 911 call was started.
