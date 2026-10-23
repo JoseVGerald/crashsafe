@@ -145,7 +145,9 @@ Shared sensor acquisition and experimental crash-evidence evaluation, their test
 
 Pulse needs no Mac and no server: the phone asks OpenRouter (free models, with the team's Pulse core prompt,
 the app's verified evidence cards and the team's sentence filter) and has Cartesia speak the reply as "Corey".
-911 rules run on the phone first, and without a connection the on-device guides and an Apple voice answer.
+911 rules run on the phone first. OpenRouter's free plan allows 50 requests a day (adding $10 of credit raises
+that to 1,000); past the limit, or with no signal, Pulse answers with the phone's own Apple Intelligence model using
+the team's short prompt (`core_mini`), and without that the on-device guides and an Apple voice answer.
 
 To build with the keys (they stay out of git):
 

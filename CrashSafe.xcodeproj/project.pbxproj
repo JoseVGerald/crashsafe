@@ -33,6 +33,7 @@
 		371FF31014CA54C06D6F2EB3 /* AuthLandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9F2488D9CE775D06EA66B /* AuthLandingView.swift */; };
 		3DAD74871A8FF82E756C26BE /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624251F4B57EC28C6496B1FB /* TripDetailView.swift */; };
 		4702E7135DC116E74CD6FAE8 /* CrashScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA915D91070A6C6E7177DBC /* CrashScenarios.swift */; };
+		4790AB72C513FB255E9392D8 /* pulse_core_mini.txt in Resources */ = {isa = PBXBuildFile; fileRef = 94EF22920D7A37C6B222449B /* pulse_core_mini.txt */; };
 		4A34902EDBCD61C45D021779 /* SpeedLimitServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C198AB6CBE2A798D807FA0 /* SpeedLimitServiceTests.swift */; };
 		5176F8E15C66BF51D093097A /* CarPlaySceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3A02D2109887A77D8BA0BB /* CarPlaySceneDelegate.swift */; };
 		55132413CA9EB801CB369363 /* ConditionsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB3E66A82429427DD6B759 /* ConditionsStore.swift */; };
@@ -65,6 +66,7 @@
 		822190EF9F092B05903A86CE /* EmergencyAlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C715BF1EBD35BFF54F5D12C8 /* EmergencyAlertService.swift */; };
 		8944A010A042304E95FB8CF5 /* BackgroundSensorLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9092BFB990AF8BE0C42C0440 /* BackgroundSensorLog.swift */; };
 		896D4F2EE50E6046B8FE26BC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF795C2A223A6118B37AF937 /* Models.swift */; };
+		899E0D11D6898BCC7A267EEA /* OnDevicePulse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3C16101F3C95A6CC0B1705E /* OnDevicePulse.swift */; };
 		90ED1C62AE00C6D5DD59EF58 /* motionsense-walking.csv in Resources */ = {isa = PBXBuildFile; fileRef = ABABF2E0ECF19FDB56618778 /* motionsense-walking.csv */; };
 		9171DCB89FE1AC3A136574DF /* checkin-10s.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0083E0E7BB0F62C7B7AE77DA /* checkin-10s.m4a */; };
 		93798BF462075B31DBF17570 /* CrashResponseCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2306F5182D41A13DAE00B4E0 /* CrashResponseCenter.swift */; };
@@ -190,6 +192,7 @@
 		910E89ED7542C6F5CC1F4140 /* LiveCrashDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCrashDetectorTests.swift; sourceTree = "<group>"; };
 		92A41A9E33E4ED4398A48CCA /* SignedInRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignedInRoot.swift; sourceTree = "<group>"; };
 		93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityMonitor.swift; sourceTree = "<group>"; };
+		94EF22920D7A37C6B222449B /* pulse_core_mini.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = pulse_core_mini.txt; sourceTree = "<group>"; };
 		977A38F928BD92A434D14923 /* LocationSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearch.swift; sourceTree = "<group>"; };
 		99425B6F031FBEB982BEAFBA /* TripViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripViewModels.swift; sourceTree = "<group>"; };
 		9A1545C810A51A827D376C7A /* DirectPulseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectPulseService.swift; sourceTree = "<group>"; };
@@ -212,6 +215,7 @@
 		BE113AF115BCE3121B7CD9C2 /* CrashNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashNotifier.swift; sourceTree = "<group>"; };
 		BEFB0EAAFF309AB615DEB01A /* PulseConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseConversationTests.swift; sourceTree = "<group>"; };
 		C0450F413DDEBAB2C86C78C9 /* checkin-glad.m4a */ = {isa = PBXFileReference; path = "checkin-glad.m4a"; sourceTree = "<group>"; };
+		C3C16101F3C95A6CC0B1705E /* OnDevicePulse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDevicePulse.swift; sourceTree = "<group>"; };
 		C47BE0F8143DE54326A7F098 /* DrivingCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrivingCards.swift; sourceTree = "<group>"; };
 		C62C2C0A4F964592CCAA018C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		C715BF1EBD35BFF54F5D12C8 /* EmergencyAlertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyAlertService.swift; sourceTree = "<group>"; };
@@ -308,6 +312,7 @@
 		1B07CE3030CCC2B23977FE74 /* Pulse */ = {
 			isa = PBXGroup;
 			children = (
+				94EF22920D7A37C6B222449B /* pulse_core_mini.txt */,
 				36057062EA5399EA3EFBDA37 /* pulse_core.txt */,
 				EBF9B6768A25908C92AD72C1 /* pulse_hard_lines.txt */,
 			);
@@ -657,6 +662,7 @@
 			children = (
 				4A6AD8E09B52B378D34374AF /* AssistantService.swift */,
 				9A1545C810A51A827D376C7A /* DirectPulseService.swift */,
+				C3C16101F3C95A6CC0B1705E /* OnDevicePulse.swift */,
 				8E9C240B6B1C3C016190C18E /* PulseSpeaker.swift */,
 				1DD25929C2B1DC2E2D4FA025 /* PulseVoice.swift */,
 				5125718C0BBB8D5B2B5B974D /* SpeechVoiceInput.swift */,
@@ -780,6 +786,7 @@
 				B7808DC0B089AF7500BDC907 /* motionsense-jogging.csv in Resources */,
 				90ED1C62AE00C6D5DD59EF58 /* motionsense-walking.csv in Resources */,
 				98A55F8636847E3D7CB1F54A /* pulse_core.txt in Resources */,
+				4790AB72C513FB255E9392D8 /* pulse_core_mini.txt in Resources */,
 				1C4DE8200F9BFCBE522FE528 /* pulse_hard_lines.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -841,6 +848,7 @@
 				896D4F2EE50E6046B8FE26BC /* Models.swift in Sources */,
 				7176D1F68829E1D9D26FDC22 /* MotionIntelligence.swift in Sources */,
 				9A9CD4DD960E41EBD486285E /* MotionSource.swift in Sources */,
+				899E0D11D6898BCC7A267EEA /* OnDevicePulse.swift in Sources */,
 				28C5C48D0E7369D4FCCFFE73 /* OnboardingFlowView.swift in Sources */,
 				C1402D493648DD92C0952AAE /* PressToTalkCard.swift in Sources */,
 				7DCB5ED18902313F0EBF3579 /* PreviewData.swift in Sources */,

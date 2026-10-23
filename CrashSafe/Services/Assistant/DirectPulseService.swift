@@ -92,10 +92,12 @@ nonisolated enum PulseSentenceFilter {
 /// Pulse straight from the phone, with no server: the team's Pulse core prompt on a free OpenRouter model,
 /// the app's verified evidence cards as data, the team's sentence filter on every sentence, and two tools the
 /// model may ask for (the Call 911 button and a tow search), which the app only offers. Works anywhere the
-/// phone is online. Emergencies are answered on the phone first with no model; if the model can't answer,
-/// `fallback` does (the backend when one is configured, otherwise the on-device guides).
+/// phone is online. Emergencies are answered on the phone first with no model. When OpenRouter can't answer
+/// (its free plan allows 50 requests a day, or no signal), the phone's own model does (`OnDevicePulse`), and
+/// after that `fallback` (the backend when one is configured, otherwise the on-device guides).
 final class DirectPulseService: AssistantService {
-    static let freeModels = ["nvidia/nemotron-3.5-lightning:free", "openai/gpt-oss-20b:free"]
+    /// Both screened by the team (pulse_agent/config/model_profiles.json). OpenRouter's free-plan limit is shared.
+    static let freeModels = ["nvidia/nemotron-3.5-lightning:free", "google/gemma-4-26b-a4b-it:free"]
     private static let log = Logger(subsystem: "org.cac.crashsafe", category: "assistant")
     private static let appContext = """
         [APP_CONTEXT]
@@ -125,10 +127,17 @@ final class DirectPulseService: AssistantService {
     private(set) var requestedActions: [String] = []
     /// Which model answered last (nil when the fallback did); for tests and diagnostics.
     private(set) var lastModel: String?
+    /// Set when OpenRouter's daily free limit is used up: until then Pulse goes straight to the phone's model.
+    private(set) var cloudPausedUntil: Date?
+    private let onDevice: ([ChatMessage], [(id: String, text: String, sources: [String])]) async -> String?
 
-    init(key: String, fallback: any AssistantService, session: URLSession? = nil) {
+    private struct DailyLimitReached: Error { let resetsAt: Date }
+
+    init(key: String, fallback: any AssistantService, session: URLSession? = nil,
+         onDevice: @escaping ([ChatMessage], [(id: String, text: String, sources: [String])]) async -> String? = OnDevicePulse.reply) {
         self.key = key
         self.fallback = fallback
+        self.onDevice = onDevice
         if let session {
             self.session = session
         } else {
@@ -158,8 +167,16 @@ final class DirectPulseService: AssistantService {
             return urgent
         }
         if let measured = LocalEvidenceAssistant.motionReply(query, context: context) { return measured }
-        if context.isOnline, let answer = try await converse(history, query: query, context: context) {
+        if context.isOnline, (cloudPausedUntil ?? .distantPast) < .now,
+           let answer = try await converse(history, query: query, context: context) {
             return answer
+        }
+        // The phone's own model: free, unlimited, and works with no signal.
+        let evidence = LocalEvidenceAssistant.evidence(for: query, context: context, limit: 2)
+        if let raw = await onDevice(history, evidence),
+           let spoken = Self.spoken(raw, medicationQuestion: Self.asksAboutMedication(query)) {
+            lastModel = OnDevicePulse.modelName
+            return spoken
         }
         let answer = try await fallback.reply(to: history, context: context)
         requestedActions = fallback.requestedActions
@@ -196,6 +213,11 @@ final class DirectPulseService: AssistantService {
                 return spoken + (sources.isEmpty ? "" : "\n\nSources:\n" + sources.joined(separator: "\n"))
             } catch is CancellationError {
                 throw CancellationError()
+            } catch let limit as DailyLimitReached {
+                // Shared by every free model on the account: stop asking until it resets.
+                cloudPausedUntil = limit.resetsAt
+                Self.log.info("OpenRouter daily free limit reached; using the phone's model until it resets")
+                return nil
             } catch {
                 Self.log.info("model \(model, privacy: .public) unavailable")
             }
@@ -226,9 +248,10 @@ final class DirectPulseService: AssistantService {
     }
 
     private func chat(model: String, messages: [[String: Any]], toolChoice: String) async throws -> [String: Any] {
-        var body: [String: Any] = ["model": model, "messages": messages, "max_tokens": 320, "temperature": 0,  // as the team's model profiles
+        // As the team's model profiles: no reasoning, temperature 0.
+        let body: [String: Any] = ["model": model, "messages": messages, "max_tokens": 320, "temperature": 0,
+                                   "reasoning": ["enabled": false, "exclude": true],
                                    "tools": Self.tools, "tool_choice": toolChoice]
-        if model.contains("nemotron") { body["reasoning"] = ["enabled": false] }
         var request = URLRequest(url: URL(string: "https://openrouter.ai/api/v1/chat/completions")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -236,6 +259,11 @@ final class DirectPulseService: AssistantService {
         request.setValue("CrashSafe Pulse", forHTTPHeaderField: "X-Title")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         let (data, response) = try await session.data(for: request)
+        if let http = response as? HTTPURLResponse, http.statusCode == 429,
+           String(decoding: data.prefix(2000), as: UTF8.self).contains("free-models-per-day") {
+            let reset = (http.value(forHTTPHeaderField: "X-RateLimit-Reset") ?? Self.resetHeader(in: data)).flatMap(Double.init)
+            throw DailyLimitReached(resetsAt: reset.map { Date(timeIntervalSince1970: $0 / 1000) } ?? .now.addingTimeInterval(3600))
+        }
         guard (response as? HTTPURLResponse)?.statusCode == 200, data.count < 200_000,
               let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let message = ((json["choices"] as? [[String: Any]])?.first)?["message"] as? [String: Any]
@@ -254,6 +282,13 @@ final class DirectPulseService: AssistantService {
             kept.append(text)
         }
         return kept.isEmpty ? nil : kept.joined(separator: " ")
+    }
+
+    /// OpenRouter puts the reset time (ms since 1970) in the error body's metadata.headers.
+    private static func resetHeader(in data: Data) -> String? {
+        let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let headers = ((json?["error"] as? [String: Any])?["metadata"] as? [String: Any])?["headers"] as? [String: Any]
+        return headers?["X-RateLimit-Reset"] as? String
     }
 
     static func asksAboutMedication(_ query: String) -> Bool {
