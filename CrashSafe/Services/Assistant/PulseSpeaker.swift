@@ -75,22 +75,32 @@ final class PulseSpeaker {
         guard !text.isEmpty else { return }
         stop()
         activateSession()
-        task = Task { [weak self] in
-            guard let self else { return }
-            if let audio = await self.corey(text), !Task.isCancelled, let player = try? AVAudioPlayer(data: audio) {
-                player.volume = 1
-                player.play()
-                self.player = player
-                Self.log.info("Pulse spoke as Corey (\(audio.count, privacy: .public) bytes)")
-                return
-            }
-            guard !Task.isCancelled else { return }
-            Self.log.info("Pulse spoke with the Apple voice (Corey unavailable)")
-            let utterance = AVSpeechUtterance(string: text)
-            utterance.voice = PulseVoice.preferred()
-            utterance.rate = rate
-            self.synthesizer.speak(utterance)
+        task = Task { [weak self] in await self?.play(text, rate: rate) }
+    }
+
+    /// Says `text` and returns once Pulse has finished saying it (or was stopped): turn-taking in a call.
+    func say(_ text: String, rate: Float = 0.5) async {
+        speak(text, rate: rate)
+        await task?.value
+    }
+
+    private func play(_ text: String, rate: Float) async {
+        if let audio = await corey(text), !Task.isCancelled, let player = try? AVAudioPlayer(data: audio) {
+            player.volume = 1
+            player.play()
+            self.player = player
+            Self.log.info("Pulse spoke as Corey (\(audio.count, privacy: .public) bytes)")
+            while player.isPlaying, !Task.isCancelled { try? await Task.sleep(for: .milliseconds(80)) }
+            return
         }
+        guard !Task.isCancelled else { return }
+        Self.log.info("Pulse spoke with the Apple voice (Corey unavailable)")
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = PulseVoice.preferred()
+        utterance.rate = rate
+        synthesizer.speak(utterance)
+        try? await Task.sleep(for: .milliseconds(200))
+        while synthesizer.isSpeaking, !Task.isCancelled { try? await Task.sleep(for: .milliseconds(80)) }
     }
 
     func stop() {
@@ -138,6 +148,7 @@ final class PulseSpeaker {
     }
 
     private func activateSession() {
+        guard !PulseCallAudio.isActive else { return }  // A call keeps its own audio setup.
         let audio = AVAudioSession.sharedInstance()
         try? audio.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
         try? audio.setActive(true)
@@ -147,5 +158,24 @@ final class PulseSpeaker {
     nonisolated static func spokenPart(of reply: String) -> String {
         reply.components(separatedBy: "\n\nSources:").first?
             .replacingOccurrences(of: #"\s*\[[A-Z0-9_]+\]"#, with: "", options: .regularExpression) ?? reply
+    }
+}
+
+/// The audio setup for a call with Pulse: the microphone and Corey share one voice-chat session for the whole
+/// call (speaker on, Bluetooth allowed), so neither switches the session between turns.
+enum PulseCallAudio {
+    private(set) static var isActive = false
+
+    static func begin() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetoothHFP, .duckOthers])
+        try session.setActive(true)
+        isActive = true
+    }
+
+    static func end() {
+        guard isActive else { return }
+        isActive = false
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }

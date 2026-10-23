@@ -30,7 +30,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>CrashSafe uses your location to show road conditions, find help nearby, and tell responders where you are.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Pulse listens when you tap the microphone, so you can talk instead of type.</string>
+	<string>Pulse listens while you're on a call with it, or when you tap the microphone, so you can talk instead of type.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>CrashSafe uses motion data to notice hard braking and possible crashes.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

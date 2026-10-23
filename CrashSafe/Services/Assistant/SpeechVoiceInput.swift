@@ -6,6 +6,7 @@ import Speech
 /// The microphone, transcribed with Apple's speech recognizer: on the phone when it can (private, works
 /// offline), otherwise Apple's server. What it hears goes to Pulse; nothing is recorded or kept.
 @MainActor
+@Observable
 final class SpeechVoiceInput: VoiceInputService {
     enum Failure: LocalizedError {
         case notAllowed, unavailable, heardNothing
@@ -19,12 +20,12 @@ final class SpeechVoiceInput: VoiceInputService {
     }
 
     private static let log = Logger(subsystem: "org.cac.crashsafe", category: "voice")
-    private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-    private let engine = AVAudioEngine()
-    private var request: SFSpeechAudioBufferRecognitionRequest?
-    private var task: SFSpeechRecognitionTask?
-    private var finalText: String?
-    private var lastChange = Date.distantPast
+    @ObservationIgnored private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+    @ObservationIgnored private let engine = AVAudioEngine()
+    @ObservationIgnored private var request: SFSpeechAudioBufferRecognitionRequest?
+    @ObservationIgnored private var task: SFSpeechRecognitionTask?
+    @ObservationIgnored private var finalText: String?
+    @ObservationIgnored private var lastChange = Date.distantPast
     private(set) var partial = ""
     private(set) var isRecording = false
 
@@ -48,9 +49,11 @@ final class SpeechVoiceInput: VoiceInputService {
         cancel()
         guard await Self.authorize() else { throw Failure.notAllowed }
         guard let recognizer, recognizer.isAvailable else { throw Failure.unavailable }
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .measurement, options: [.duckOthers, .defaultToSpeaker, .allowBluetoothHFP])
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
+        if !PulseCallAudio.isActive {  // In a call the session is already set up for talking both ways.
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .measurement, options: [.duckOthers, .defaultToSpeaker, .allowBluetoothHFP])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        }
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
@@ -105,7 +108,7 @@ final class SpeechVoiceInput: VoiceInputService {
         engine.stop()
         engine.inputNode.removeTap(onBus: 0)
         isRecording = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        if !PulseCallAudio.isActive { try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
     }
 
     // MARK: Callbacks built off the main actor
