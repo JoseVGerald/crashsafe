@@ -167,20 +167,38 @@ Supportive and practical styles use the same evidence. Emotional support is opti
 
 ## Pulse voice (Corey) and conversation
 
-`POST /v1/converse` answers as Pulse, using the team's Pulse core (`pulse_core/`, from
-github.com/udaykamboj/pulse-voice-assistant) on a free OpenRouter model. Our emergency rules run first (911,
-no model), the verified evidence cards are given to the model as data, and every sentence passes the
-team's deterministic sentence filter before it can be spoken. If the model is down, the verified answer
-is returned. `POST /v1/tts` speaks text as Cartesia's "Corey - Supportive Buddy" (MP3).
+`POST /v1/converse` answers as Pulse, from the team's Pulse (github.com/udaykamboj/pulse-voice-assistant).
+Our emergency rules run first (911, no model). Then:
+
+1. **The team's whole Pulse agent** (`pulse_agent/`: LightAgent's tool loop with consent tiers, its crisis
+   knowledge index, per-conversation memory and its sentence filter), when the app sends a `conversation_id`
+   and the agent is running. One agent session per app conversation, kept in the agent's memory only (30 idle
+   minutes at most, never on disk). Its tool requests come back as `actions` (`emergency_call_prompt`,
+   `find_tow`), which the app shows as buttons; nothing is done until the person taps one.
+2. Otherwise the team's Pulse core (`pulse_core/`) on a free OpenRouter model, with our verified evidence
+   cards as data; every sentence passes the team's sentence filter before it can be spoken.
+3. If no model answers, the verified evidence answer.
+
+`POST /v1/tts` speaks text as Cartesia's "Corey - Supportive Buddy" (MP3).
 
 Keys go in `Backend/rag/.env` (git-ignored, never in the app):
 
 ```
 OPENROUTER_API_KEY=...
 CARTESIA_API_KEY=...
+PULSE_AUTH_SECRET=...   # 32+ random characters, shared with the agent service
 ```
 
-Optional: `PULSE_MODEL` (a free OpenRouter model to try first), `CARTESIA_VOICE`, `CARTESIA_MODEL`.
-The app uses these endpoints when it can reach the backend (the simulator always can; a phone needs an
-HTTPS `RAGEndpoint`), and otherwise falls back to the on-device guides and the best Apple voice.
+Run the agent next to the backend (it listens on 127.0.0.1:7862 only; the team's code is used unchanged
+from a pinned commit in `Backend/external/`, which is git-ignored):
+
+```
+.venv/bin/python run_pulse_agent.py setup   # once: clone, install, build its indexes
+.venv/bin/python run_pulse_agent.py         # then leave it running
+```
+
+Optional: `PULSE_MODEL` (a free OpenRouter model to try first), `PULSE_AGENT_URL`, `CARTESIA_VOICE`,
+`CARTESIA_MODEL`. The app uses these endpoints when it can reach the backend (the simulator always can; a
+phone over Wi-Fi with `serve --lan`, or an HTTPS `RAGEndpoint`), and otherwise falls back to the on-device
+guides and the best Apple voice.
 The crash check-in's fixed lines are bundled in Corey's voice (`Tools/Voice/render_prompts_corey.py`).
