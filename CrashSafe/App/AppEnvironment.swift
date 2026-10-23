@@ -17,6 +17,8 @@ final class AppEnvironment {
     let coach: DriveCoach
     /// Pulse's voice: Corey (Cartesia) through the backend, an Apple voice offline.
     @ObservationIgnored let speaker: PulseSpeaker
+    /// Persistent Pulse voice call state shared across Home and the dedicated Pulse Voice tab.
+    let pulseCall: PulseCallViewModel
     /// Rolling sensor history → transport mode, harsh events, impact reports (for Pulse and the crash flow).
     let intelligence: MotionIntelligence
     /// Profile → Testing → Sensor lab (live readings, recordings, replays).
@@ -77,6 +79,17 @@ final class AppEnvironment {
         self.crashDetector = detector
         self.assistant = assistant
         self.voiceInput = voiceInput
+        let sessionStore = self.session
+        self.pulseCall = PulseCallViewModel(assistant: assistant, voice: voiceInput, speaker: speaker) { [weak connectivity, weak intelligence, weak sessionStore] in
+            let user = sessionStore?.user ?? AuthUser(id: "driver", name: "Driver", email: "driver@example.com")
+            return AssistantContext.make(
+                user: user,
+                profile: nil,
+                activeTrip: nil,
+                isOnline: connectivity?.isOnline ?? true,
+                activity: intelligence?.assistantActivity
+            )
+        }
         self.tripPacks = tripPacks
         self.alerts = alerts
         let crashCenter = CrashResponseCenter(alerts: alerts, notifier: notifier, isOnline: { connectivity.isOnline },
@@ -242,7 +255,7 @@ final class SessionStore {
 @Observable
 final class AppRouter {
     enum Tab: Hashable {
-        case home, trips, assistant, profile
+        case home, trips, pulseVoice, assistant, profile
     }
 
     var selectedTab: Tab = .home
@@ -262,5 +275,9 @@ final class AppRouter {
         pendingAssistantScenario = .afterCrash(outcome)
         activeCrash = nil
         selectedTab = .assistant
+    }
+
+    func openPulseVoice() {
+        selectedTab = .pulseVoice
     }
 }

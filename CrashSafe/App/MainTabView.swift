@@ -20,10 +20,7 @@ struct MainTabView: View {
                 user: user,
                 viewModel: HomeViewModel(detector: env.crashDetector, driving: env.driving,
                                          conditions: env.conditions, userID: user.id),
-                talk: PulseCallViewModel(assistant: env.assistant, voice: env.voiceInput, speaker: env.speaker) { [user, env] in
-                    AssistantContext.make(user: user, profile: nil, activeTrip: nil, isOnline: env.connectivity.isOnline,
-                                          activity: env.intelligence.assistantActivity)
-                }
+                talk: env.pulseCall
             )
             .tabItem { Label("Home", systemImage: "house.fill") }
             .tag(AppRouter.Tab.home)
@@ -31,6 +28,10 @@ struct MainTabView: View {
             TripPlannerView(userID: user.id)
                 .tabItem { Label("Trips", systemImage: "map.fill") }
                 .tag(AppRouter.Tab.trips)
+
+            PulseVoiceView(user: user, viewModel: env.pulseCall)
+                .tabItem { Label("Pulse Voice", systemImage: "waveform.circle.fill") }
+                .tag(AppRouter.Tab.pulseVoice)
 
             AssistantView(user: user, viewModel: AssistantViewModel(
                 service: env.assistant,
@@ -40,7 +41,7 @@ struct MainTabView: View {
                     AssistantContext.make(user: user, profile: nil, activeTrip: nil, isOnline: true)
                 }
             ))
-            .tabItem { Label("Pulse", systemImage: "sparkles") }
+            .tabItem { Label("Assistant", systemImage: "bubble.left.and.bubble.right.fill") }
             .tag(AppRouter.Tab.assistant)
 
             ProfileView(user: user)
@@ -53,7 +54,10 @@ struct MainTabView: View {
         .fullScreenCover(isPresented: $router.showingCarPlay) {
             CarPlayModeView(user: user)
         }
-        .onAppear(perform: startBackgroundCoaching)
+        .onAppear {
+            startBackgroundCoaching()
+            updatePulseContext()
+        }
         .onChange(of: profiles.first?.autoDetectDrives) { startBackgroundCoaching() }
         .onChange(of: profiles.first?.carType) { startBackgroundCoaching() }
     }
@@ -76,6 +80,20 @@ struct MainTabView: View {
             env.driveWatcher.arm(.init(ownerID: user.id, carType: profiles.first?.carType ?? .sedan))
         } else {
             env.driveWatcher.disarm()
+        }
+    }
+
+    private func updatePulseContext() {
+        let user = user
+        let profiles = profiles
+        env.pulseCall.contextProvider = { [user, env, profiles] in
+            AssistantContext.make(
+                user: user,
+                profile: profiles.first,
+                activeTrip: nil,
+                isOnline: env.connectivity.isOnline,
+                activity: env.intelligence.assistantActivity
+            )
         }
     }
 }
