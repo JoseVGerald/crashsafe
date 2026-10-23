@@ -69,6 +69,7 @@
 		93798BF462075B31DBF17570 /* CrashResponseCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2306F5182D41A13DAE00B4E0 /* CrashResponseCenter.swift */; };
 		93E58231AE5D5A7AFBE9133A /* checkin-5s.m4a in Resources */ = {isa = PBXBuildFile; fileRef = AC626DEAE6D3E64DC1A583AD /* checkin-5s.m4a */; };
 		97611A186EDCE389CB08C9E2 /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BBFEA2A56022EA174A04AF /* CheckInView.swift */; };
+		995A28820DA56E6E3A4ADB0A /* SpeechVoiceInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5125718C0BBB8D5B2B5B974D /* SpeechVoiceInput.swift */; };
 		9A9CD4DD960E41EBD486285E /* MotionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E408DE1F0E5654AE43291C4B /* MotionSource.swift */; };
 		9DADCED07D05F66D5D9E8F9E /* SensorTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABBD5CD1F0E28136E5FCC5E /* SensorTypes.swift */; };
 		9FBDC5C9C452A8CED84ECEFA /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97A0114DCD7AE59F689BB9B /* LocationService.swift */; };
@@ -152,6 +153,7 @@
 		4B718BBB74F5C4AE2CA81740 /* SensorLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorLabView.swift; sourceTree = "<group>"; };
 		4D8BFCCE656ACD48501DF6AA /* DriveCoach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveCoach.swift; sourceTree = "<group>"; };
 		4EAA0D4323A0D7B1FC568FDF /* AssistantViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantViewModel.swift; sourceTree = "<group>"; };
+		5125718C0BBB8D5B2B5B974D /* SpeechVoiceInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechVoiceInput.swift; sourceTree = "<group>"; };
 		5196BF7C1D39AFB4DC4F3D8C /* CrashDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashDetector.swift; sourceTree = "<group>"; };
 		52CAF0C8F39FA5F82EA550A3 /* HarshEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarshEvents.swift; sourceTree = "<group>"; };
 		52CF1AB3252565C7FB0D084A /* RoadMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadMatching.swift; sourceTree = "<group>"; };
@@ -630,6 +632,7 @@
 				4A6AD8E09B52B378D34374AF /* AssistantService.swift */,
 				8E9C240B6B1C3C016190C18E /* PulseSpeaker.swift */,
 				1DD25929C2B1DC2E2D4FA025 /* PulseVoice.swift */,
+				5125718C0BBB8D5B2B5B974D /* SpeechVoiceInput.swift */,
 				B804117D146681B2ED056995 /* VoiceInputService.swift */,
 			);
 			path = Assistant;
@@ -830,6 +833,7 @@
 				FC0B27BFAC068D54FDAAE347 /* SignInView.swift in Sources */,
 				C5D165A1C5E401B63933232A /* SignUpView.swift in Sources */,
 				14E17D439A3B61530BD4EBB3 /* SignedInRoot.swift in Sources */,
+				995A28820DA56E6E3A4ADB0A /* SpeechVoiceInput.swift in Sources */,
 				A3FA1E67A4CEFF0BE2283C9A /* SpeedLimitService.swift in Sources */,
 				1D1B2D27658CC7D2F38F9A89 /* SplashView.swift in Sources */,
 				6026CD2D1BB2BDF5144440A2 /* SystemAppleButton.swift in Sources */,

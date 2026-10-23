@@ -37,6 +37,8 @@ targets:
         NSLocationAlwaysAndWhenInUseUsageDescription: "During trips, CrashSafe keeps watching your drive in the background so it can coach you and check on you after a crash."
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
+        NSMicrophoneUsageDescription: "Pulse listens when you tap the microphone, so you can talk instead of type."
+        NSSpeechRecognitionUsageDescription: "Pulse turns what you say into text to answer you. On supported iPhones this happens on the phone."
         NSLocalNetworkUsageDescription: "In development builds, CrashSafe talks to the Pulse server on your Mac over Wi-Fi."
         # Debug phone builds: the Mac's Wi-Fi name and the backend's LAN token (pass as build settings;
         # never committed). Empty in normal builds.
