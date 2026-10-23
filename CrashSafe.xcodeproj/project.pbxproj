@@ -25,6 +25,7 @@
 		2BEC86EF1468E77BDD643770 /* CarPlayModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A496163788970D463B5B7975 /* CarPlayModeView.swift */; };
 		2C152A03A7BABD327CB6C86B /* SensorLabMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC16382702C757F16D00A9D3 /* SensorLabMath.swift */; };
 		2FC3E3DABC199EC2206ADE1F /* AssistantViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA0D4323A0D7B1FC568FDF /* AssistantViewModel.swift */; };
+		3012C4C8750ACED7EF612E27 /* AboutYouAndReportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479BFD454A4CD08F41B9D301 /* AboutYouAndReportTests.swift */; };
 		310AC052113F88DFD4543358 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6502E9B8772EC93C22CA1444 /* PrivacyInfo.xcprivacy */; };
 		31A7D014C173178BA64025B7 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */; };
 		33B23883222FD27A58FBD394 /* SensorLabModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02574A6C9BFCA1C489B9B67B /* SensorLabModel.swift */; };
@@ -74,6 +75,7 @@
 		9171DCB89FE1AC3A136574DF /* checkin-10s.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0083E0E7BB0F62C7B7AE77DA /* checkin-10s.m4a */; };
 		93798BF462075B31DBF17570 /* CrashResponseCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2306F5182D41A13DAE00B4E0 /* CrashResponseCenter.swift */; };
 		93E58231AE5D5A7AFBE9133A /* checkin-5s.m4a in Resources */ = {isa = PBXBuildFile; fileRef = AC626DEAE6D3E64DC1A583AD /* checkin-5s.m4a */; };
+		956B05920C42D9D4D4DE3DE0 /* InsurerPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155BF8D9D850158D2A834217 /* InsurerPicker.swift */; };
 		97611A186EDCE389CB08C9E2 /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BBFEA2A56022EA174A04AF /* CheckInView.swift */; };
 		98A55F8636847E3D7CB1F54A /* pulse_core.txt in Resources */ = {isa = PBXBuildFile; fileRef = 36057062EA5399EA3EFBDA37 /* pulse_core.txt */; };
 		995A28820DA56E6E3A4ADB0A /* SpeechVoiceInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5125718C0BBB8D5B2B5B974D /* SpeechVoiceInput.swift */; };
@@ -108,6 +110,7 @@
 		DC1D7A746C10719C5FEC29B8 /* CrashPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB925E09CEE2D2AD19FE146D /* CrashPipeline.swift */; };
 		DC6C9908F0808E00EA66E68D /* AssistantContext+Make.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C971714785C165C7EAB4CD /* AssistantContext+Make.swift */; };
 		DE798C761B86A973F3549F8D /* BackgroundDriveWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC686B607767BDC0EF03EF0 /* BackgroundDriveWatcher.swift */; };
+		DF9C49F480A807B229A0C280 /* ImpactReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9721315490809FB084D9050A /* ImpactReportView.swift */; };
 		E3CF0BEE1398F1C3218A5D20 /* MockAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */; };
 		EA37968AA11CBBC6962739DE /* Editors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73F6A49957B27238D1BA09B /* Editors.swift */; };
 		EAA429F34A7C46294DAB53F4 /* RedrawTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661E5B9E2AD3531C38123DE5 /* RedrawTests.swift */; };
@@ -144,6 +147,7 @@
 		0E8C41BA3E27C5E23C55EC1D /* SystemAppleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemAppleButton.swift; sourceTree = "<group>"; };
 		0F29F09EA08D31DE9104DC31 /* Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brand.swift; sourceTree = "<group>"; };
 		106026967B7056458A0C3732 /* SensorHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorHistory.swift; sourceTree = "<group>"; };
+		155BF8D9D850158D2A834217 /* InsurerPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsurerPicker.swift; sourceTree = "<group>"; };
 		1ACDD4E53251477FB417FA68 /* CrashAlarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashAlarm.swift; sourceTree = "<group>"; };
 		1DD25929C2B1DC2E2D4FA025 /* PulseVoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseVoice.swift; sourceTree = "<group>"; };
 		1F2CF5BD74AAA2B90EB47D16 /* MockAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthService.swift; sourceTree = "<group>"; };
@@ -160,6 +164,7 @@
 		38E83097D679184F30038226 /* DrivingAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrivingAdvisor.swift; sourceTree = "<group>"; };
 		402FA5AE51780196AE4E0D2D /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
 		41227F19FE935E194E2C1B5A /* RealCrashPulse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealCrashPulse.swift; sourceTree = "<group>"; };
+		479BFD454A4CD08F41B9D301 /* AboutYouAndReportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutYouAndReportTests.swift; sourceTree = "<group>"; };
 		4A6AD8E09B52B378D34374AF /* AssistantService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantService.swift; sourceTree = "<group>"; };
 		4B718BBB74F5C4AE2CA81740 /* SensorLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorLabView.swift; sourceTree = "<group>"; };
 		4D8BFCCE656ACD48501DF6AA /* DriveCoach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveCoach.swift; sourceTree = "<group>"; };
@@ -199,6 +204,7 @@
 		92A41A9E33E4ED4398A48CCA /* SignedInRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignedInRoot.swift; sourceTree = "<group>"; };
 		93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityMonitor.swift; sourceTree = "<group>"; };
 		94EF22920D7A37C6B222449B /* pulse_core_mini.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = pulse_core_mini.txt; sourceTree = "<group>"; };
+		9721315490809FB084D9050A /* ImpactReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpactReportView.swift; sourceTree = "<group>"; };
 		977A38F928BD92A434D14923 /* LocationSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearch.swift; sourceTree = "<group>"; };
 		99425B6F031FBEB982BEAFBA /* TripViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripViewModels.swift; sourceTree = "<group>"; };
 		9A1545C810A51A827D376C7A /* DirectPulseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectPulseService.swift; sourceTree = "<group>"; };
@@ -399,6 +405,7 @@
 			children = (
 				FBECFC0CC0EBA2654A113684 /* ContactPicker.swift */,
 				E73F6A49957B27238D1BA09B /* Editors.swift */,
+				155BF8D9D850158D2A834217 /* InsurerPicker.swift */,
 				CC5D3C84C6C02A2E4E9A6E1A /* ProfileView.swift */,
 				7E31545103C293A896868B20 /* ProfileViewModels.swift */,
 				7E5A73A62FAB9DFDEFA26765 /* PulseVoiceCard.swift */,
@@ -514,6 +521,7 @@
 		99A25C9660DC4FF25CE82298 /* Recovery */ = {
 			isa = PBXGroup;
 			children = (
+				9721315490809FB084D9050A /* ImpactReportView.swift */,
 				2F5CD2FE7472ED0EF50C22F5 /* RecoveryView.swift */,
 			);
 			path = Recovery;
@@ -541,6 +549,7 @@
 		AE511D98B765FCB817D778E4 /* CrashSafeTests */ = {
 			isa = PBXGroup;
 			children = (
+				479BFD454A4CD08F41B9D301 /* AboutYouAndReportTests.swift */,
 				65423B333CB78ED3795F2F92 /* BackgroundFlowTests.swift */,
 				389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */,
 				910E89ED7542C6F5CC1F4140 /* LiveCrashDetectorTests.swift */,
@@ -868,6 +877,8 @@
 				64CC9809B8261DAF2DBE0F11 /* HomeView.swift in Sources */,
 				F44FCF6E5D20D06D6469B612 /* HomeViewModel.swift in Sources */,
 				C84ECC05AF4923CC2EF64CE2 /* ImpactAnalysis.swift in Sources */,
+				DF9C49F480A807B229A0C280 /* ImpactReportView.swift in Sources */,
+				956B05920C42D9D4D4DE3DE0 /* InsurerPicker.swift in Sources */,
 				F9E19D189A9B0D0C8A62BC20 /* LocationSearch.swift in Sources */,
 				9FBDC5C9C452A8CED84ECEFA /* LocationService.swift in Sources */,
 				D46CE9D870BB1F43769C83F6 /* MainTabView.swift in Sources */,
@@ -918,6 +929,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3012C4C8750ACED7EF612E27 /* AboutYouAndReportTests.swift in Sources */,
 				A06C7AD8A454521E61E272D8 /* BackgroundFlowTests.swift in Sources */,
 				C1CC2CF9212A2D9F2835ED24 /* CrashSafeTests.swift in Sources */,
 				72B564875DEF400041872A93 /* LiveCrashDetectorTests.swift in Sources */,

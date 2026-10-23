@@ -14,6 +14,7 @@ struct HomeView: View {
 
     @Query private var trips: [Trip]
     @Query private var checkIns: [CheckInRecord]
+    @State private var openReport: CheckInRecord?
     @Query private var profiles: [Profile]
 
     init(user: AuthUser, viewModel: HomeViewModel, talk: PulseCallViewModel) {
@@ -346,6 +347,22 @@ struct HomeView: View {
     @ViewBuilder
     private var lastCheckIn: some View {
         if let last = checkIns.first {
+            Button { if last.snapshot != nil { openReport = last } } label: { lastCheckInRow(last) }
+                .buttonStyle(.plain)
+                .disabled(last.snapshot == nil)
+                .accessibilityHint(last.snapshot == nil ? "" : "Opens the impact report.")
+                .sheet(item: $openReport) { record in
+                    NavigationStack {
+                        ImpactReportView(record: record, profile: profiles.first, driverName: user.name)
+                            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { openReport = nil } } }
+                    }
+                    .preferredColorScheme(.dark)
+                }
+        }
+    }
+
+    private func lastCheckInRow(_ last: CheckInRecord) -> some View {
+        Group {
             AdaptiveStack(spacing: 12) {
                 Label {
                     Text("Last check-in · \(last.outcome.shortLabel)")
@@ -357,6 +374,11 @@ struct HomeView: View {
                 Spacer(minLength: 0)
                 Text(last.date.formatted(.relative(presentation: .named)))
                     .foregroundStyle(Brand.textSecondary)
+                if last.snapshot != nil {
+                    Label("Report", systemImage: "chevron.right")
+                        .labelStyle(.titleAndIcon)
+                        .foregroundStyle(Brand.blueInk)
+                }
             }
             .font(.footnote)
             .padding(.horizontal, Space.xs)
