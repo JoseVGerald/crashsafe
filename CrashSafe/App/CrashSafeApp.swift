@@ -27,8 +27,21 @@ struct CrashSafeApp: App {
             let profile = try? context.fetch(FetchDescriptor<Profile>(predicate: #Predicate { $0.ownerID == ownerID })).first
             return profile?.sortedContacts.map { AlertRecipient(name: $0.name, phone: $0.phone) } ?? []
         }
-        env.crashCenter.recordOutcome = { ownerID, event, outcome in
-            context.insert(CheckInRecord(ownerID: ownerID, outcome: outcome, wasSimulated: event.isSimulated))
+        env.crashCenter.recordOutcome = { [env] ownerID, event, outcome in
+            // Where and in what conditions, for the impact report (kept on this phone only).
+            let here = env.location.location
+            let weather = env.conditions.weather.map { w in
+                [w.condition.label, "\(Int(w.temperatureF.rounded()))°F",
+                 w.visibilityMiles.map { "visibility \(Int($0.rounded())) mi" }, w.isDay ? "daylight" : "dark"]
+                    .compactMap { $0 }.joined(separator: ", ")
+            }
+            let snapshot = CrashSnapshot(date: event.date, peakG: event.peakG, speedDropMPH: event.speedDropMPH,
+                                         impact: event.impact, latitude: here?.coordinate.latitude,
+                                         longitude: here?.coordinate.longitude, accuracyMeters: here?.horizontalAccuracy,
+                                         street: env.location.streetName, place: env.location.placeName,
+                                         weather: weather, isSimulated: event.isSimulated)
+            context.insert(CheckInRecord(ownerID: ownerID, outcome: outcome, wasSimulated: event.isSimulated,
+                                         date: event.date, snapshot: snapshot))
             try? context.save()
         }
 

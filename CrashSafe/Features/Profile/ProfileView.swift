@@ -917,26 +917,12 @@ private struct MedicalEditorView: View {
 private struct InsuranceEditorView: View {
     @Bindable var profile: Profile
     @Environment(\.dismiss) private var dismiss
-    @FocusState private var focus: Field?
-
-    private enum Field { case insurer, policy, phone }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 18) {
-                    FormField(title: "Insurance company", text: $profile.insurer, placeholder: "e.g. State Farm",
-                              systemImage: "building.columns.fill", autocapitalization: .words, focus: $focus, field: .insurer)
-                        .submitLabel(.next)
-                        .onSubmit { focus = .policy }
-                    FormField(title: "Policy number", text: $profile.policyNumber, systemImage: "number",
-                              autocapitalization: .characters, focus: $focus, field: .policy)
-                        .submitLabel(.next)
-                        .onSubmit { focus = .phone }
-                    FormField(title: "Claims phone", text: $profile.insurerPhone, placeholder: "(800) 555-0100",
-                              systemImage: "phone.fill", keyboard: .phonePad, focus: $focus, field: .phone)
-                }
-                .padding(Space.lg)
+                InsurerPicker(profile: profile)
+                    .padding(Space.lg)
             }
             .scrollDismissesKeyboard(.interactively)
             .background(BrandBackground())
@@ -947,12 +933,9 @@ private struct InsuranceEditorView: View {
                     Button("Done") { dismiss() }.fontWeight(.semibold)
                 }
             }
-            .onChange(of: focus) { old, _ in
-                if old == .phone { profile.insurerPhone = PhoneFormat.display(profile.insurerPhone) }
-            }
             .onDisappear { profile.insurerPhone = PhoneFormat.display(profile.insurerPhone) }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         .presentationCornerRadius(28)
     }
 }

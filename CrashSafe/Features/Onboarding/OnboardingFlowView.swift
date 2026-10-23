@@ -1,19 +1,27 @@
 import SwiftData
 import SwiftUI
 
-/// First-run setup after sign up: driver style, drive monitoring, vehicles, health, insurance, family, permissions.
+/// First-run setup after sign up: about you (which picks the coaching style), vehicles, health, insurance, family,
+/// permissions. Pulse watches every drive by default (Profile → Driving changes that).
 struct OnboardingFlowView: View {
     let user: AuthUser
     @Bindable var profile: Profile
 
     enum Step: Int, CaseIterable {
-        case welcome, driver, monitoring, vehicles, health, insurance, family, permissions, done
+        case welcome, driver, vehicles, health, insurance, family, permissions, done
 
         var isOptional: Bool { [.vehicles, .health, .insurance, .family].contains(self) }
     }
 
-    @State private var step: Step = .welcome
+    @State private var step: Step
     @State private var forward = true
+
+    /// `start` is for previews and screenshots; the app always starts at the welcome step.
+    init(user: AuthUser, profile: Profile, start: Step = .welcome) {
+        self.user = user
+        self.profile = profile
+        _step = State(initialValue: start)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -119,7 +127,6 @@ struct OnboardingFlowView: View {
         switch step {
         case .welcome: WelcomeStep(name: user.firstName)
         case .driver: DriverStep(profile: profile)
-        case .monitoring: MonitoringStep(profile: profile)
         case .vehicles: VehiclesStep(profile: profile)
         case .health: HealthStep(profile: profile)
         case .insurance: InsuranceStep(profile: profile)
@@ -189,60 +196,115 @@ private struct WelcomeStep: View {
     }
 }
 
+/// About you: a few questions Pulse actually uses (who may be in the car after a crash, how to steady you,
+/// what to explain first). Together they pick the coaching style, shown at the end with the reasons.
 private struct DriverStep: View {
     @Bindable var profile: Profile
 
     var body: some View {
-        StepScaffold(title: "How should Pulse coach you?",
-                     subtitle: "When you're driving too fast for the conditions, Pulse speaks up in the way that works for you.") {
-            VStack(spacing: 12) {
-                ForEach(CoachingStyle.allCases) { style in
-                    Button {
-                        profile.coachingStyle = style
-                    } label: {
-                        HStack(spacing: 14) {
-                            IconBadge(systemName: style.systemImage, tint: style == .logical ? Brand.blue : Brand.teal, size: 46)
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(style.title).font(.headline).foregroundStyle(Brand.textPrimary)
-                                Text(style.subtitle).font(.subheadline).foregroundStyle(Brand.textSecondary)
-                                    .multilineTextAlignment(.leading)
-                            }
-                            Spacer(minLength: 0)
-                            Image(systemName: profile.coachingStyle == style ? "checkmark.circle.fill" : "circle")
-                                .font(.title2)
-                                .foregroundStyle(profile.coachingStyle == style ? Brand.blueInk : Brand.textSecondary.opacity(0.5))
-                        }
-                        .card()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Radius.card, style: .continuous)
-                                .strokeBorder(Brand.blueInk, lineWidth: profile.coachingStyle == style ? 2 : 0)
-                        )
-                    }
-                    .buttonStyle(.pressable)
-                    .sensoryFeedback(.selection, trigger: profile.coachingStyle)
-                }
-
-                Text("Example: “\(example)”")
-                    .font(.callout.italic())
-                    .foregroundStyle(Brand.textSecondary)
-                    .padding(.horizontal, Space.xs)
-                    .contentTransition(.opacity)
-                    .animation(.easeOut, value: profile.coachingStyle)
-            }
-
-            VStack(alignment: .leading, spacing: 12) {
-                Text("How long have you been driving?")
-                    .font(.headline)
-                    .foregroundStyle(Brand.textPrimary)
+        StepScaffold(title: "A bit about you",
+                     subtitle: "Pulse uses these to coach you the way that works for you, and to know who might need help after a crash.") {
+            question("How long have you been driving?") {
                 HStack(spacing: 8) {
                     ForEach(DrivingExperience.allCases) { option in
                         ChoiceTile(title: option.label, systemImage: icon(for: option), isSelected: profile.experience == option) {
                             profile.experience = option
+                            decide()
                         }
                     }
                 }
             }
+            question("How old are you?") {
+                HStack(spacing: 6) {
+                    ForEach(AgeBand.allCases) { option in
+                        ChoiceTile(title: option.label, systemImage: "person.fill", isSelected: profile.ageBand == option) {
+                            profile.ageBand = option
+                            decide()
+                        }
+                    }
+                }
+            }
+            question("What do you drive for most?") {
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                    ForEach(DrivingPurpose.allCases) { option in
+                        ChoiceTile(title: option.label, systemImage: option.systemImage, isSelected: profile.drivingPurpose == option) {
+                            profile.drivingPurpose = option
+                            decide()
+                        }
+                    }
+                }
+            }
+            question("Who usually rides with you?") {
+                choices(UsualPassengers.allCases, selected: profile.passengers) { profile.passengers = $0 }
+            }
+            question("How do you feel about driving?") {
+                choices(DrivingFeeling.allCases, selected: profile.drivingFeeling) { profile.drivingFeeling = $0 }
+            }
+            question("Have you been in a crash before?") {
+                choices(PastCrash.allCases, selected: profile.pastCrash) { profile.pastCrash = $0 }
+            }
+            result
         }
+        .onAppear(perform: decide)
+    }
+
+    /// The style Pulse picked from the answers, why, and a way to switch it.
+    private var result: some View {
+        let reasons = profile.recommendedCoaching.reasons
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Pulse will coach you like this")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Brand.textSecondary)
+            HStack(spacing: 14) {
+                IconBadge(systemName: profile.coachingStyle.systemImage,
+                          tint: profile.coachingStyle == .logical ? Brand.blue : Brand.teal, size: 46)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(profile.coachingStyle.title).font(.headline).foregroundStyle(Brand.textPrimary)
+                    Text("“\(example)”").font(.subheadline.italic()).foregroundStyle(Brand.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            if !reasons.isEmpty, profile.coachingStyle == profile.recommendedCoaching.style {
+                Text("Because " + ListFormatter.localizedString(byJoining: reasons) + ".")
+                    .font(.footnote)
+                    .foregroundStyle(Brand.textSecondary)
+            }
+            Button(profile.coachingStyle == .logical ? "Prefer a calm, people-first nudge" : "Prefer the facts and numbers") {
+                profile.coachingStyle = profile.coachingStyle == .logical ? .emotional : .logical
+            }
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(Brand.blueInk)
+        }
+        .card()
+        .animation(.easeOut, value: profile.coachingStyle)
+        .sensoryFeedback(.selection, trigger: profile.coachingStyle)
+    }
+
+    private func question<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(Brand.textPrimary)
+            content()
+        }
+    }
+
+    private func choices<Option: Identifiable & Equatable>(_ options: [Option], selected: Option?,
+                                                         set: @escaping (Option) -> Void) -> some View
+        where Option: AboutYouOption {
+        HStack(spacing: 8) {
+            ForEach(options) { option in
+                ChoiceTile(title: option.label, systemImage: option.systemImage, isSelected: selected == option) {
+                    set(option)
+                    decide()
+                }
+            }
+        }
+    }
+
+    /// Re-picks the style whenever an answer changes.
+    private func decide() {
+        profile.coachingStyle = profile.recommendedCoaching.style
     }
 
     private var example: String {
@@ -262,54 +324,14 @@ private struct DriverStep: View {
     }
 }
 
-/// New question: should Pulse start watching on its own whenever you drive?
-private struct MonitoringStep: View {
-    @Bindable var profile: Profile
-
-    var body: some View {
-        StepScaffold(title: "Watch every drive?",
-                     subtitle: "Pulse can turn on crash detection by itself when it notices you're driving — even if you forget to open the app.") {
-            VStack(spacing: 12) {
-                option(true, icon: "car.fill", title: "Yes, watch every drive",
-                       detail: "Starts automatically. Works best with “Always” location, which you can allow on a later step.")
-                option(false, icon: "hand.tap.fill", title: "Only when I start a drive",
-                       detail: "You'll pick your car and tap Start before each drive.")
-            }
-            Text("You can change this anytime in Profile → Driving.")
-                .font(.footnote)
-                .foregroundStyle(Brand.textSecondary)
-        }
-    }
-
-    private func option(_ value: Bool, icon: String, title: String, detail: String) -> some View {
-        let isSelected = profile.autoDetectDrives == value
-        return Button {
-            profile.autoDetectDrives = value
-        } label: {
-            HStack(spacing: 14) {
-                IconBadge(systemName: icon, tint: value ? Brand.blue : Brand.teal, size: 46)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title).font(.headline).foregroundStyle(Brand.textPrimary)
-                    Text(detail).font(.subheadline).foregroundStyle(Brand.textSecondary)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
-                    .foregroundStyle(isSelected ? Brand.blueInk : Brand.textSecondary.opacity(0.5))
-            }
-            .card()
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.card, style: .continuous)
-                    .strokeBorder(Brand.blueInk, lineWidth: isSelected ? 2 : 0)
-            )
-        }
-        .buttonStyle(.pressable)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .sensoryFeedback(.selection, trigger: profile.autoDetectDrives)
-    }
+/// The answer types shown as tiles.
+private protocol AboutYouOption {
+    var label: String { get }
+    var systemImage: String { get }
 }
+extension UsualPassengers: AboutYouOption {}
+extension DrivingFeeling: AboutYouOption {}
+extension PastCrash: AboutYouOption {}
 
 private struct VehiclesStep: View {
     @Bindable var profile: Profile
@@ -404,24 +426,11 @@ private struct HealthStep: View {
 
 private struct InsuranceStep: View {
     @Bindable var profile: Profile
-    @FocusState private var focus: Field?
-
-    private enum Field { case insurer, policy, phone }
 
     var body: some View {
         StepScaffold(title: "Insurance",
                      subtitle: "So Pulse can help you report a claim with just the facts — no searching through your glovebox.") {
-            VStack(spacing: 18) {
-                FormField(title: "Insurance company", text: $profile.insurer, placeholder: "e.g. State Farm", systemImage: "building.columns.fill",
-                          autocapitalization: .words, focus: $focus, field: .insurer)
-                FormField(title: "Policy number", text: $profile.policyNumber, placeholder: "On your insurance card", systemImage: "number",
-                          autocapitalization: .characters, focus: $focus, field: .policy)
-                FormField(title: "Claims phone number", text: $profile.insurerPhone, placeholder: "(800) 555-0123", systemImage: "phone.fill",
-                          contentType: .telephoneNumber, keyboard: .phonePad, focus: $focus, field: .phone)
-            }
-        }
-        .onChange(of: focus) { old, _ in
-            if old == .phone { profile.insurerPhone = PhoneFormat.display(profile.insurerPhone) }
+            InsurerPicker(profile: profile)
         }
     }
 }
