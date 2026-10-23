@@ -49,11 +49,9 @@ final class SpeechVoiceInput: VoiceInputService {
         cancel()
         guard await Self.authorize() else { throw Failure.notAllowed }
         guard let recognizer, recognizer.isAvailable else { throw Failure.unavailable }
-        if !PulseCallAudio.isActive {  // In a call the session is already set up for talking both ways.
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playAndRecord, mode: .measurement, options: [.duckOthers, .defaultToSpeaker, .allowBluetoothHFP])
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
-        }
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .measurement, options: [.duckOthers, .defaultToSpeaker, .allowBluetoothHFP])
+        try session.setActive(true, options: .notifyOthersOnDeactivation)
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
@@ -108,7 +106,7 @@ final class SpeechVoiceInput: VoiceInputService {
         engine.stop()
         engine.inputNode.removeTap(onBus: 0)
         isRecording = false
-        if !PulseCallAudio.isActive { try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     // MARK: Callbacks built off the main actor
