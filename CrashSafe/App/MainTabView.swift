@@ -19,8 +19,7 @@ struct MainTabView: View {
             HomeView(
                 user: user,
                 viewModel: HomeViewModel(detector: env.crashDetector, driving: env.driving,
-                                         conditions: env.conditions, userID: user.id),
-                talk: env.pulseCall
+                                         conditions: env.conditions, userID: user.id)
             )
             .tabItem { Label("Home", systemImage: "house.fill") }
             .tag(AppRouter.Tab.home)
