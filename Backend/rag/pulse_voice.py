@@ -40,7 +40,6 @@ from pulse_core.sentence_filter import SentenceStream, filter_sentence
 
 HERE = Path(__file__).resolve().parent
 CORE = (HERE / "pulse_core/core.md").read_text(encoding="utf-8")
-HARD_LINES = (HERE / "pulse_core/hard_lines.md").read_text(encoding="utf-8")
 
 COREY = "630ed21c-2c5c-41cf-9d82-10a7fd668370"  # Cartesia "Corey - Supportive Buddy"
 # The key has a $0 limit: free models only, both screened by the team (pulse_agent/config/model_profiles.json);
@@ -258,7 +257,7 @@ class PulseVoice:
             context += "\n\n[INCIDENT]\n" + json.dumps(incident)[:2000]
         if activity:
             context += "\n\n[ACTIVITY]\n" + json.dumps(activity)[:600]
-        system = CORE + "\n\n" + HARD_LINES + "\n\n" + context
+        system = CORE + "\n\n" + context  # core.md already contains the hard lines
 
         text, model = self._complete(system, turns[-12:])
         if text is None:

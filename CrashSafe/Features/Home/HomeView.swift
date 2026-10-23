@@ -7,7 +7,7 @@ struct HomeView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(\.modelContext) private var context
     @State private var viewModel: HomeViewModel
-    @State private var talk: PressToTalkViewModel
+    @State private var talk: PulseCallViewModel
     @State private var showingDrivePicker = false
     /// Set when a drive starts from the picker; CarPlay mode opens once the picker has closed.
     @State private var openCarPlayAfterPicker = false
@@ -16,7 +16,7 @@ struct HomeView: View {
     @Query private var checkIns: [CheckInRecord]
     @Query private var profiles: [Profile]
 
-    init(user: AuthUser, viewModel: HomeViewModel, talk: PressToTalkViewModel) {
+    init(user: AuthUser, viewModel: HomeViewModel, talk: PulseCallViewModel) {
         self.user = user
         _viewModel = State(initialValue: viewModel)
         _talk = State(initialValue: talk)
@@ -77,7 +77,7 @@ struct HomeView: View {
                     )
                     .fadeUp(delay: 0.12)
 
-                    PressToTalkCard(viewModel: talk) { env.router.selectedTab = .assistant }
+                    PulseCallCard(viewModel: talk) { env.router.selectedTab = .assistant }
                         .fadeUp(delay: 0.15)
 
                     tripCard.fadeUp(delay: 0.18)

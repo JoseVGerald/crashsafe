@@ -474,18 +474,25 @@ struct BrandPhotoView: View {
 
 /// What Pulse is doing, shown by the thinking orb on every AI control.
 enum PulseOrbMood: Equatable {
-    case idle, listening, thinking
+    case idle, listening, thinking, speaking
 
     var orbState: OrbState {
         switch self {
         case .idle: .solving
         case .listening: .listening
         case .thinking: .working
+        case .speaking: .breathing
         }
     }
 
-    /// Ring colour around the orb: blue at rest, red while the mic is open.
-    var ringTint: Color { self == .listening ? Brand.redInk : Brand.blueInk }
+    /// Ring colour around the orb: blue at rest, red while the mic is open, green while Pulse talks.
+    var ringTint: Color {
+        switch self {
+        case .listening: Brand.redInk
+        case .speaking: Brand.greenInk
+        case .idle, .thinking: Brand.blueInk
+        }
+    }
 }
 
 /// Pulse's animated thinking orb (ThinkingOrbsKit), drawn in white dots.
@@ -524,12 +531,13 @@ struct PulseVoiceFace: View {
     var mood: PulseOrbMood
     var diameter: CGFloat
     var showsMicBadge = true
+    var badge = "mic.fill"
 
     var body: some View {
         PulseOrbDisc(mood: mood, diameter: diameter)
             .overlay(alignment: .bottomTrailing) {
                 if showsMicBadge && mood == .idle {
-                    Image(systemName: "mic.fill")
+                    Image(systemName: badge)
                         .font(.system(size: diameter * 0.15, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: diameter * 0.34, height: diameter * 0.34)
