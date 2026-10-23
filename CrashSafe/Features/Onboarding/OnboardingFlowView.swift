@@ -197,7 +197,7 @@ private struct WelcomeStep: View {
 }
 
 /// About you: a few questions Pulse actually uses (who may be in the car after a crash, how to steady you,
-/// what to explain first). Together they pick the coaching style, shown at the end with the reasons.
+/// what to explain first). Together they pick the coaching style quietly (Profile shows and changes it).
 private struct DriverStep: View {
     @Bindable var profile: Profile
 
@@ -243,41 +243,8 @@ private struct DriverStep: View {
             question("Have you been in a crash before?") {
                 choices(PastCrash.allCases, selected: profile.pastCrash) { profile.pastCrash = $0 }
             }
-            result
         }
         .onAppear(perform: decide)
-    }
-
-    /// The style Pulse picked from the answers, why, and a way to switch it.
-    private var result: some View {
-        let reasons = profile.recommendedCoaching.reasons
-        return VStack(alignment: .leading, spacing: 10) {
-            Text("Pulse will coach you like this")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Brand.textSecondary)
-            HStack(spacing: 14) {
-                IconBadge(systemName: profile.coachingStyle.systemImage,
-                          tint: profile.coachingStyle == .logical ? Brand.blue : Brand.teal, size: 46)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(profile.coachingStyle.title).font(.headline).foregroundStyle(Brand.textPrimary)
-                    Text("“\(example)”").font(.subheadline.italic()).foregroundStyle(Brand.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            if !reasons.isEmpty, profile.coachingStyle == profile.recommendedCoaching.style {
-                Text("Because " + ListFormatter.localizedString(byJoining: reasons) + ".")
-                    .font(.footnote)
-                    .foregroundStyle(Brand.textSecondary)
-            }
-            Button(profile.coachingStyle == .logical ? "Prefer a calm, people-first nudge" : "Prefer the facts and numbers") {
-                profile.coachingStyle = profile.coachingStyle == .logical ? .emotional : .logical
-            }
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(Brand.blueInk)
-        }
-        .card()
-        .animation(.easeOut, value: profile.coachingStyle)
-        .sensoryFeedback(.selection, trigger: profile.coachingStyle)
     }
 
     private func question<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
@@ -305,13 +272,6 @@ private struct DriverStep: View {
     /// Re-picks the style whenever an answer changes.
     private func decide() {
         profile.coachingStyle = profile.recommendedCoaching.style
-    }
-
-    private var example: String {
-        switch profile.coachingStyle {
-        case .logical: "At 58 mph on wet pavement you need about 330 ft to stop. At 45 it's 220 ft."
-        case .emotional: "Your mom would rather you get home a few minutes late. Let's ease off."
-        }
     }
 
     private func icon(for experience: DrivingExperience) -> String {
