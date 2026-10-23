@@ -78,12 +78,12 @@ class PulseVoiceTests(unittest.TestCase):
         self.assertIn("[EVIDENCE]", system)                 # our verified cards, as data
         self.assertIn("[INCIDENT]", system)
         self.assertEqual([m["role"] for m in body["messages"][1:]], ["user", "assistant", "user"])
-        self.assertEqual(body["reasoning"], {"enabled": False})
+        self.assertEqual(body["reasoning"], {"enabled": False, "exclude": True})
 
     def test_free_fallback_model_then_verified_answer_when_models_fail(self):
         net = FakeNetwork([urllib.error.URLError("down"), chat("Exchange insurance details with the other driver.")])
         r = PulseVoice(self.engine, ENV, opener=net).converse([{"role": "user", "text": "what do I exchange with the other driver"}])
-        self.assertEqual(r["model"], "openai/gpt-oss-20b:free")
+        self.assertEqual(r["model"], "google/gemma-4-26b-a4b-it:free")
         net = FakeNetwork([urllib.error.URLError("down"), urllib.error.URLError("down")])
         r = PulseVoice(self.engine, ENV, opener=net).converse([{"role": "user", "text": "what do I exchange with the other driver"}])
         self.assertFalse(r["model_used"])

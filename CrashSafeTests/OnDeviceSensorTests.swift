@@ -106,10 +106,10 @@ struct OnDeviceSensorTests {
         context.assistanceStage = "active"
         let first = [ChatMessage(role: .user, text: "A white truck just sideswiped me on the freeway. I pulled over and I'm okay.")]
         let reply = try await pulse.reply(to: first, context: context)
-        #expect(pulse.lastModel != nil, "answered by: \(reply)")
+        #expect(pulse.lastModel != nil, "on-device model available: \(OnDevicePulse.isAvailable); reply: \(reply)")
         let followUp = first + [ChatMessage(role: .assistant, text: reply), ChatMessage(role: .user, text: "What color was the truck?")]
         let second = try await pulse.reply(to: followUp, context: context)
-        #expect(second.lowercased().contains("white"), "\(second)")
+        #expect(second.lowercased().contains("white"), "[\(pulse.lastModel ?? "guides")] \(second)")
         let audio = await PulseSpeaker().corey(PulseSpeaker.spokenPart(of: second))
         #expect((audio?.count ?? 0) > 5_000)
     }
