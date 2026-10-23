@@ -3,7 +3,8 @@ import SwiftUI
 
 /// A phone call with Pulse: tap once and just talk. Pulse listens until you pause, answers out loud as Corey,
 /// then listens again on its own, back and forth until you hang up. No button presses between turns.
-/// (Pulse doesn't listen while it is talking; tap the orb to cut it off and speak.)
+/// (Pulse doesn't listen while it is talking; tap the orb to cut it off and speak.) Corey plays in the normal
+/// full-quality playback mode, and the mic opens only for your turn, as with the chat's voice questions.
 @Observable
 final class PulseCallViewModel {
     enum Phase: Equatable {
@@ -66,7 +67,6 @@ final class PulseCallViewModel {
         call = nil
         voice.cancel()
         speaker?.stop()
-        PulseCallAudio.end()
         startedAt = nil
         phase = .idle
     }
@@ -77,13 +77,6 @@ final class PulseCallViewModel {
     }
 
     private func run() async {
-        if speaker != nil {
-            do {
-                try PulseCallAudio.begin()
-            } catch {
-                return fail("Couldn't start the call audio.")
-            }
-        }
         await say(Self.greeting, heard: "")
         while !Task.isCancelled {
             phase = .listening
@@ -122,7 +115,6 @@ final class PulseCallViewModel {
     private func fail(_ message: String) {
         voice.cancel()
         speaker?.stop()
-        PulseCallAudio.end()
         startedAt = nil
         phase = .failed(message)
     }
