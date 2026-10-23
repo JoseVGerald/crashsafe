@@ -196,8 +196,11 @@ final class LocalEvidenceAssistant: AssistantService {
                        "scared": "panic", "shaking": "panic", "panicking": "panic",
                        "photos": "photographs", "pictures": "photographs",
                        "electric": "ev", "accident": "collision", "crash": "collision"]
+        // Short function words carry no topic: "on the freeway" must not match "Vehicle on fire".
         let stop: Set<String> = ["the","a","an","i","my","me","to","is","it","what","how","do","should",
-                                 "can","of","for","and","you","after","about","have","are"]
+                                 "can","of","for","and","you","after","about","have","are","on","in","at",
+                                 "with","was","were","be","been","just","this","that","there","if","or","but",
+                                 "so","from","by","as","its","m","s","t","re","ve","ll","d"]
         return Set(value.lowercased().components(separatedBy: CharacterSet.alphanumerics.inverted)
             .filter { !$0.isEmpty && !stop.contains($0) }.map { aliases[$0] ?? $0 })
     }
@@ -268,21 +271,32 @@ final class LocalEvidenceAssistant: AssistantService {
         }
     }
 
+    /// The best-matching current cards for this question, location and stage (best first).
+    private static func ranked(_ query: String, context: AssistantContext) -> [LocalKnowledgeCard] {
+        let today = String(Date().ISO8601Format().prefix(10))
+        let terms = words(query)
+        return cards.compactMap { card -> (LocalKnowledgeCard, Int)? in
+            guard card.expires >= today,
+                  card.scope == "US" || card.scope == context.jurisdiction,
+                  card.stage == "any" || card.stage == context.assistanceStage else { return nil }
+            let score = words(card.title + " " + card.terms).intersection(terms).count * 3
+                + words(card.body).intersection(terms).count
+            return score >= 3 ? (card, score) : nil
+        }.sorted { $0.1 == $1.1 ? $0.0.id < $1.0.id : $0.1 > $1.1 }.map(\.0)
+    }
+
+    /// Verified evidence for a model to use as data: card id, text, and its sources as "title: url".
+    static func evidence(for query: String, context: AssistantContext, limit: Int) -> [(id: String, text: String, sources: [String])] {
+        ranked(query, context: context).prefix(limit).map { card in
+            (card.id, card.body, card.sources.compactMap { sourceLinks[$0] })
+        }
+    }
+
     func reply(to history: [ChatMessage], context: AssistantContext) async throws -> String {
         let query = history.last(where: { $0.role == .user })?.text ?? ""
         if let urgent = Self.emergencyReply(query) { return urgent }
         if let measured = Self.motionReply(query, context: context) { return measured }
-        let today = String(Date().ISO8601Format().prefix(10))
-        let terms = Self.words(query)
-        let ranked = Self.cards.compactMap { card -> (LocalKnowledgeCard, Int)? in
-            guard card.expires >= today,
-                  card.scope == "US" || card.scope == context.jurisdiction,
-                  card.stage == "any" || card.stage == context.assistanceStage else { return nil }
-            let score = Self.words(card.title + " " + card.terms).intersection(terms).count * 3
-                + Self.words(card.body).intersection(terms).count
-            return score >= 3 ? (card, score) : nil
-        }.sorted { $0.1 == $1.1 ? $0.0.id < $1.0.id : $0.1 > $1.1 }
-        let cards = ranked.prefix(context.assistanceStage == "active" ? 1 : 2).map(\.0)
+        let cards = Self.ranked(query, context: context).prefix(context.assistanceStage == "active" ? 1 : 2)
         guard !cards.isEmpty else {
             return "I don't have current, supported information for that question and location. If you are safe and need paperwork help, select follow-up mode. For urgent danger, call 911."
         }

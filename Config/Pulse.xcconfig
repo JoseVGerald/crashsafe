@@ -1,0 +1,7 @@
+// Pulse's cloud services, called straight from the phone (no server needed).
+// The keys live in Pulse.xcconfig.local next to this file: git-ignored, written from Backend/rag/.env by
+//   Tools/Pulse/write_app_keys.sh
+// Without it, builds have no keys and Pulse falls back to the backend / on-device guides.
+PULSE_OPENROUTER_KEY =
+PULSE_CARTESIA_KEY =
+#include? "Pulse.xcconfig.local"
