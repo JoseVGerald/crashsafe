@@ -870,6 +870,7 @@ private struct MedicalEditorView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.lg) {
+                    AppleHealthFillButton(profile: profile)
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Allergies, conditions, medications")
                             .font(.subheadline.weight(.medium))

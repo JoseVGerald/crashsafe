@@ -52,6 +52,9 @@ targets:
         PulseOpenRouterKey: "$(PULSE_OPENROUTER_KEY)"
         PulseCartesiaKey: "$(PULSE_CARTESIA_KEY)"
         PulseCartesiaBackupKey: "$(PULSE_CARTESIA_BACKUP_KEY)"
+        # YES where the build is signed with HealthKit (see CODE_SIGN_ENTITLEMENTS below).
+        PulseHealthImport: "$(PULSE_HEALTHKIT)"
+        NSHealthShareUsageDescription: "CrashSafe reads your blood type, birthday and the medications you track in Health to fill in your safety profile, so responders see them after a crash. Nothing is written to Health."
         NSMotionUsageDescription: "CrashSafe uses motion data to notice hard braking and possible crashes."
         UIBackgroundModes: [location, audio]
         UIApplicationSceneManifest:
@@ -70,6 +73,11 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         # CarPlay entitlement only on simulator builds: device builds need Apple's approval first.
         "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": CrashSafe/CrashSafe-CarPlay.entitlements
+        # Device builds with HealthKit (Fill from Apple Health) need Xcode signed in to the team's Apple ID, so
+        # it can add HealthKit to the provisioning profile. Then uncomment and set PULSE_HEALTHKIT to YES:
+        # "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": CrashSafe/CrashSafe-Device.entitlements
+        PULSE_HEALTHKIT: "NO"
+        "PULSE_HEALTHKIT[sdk=iphonesimulator*]": "YES"
         # Apple Weather on devices needs a paid team with the WeatherKit capability. With one, uncomment:
         # "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": CrashSafe/CrashSafe-Device-WeatherKit.entitlements
         # Without it (e.g. a free Personal Team) the app falls back to Open-Meteo.
