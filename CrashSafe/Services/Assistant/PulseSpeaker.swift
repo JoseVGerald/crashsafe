@@ -148,7 +148,6 @@ final class PulseSpeaker {
     }
 
     private func activateSession() {
-        guard !PulseCallAudio.isActive else { return }  // A call keeps its own audio setup.
         let audio = AVAudioSession.sharedInstance()
         try? audio.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
         try? audio.setActive(true)
@@ -161,21 +160,3 @@ final class PulseSpeaker {
     }
 }
 
-/// The audio setup for a call with Pulse: the microphone and Corey share one voice-chat session for the whole
-/// call (speaker on, Bluetooth allowed), so neither switches the session between turns.
-enum PulseCallAudio {
-    private(set) static var isActive = false
-
-    static func begin() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetoothHFP, .duckOthers])
-        try session.setActive(true)
-        isActive = true
-    }
-
-    static func end() {
-        guard isActive else { return }
-        isActive = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-    }
-}
