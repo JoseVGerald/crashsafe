@@ -65,7 +65,7 @@ def load_env(path: Path = HERE / ".env") -> dict[str, str]:
                 values[key.strip()] = value.strip()
     values.update({k: v for k, v in os.environ.items() if k in ("OPENROUTER_API_KEY", "CARTESIA_API_KEY", "PULSE_MODEL",
                                                               "CARTESIA_VOICE", "CARTESIA_MODEL", "PULSE_AUTH_SECRET",
-                                                              "PULSE_AGENT_URL")})
+                                                              "PULSE_AGENT_URL", "PULSE_APP_TOKEN")})
     return values
 
 
@@ -297,7 +297,7 @@ class PulseVoice:
         if not key:
             return None, None
         for model in self.models:
-            body = {"model": model, "max_tokens": 220, "temperature": 0.4,
+            body = {"model": model, "max_tokens": 220, "temperature": 0,  # as the team's model profiles
                     "messages": [{"role": "system", "content": system}] + turns}
             if "nemotron" in model:
                 body["reasoning"] = {"enabled": False}

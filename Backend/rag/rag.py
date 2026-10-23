@@ -242,8 +242,8 @@ def make_server(engine,port=8787,developer_engine=None,voice=None,host="127.0.0.
             try: self.wfile.write(raw)
             except (BrokenPipeError,ConnectionResetError): pass  # the phone hung up (e.g. asked again)
         def allowed(self):
-            # The Mac itself (simulator) is trusted; another device on the Wi-Fi (the phone) must send the
-            # LAN token. Without a token configured, nothing off this machine gets in.
+            # The Mac itself (simulator) is trusted; the phone (over Wi-Fi, or anyone reaching the cloud server)
+            # must send the app token. Without a token configured, nothing off this machine gets in.
             if self.client_address[0] in trusted: return True
             import hmac
             given=self.headers.get("X-Pulse-Token","")
@@ -256,6 +256,7 @@ def make_server(engine,port=8787,developer_engine=None,voice=None,host="127.0.0.
             try: self.wfile.write(raw)
             except (BrokenPipeError,ConnectionResetError): pass
         def do_GET(self):
+            if self.path=="/healthz": return self.reply(200,{"ok":True})  # the cloud host's liveness check; says nothing else
             if not self.allowed(): return
             if self.path.startswith("/v1/roads?"):
                 # Speed-limit road data (cached OpenStreetMap tiles). Nothing about the request is logged.
@@ -354,8 +355,9 @@ def main():
             token=None
             if lan:
                 from pulse_voice import load_env
-                token=load_env().get("PULSE_LAN_TOKEN") or os.getenv("PULSE_LAN_TOKEN")
-                if not token or len(token)<32: raise SystemExit("--lan needs PULSE_LAN_TOKEN (32+ random characters) in Backend/rag/.env")
+                values=load_env()
+                token=values.get("PULSE_APP_TOKEN") or values.get("PULSE_LAN_TOKEN")
+                if not token or len(token)<32: raise SystemExit("--lan needs PULSE_APP_TOKEN (32+ random characters) in Backend/rag/.env")
             server=make_server(engine,args.port,developer_engine,host="0.0.0.0" if lan else "127.0.0.1",lan_token=token)
             print(f"Prototype API at http://127.0.0.1:{args.port}"+(" and on the local network (token required)" if lan else ""),flush=True)
             try: server.serve_forever()

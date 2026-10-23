@@ -7,6 +7,9 @@ nonisolated final class StubBackend: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) static var routes: [String: (status: Int, body: Data, type: String)] = [:]
     nonisolated(unsafe) static var seen: [String] = []
     nonisolated(unsafe) static var bodies: [String: [String: Any]] = [:]
+    /// Replies used once each, in order, before `routes` (for multi-step exchanges).
+    nonisolated(unsafe) static var queued: [String: [(status: Int, body: Data, type: String)]] = [:]
+    nonisolated(unsafe) static var log: [(path: String, body: [String: Any]?, headers: [String: String])] = []
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func startLoading() {
@@ -19,7 +22,14 @@ nonisolated final class StubBackend: URLProtocol, @unchecked Sendable {
             stream.close()
             Self.bodies[path] = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
         }
-        let route = Self.routes[path] ?? (404, Data(), "application/json")
+        Self.log.append((path, Self.bodies[path], request.allHTTPHeaderFields ?? [:]))
+        let route: (status: Int, body: Data, type: String)
+        if var next = Self.queued[path], !next.isEmpty {
+            route = next.removeFirst()
+            Self.queued[path] = next
+        } else {
+            route = Self.routes[path] ?? (404, Data(), "application/json")
+        }
         let response = HTTPURLResponse(url: request.url!, statusCode: route.status, httpVersion: nil,
                                        headerFields: ["Content-Type": route.type])!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
@@ -27,6 +37,10 @@ nonisolated final class StubBackend: URLProtocol, @unchecked Sendable {
         client?.urlProtocolDidFinishLoading(self)
     }
     override func stopLoading() {}
+
+    static func reset() {
+        seen = []; bodies = [:]; queued = [:]; log = []; routes = [:]
+    }
 
     static func session() -> URLSession {
         let configuration = URLSessionConfiguration.ephemeral
@@ -155,4 +169,103 @@ struct TapToTalkTests {
 
 extension PressToTalkViewModel.Phase {
     var isAnswered: Bool { if case .answered = self { true } else { false } }
+}
+
+/// Pulse straight from the phone: OpenRouter for the reply, Cartesia for Corey. No server involved.
+@MainActor
+@Suite(.serialized)
+struct DirectPulseTests {
+    private let completions = "/api/v1/chat/completions"
+    private func context() -> AssistantContext {
+        AssistantContext(userName: "Test", isOnline: true, scenario: .general, carDescription: "", insurer: "",
+                         medicalNotes: "", familyContactNames: [])
+    }
+    private func chat(_ message: String) -> (status: Int, body: Data, type: String) {
+        (200, Data(#"{"choices":[{"message":\#(message)}]}"#.utf8), "application/json")
+    }
+
+    @Test func pulseAnswersFromOpenRouterWithTheTeamsCoreAndFilter() async throws {
+        StubBackend.reset()
+        StubBackend.routes[completions] = chat(#"{"content":"I'm right here with you. Calm down. Take 400 mg of ibuprofen. Help is on the way. Turn on your hazard lights if you can... Exchange insurance details."}"#)
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session())
+        let history = [ChatMessage(role: .user, text: "I got rear-ended"), ChatMessage(role: .assistant, text: "Are you somewhere safe?"),
+                       ChatMessage(role: .user, text: "yes. what do I tell my insurance?")]
+        let reply = try await service.reply(to: history, context: context())
+        let spoken = PulseSpeaker.spokenPart(of: reply)
+        #expect(spoken == "I'm right here with you. I can't give a medication dose. I don't have confirmation that worked. Turn on your hazard lights if you can, Exchange insurance details.")
+        #expect(service.lastModel == "nvidia/nemotron-3.5-lightning:free")
+        let request = try #require(StubBackend.log.first)
+        #expect(request.headers["Authorization"] == "Bearer sk-test-0123456789abcdef")
+        let body = try #require(request.body)
+        #expect(body["model"] as? String == "nvidia/nemotron-3.5-lightning:free")
+        #expect((body["reasoning"] as? [String: Any])?["enabled"] as? Bool == false)
+        let messages = try #require(body["messages"] as? [[String: Any]])
+        let system = try #require(messages.first?["content"] as? String)
+        #expect(system.contains("[PULSE_CORE]") && system.contains("[EVIDENCE]") && system.contains("DOCUMENT"))
+        #expect(messages.dropFirst().compactMap { $0["role"] as? String } == ["user", "assistant", "user"])   // the conversation so far
+    }
+
+    @Test func toolRequestsBecomeButtonsAndTheModelFinishesItsReply() async throws {
+        StubBackend.reset()
+        StubBackend.queued[completions] = [
+            chat(#"{"content":null,"tool_calls":[{"id":"c1","type":"function","function":{"name":"emergency_call_prompt","arguments":"{}"}}]}"#),
+            chat(#"{"content":"Tap Call 911 now. I'm staying right here with you."}"#)]
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session())
+        let reply = try await service.reply(to: [ChatMessage(role: .user, text: "my friend hit her head and seems confused")], context: context())
+        #expect(PulseSpeaker.spokenPart(of: reply) == "Tap Call 911 now. I'm staying right here with you.")
+        #expect(service.requestedActions == ["emergency_call_prompt"])
+        let second = try #require(StubBackend.log.last?.body)
+        #expect(second["tool_choice"] as? String == "none")
+        let tool = try #require((second["messages"] as? [[String: Any]])?.last)
+        #expect(tool["role"] as? String == "tool" && (tool["content"] as? String)?.contains(#""performed": false"#) == true)
+    }
+
+    @Test func emergenciesAndOutagesNeverWaitOnTheModel() async throws {
+        StubBackend.reset()
+        StubBackend.routes[completions] = (503, Data(), "application/json")
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session())
+        let urgent = try await service.reply(to: [ChatMessage(role: .user, text: "the car is on fire")], context: context())
+        #expect(urgent.hasPrefix("Call 911") && StubBackend.log.isEmpty && service.requestedActions == ["emergency_call_prompt"])
+        let answer = try await service.reply(to: [ChatMessage(role: .user, text: "what photographs should I take for documentation")], context: context())
+        #expect(StubBackend.log.count == 2)              // both free models tried
+        #expect(answer.contains("Photograph the scene"))  // then the verified on-device guide
+        #expect(service.lastModel == nil)
+    }
+
+    /// The same cases as the team's Python filter tests (Backend/rag/tests/test_pulse_voice.py).
+    @Test func theTeamsSentenceFilterHoldsInSwift() {
+        typealias F = PulseSentenceFilter
+        #expect(F.filter("Calm down.") == .drop(reason: "banned_phrase"))
+        #expect(F.filter("You're fine.") == .drop(reason: "banned_phrase"))
+        #expect(F.filter("Take 2.5 mg now.") == .rewrite(F.doseFallback, reason: "dose_pattern"))
+        #expect(F.filter("Take two of them.", medicationQuestion: true) == .rewrite(F.doseFallback, reason: "medication_quantity"))
+        #expect(F.filter("Help is on the way.") == .rewrite("I don't have confirmation that worked.", reason: "unconfirmed_action"))
+        #expect(F.filter("I've notified your sister.", successfulActions: ["emergency_call_prompt"]).text == "I don't have confirmation that worked.")
+        #expect(F.filter("- Move to the shoulder if it's safe.") == .pass("Move to the shoulder if it's safe."))
+        #expect(F.filter("See https://example.com.") == .drop(reason: "not_speech"))
+        #expect(F.sentences("Take 2.5 mg. Are you okay? Breathe") == ["Take 2.5 mg.", "Are you okay?", "Breathe"])
+    }
+
+    @Test func coreyComesStraightFromCartesia() async throws {
+        StubBackend.reset()
+        StubBackend.routes["/tts/bytes"] = (200, Data(repeating: 7, count: 4000), "audio/mpeg")
+        let speaker = PulseSpeaker(endpoint: nil, cartesiaKey: "sk_car_test_0123456789", session: StubBackend.session())
+        let audio = await speaker.corey("I'm right here with you.")
+        #expect(audio?.count == 4000)
+        let request = try #require(StubBackend.log.first)
+        #expect(request.headers["X-API-Key"] == "sk_car_test_0123456789")
+        #expect((request.body?["voice"] as? [String: Any])?["id"] as? String == PulseSpeaker.corey)
+        #expect(request.body?["transcript"] as? String == "I'm right here with you.")
+    }
+
+    #if targetEnvironment(simulator)
+    /// The app's copy of the team's prompt is the same as the backend's (both unchanged from the team's repo).
+    @Test func bundledCoreMatchesTheTeamsFiles() throws {
+        let repo = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        for (bundled, original) in [("pulse_core", "core.md"), ("pulse_hard_lines", "hard_lines.md")] {
+            let app = try String(contentsOf: try #require(Bundle.main.url(forResource: bundled, withExtension: "txt")), encoding: .utf8)
+            #expect(app == (try String(contentsOf: repo.appending(path: "Backend/rag/pulse_core/\(original)"), encoding: .utf8)))
+        }
+    }
+    #endif
 }

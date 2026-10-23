@@ -116,7 +116,7 @@ final class AppEnvironment {
         AppEnvironment(
             auth: makeAuthService(),
             crashDetector: nil,                       // Live shared sensors + experimental evidence rules
-            assistant: RAGAssistantService.configured(),        // AI TEAM: Cloud / on-device assistant
+            assistant: DirectPulseService.configured(),  // Pulse via OpenRouter from the phone; backend / on-device fallback
             voiceInput: SpeechVoiceInput(),           // Apple speech recognition, on-device when possible
             tripPacks: MapKitTripPackService(),       // Apple Maps search (mock fallback without coordinates)
             alerts: BackendEmergencyAlertService.configured(  // Texts + automated calls via /v1/alerts

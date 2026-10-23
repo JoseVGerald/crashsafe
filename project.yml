@@ -28,6 +28,9 @@ targets:
   CrashSafe:
     type: application
     platform: iOS
+    configFiles:
+      Debug: Config/Pulse.xcconfig
+      Release: Config/Pulse.xcconfig
     sources:
       - path: CrashSafe
     info:
@@ -44,6 +47,10 @@ targets:
         # never committed). Empty in normal builds.
         PulseLANHost: "$(PULSE_LAN_HOST)"
         PulseLANToken: "$(PULSE_LAN_TOKEN)"
+        # Pulse straight from the phone: OpenRouter (replies) and Cartesia (Corey). From the git-ignored
+        # Config/Pulse.xcconfig.local; empty without it.
+        PulseOpenRouterKey: "$(PULSE_OPENROUTER_KEY)"
+        PulseCartesiaKey: "$(PULSE_CARTESIA_KEY)"
         NSMotionUsageDescription: "CrashSafe uses motion data to notice hard braking and possible crashes."
         UIBackgroundModes: [location, audio]
         UIApplicationSceneManifest:

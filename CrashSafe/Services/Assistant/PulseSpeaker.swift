@@ -37,13 +37,15 @@ nonisolated enum PulseBackend {
     }
 }
 
-/// Speaks for Pulse in its voice, Cartesia's "Corey", via the backend (`POST /v1/tts`). When the backend
-/// can't be reached in time (offline, or no server configured on this phone), the best installed Apple
-/// voice says it instead, so nothing Pulse needs to say is ever lost.
+/// Speaks for Pulse in its voice, Cartesia's "Corey": straight from Cartesia when this build has a Cartesia key
+/// (`PulseKeys`), otherwise through the backend (`POST /v1/tts`). When neither answers in time (offline, or
+/// nothing configured), the best installed Apple voice says it instead, so nothing Pulse needs to say is lost.
 @MainActor
 final class PulseSpeaker {
     private static let log = Logger(subsystem: "org.cac.crashsafe", category: "voice")
+    static let corey = "630ed21c-2c5c-41cf-9d82-10a7fd668370"  // Cartesia "Corey - Supportive Buddy"
     private let endpoint: URL?
+    private let cartesiaKey: String?
     private let session: URLSession
     private let isOnline: () -> Bool
     private let synthesizer = AVSpeechSynthesizer()
@@ -53,14 +55,16 @@ final class PulseSpeaker {
     private var cache: [String: Data] = [:]
     private var cacheOrder: [String] = []
 
-    init(endpoint: URL? = PulseBackend.endpoint(), isOnline: @escaping () -> Bool = { true }, timeout: TimeInterval = 3) {
+    init(endpoint: URL? = PulseBackend.endpoint(), cartesiaKey: String? = PulseKeys.cartesia(),
+         isOnline: @escaping () -> Bool = { true }, timeout: TimeInterval = 4, session: URLSession? = nil) {
         self.endpoint = endpoint
+        self.cartesiaKey = cartesiaKey
         self.isOnline = isOnline
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = timeout
         configuration.timeoutIntervalForResource = timeout + 1
         configuration.urlCache = nil
-        session = URLSession(configuration: configuration)
+        self.session = session ?? URLSession(configuration: configuration)
     }
 
     var isSpeaking: Bool { (player?.isPlaying ?? false) || synthesizer.isSpeaking }
@@ -97,14 +101,9 @@ final class PulseSpeaker {
         synthesizer.stopSpeaking(at: .immediate)
     }
 
-    private func corey(_ text: String) async -> Data? {
+    func corey(_ text: String) async -> Data? {
         if let cached = cache[text] { return cached }
-        guard let endpoint, isOnline(), text.count <= 1200 else { return nil }
-        var request = URLRequest(url: endpoint.appendingPathComponent("v1/tts"))
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        PulseBackend.authorize(&request)
-        request.httpBody = try? JSONEncoder().encode(["text": text])
+        guard isOnline(), text.count <= 1200, let request = coreyRequest(text) else { return nil }
         guard let (data, response) = try? await session.data(for: request),
               (response as? HTTPURLResponse)?.statusCode == 200,
               (response as? HTTPURLResponse)?.value(forHTTPHeaderField: "Content-Type")?.hasPrefix("audio/") == true,
@@ -113,6 +112,29 @@ final class PulseSpeaker {
         cacheOrder.append(text)
         if cacheOrder.count > 32 { cache[cacheOrder.removeFirst()] = nil }
         return data
+    }
+
+    /// Cartesia itself when this build has its key, else the backend.
+    private func coreyRequest(_ text: String) -> URLRequest? {
+        var request: URLRequest
+        if let cartesiaKey {
+            request = URLRequest(url: URL(string: "https://api.cartesia.ai/tts/bytes")!)
+            request.setValue(cartesiaKey, forHTTPHeaderField: "X-API-Key")
+            request.setValue("2025-04-16", forHTTPHeaderField: "Cartesia-Version")
+            request.httpBody = try? JSONSerialization.data(withJSONObject: [
+                "model_id": "sonic-3", "transcript": text, "language": "en",
+                "voice": ["mode": "id", "id": Self.corey],
+                "output_format": ["container": "mp3", "sample_rate": 44100, "bit_rate": 128000]])
+        } else if let endpoint {
+            request = URLRequest(url: endpoint.appendingPathComponent("v1/tts"))
+            PulseBackend.authorize(&request)
+            request.httpBody = try? JSONEncoder().encode(["text": text])
+        } else {
+            return nil
+        }
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        return request
     }
 
     private func activateSession() {
