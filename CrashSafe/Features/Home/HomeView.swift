@@ -78,8 +78,15 @@ struct HomeView: View {
                     )
                     .fadeUp(delay: 0.12)
 
-                    PulseCallCard(viewModel: talk) { env.router.selectedTab = .assistant }
-                        .fadeUp(delay: 0.15)
+                    PulseCallCard(
+                        viewModel: talk,
+                        onCall: {
+                            env.router.selectedTab = .pulseVoice
+                            if !talk.inCall { talk.startCall() }
+                        },
+                        onOpenChat: { env.router.selectedTab = .assistant }
+                    )
+                    .fadeUp(delay: 0.15)
 
                     tripCard.fadeUp(delay: 0.18)
                     lastCheckIn.fadeUp(delay: 0.21)

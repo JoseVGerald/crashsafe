@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		038A4434D278882551D4D92B /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCBBE80EC490BE199FD311F /* AppEnvironment.swift */; };
 		03A006DD4A36D8E6BD0E0BC5 /* AssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78538B95EBA79A6530A4CE4 /* AssistantView.swift */; };
+		B2C3D4E5F60718293A4B5C6D /* PulseVoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* PulseVoiceView.swift */; };
 		04C60359CA58380CB3DE33A4 /* TripViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99425B6F031FBEB982BEAFBA /* TripViewModels.swift */; };
 		0796A64F75D07802D6E45F83 /* Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F29F09EA08D31DE9104DC31 /* Brand.swift */; };
 		0A5B347A883650691A9D59DE /* CheckInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABA3EE4C6CBEB8E37097677 /* CheckInViewModel.swift */; };
@@ -251,6 +252,7 @@
 		E73F6A49957B27238D1BA09B /* Editors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editors.swift; sourceTree = "<group>"; };
 		E78538B95EBA79A6530A4CE4 /* AssistantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantView.swift; sourceTree = "<group>"; };
 		E8E3B8EE309F44FB424B665F /* AppleHealthFillButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHealthFillButton.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* PulseVoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseVoiceView.swift; sourceTree = "<group>"; };
 		EB6A0B93C97FCB3D32E6C3A5 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		EC16382702C757F16D00A9D3 /* SensorLabMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorLabMath.swift; sourceTree = "<group>"; };
 		F84372694B6F771A09C0C84D /* ImpactAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpactAnalysis.swift; sourceTree = "<group>"; };
@@ -426,6 +428,7 @@
 				31C971714785C165C7EAB4CD /* AssistantContext+Make.swift */,
 				E78538B95EBA79A6530A4CE4 /* AssistantView.swift */,
 				4EAA0D4323A0D7B1FC568FDF /* AssistantViewModel.swift */,
+				A1B2C3D4E5F60718293A4B5C /* PulseVoiceView.swift */,
 			);
 			path = Assistant;
 			sourceTree = "<group>";
@@ -859,6 +862,7 @@
 				603242792CD34CC3469E0E26 /* AssistantService.swift in Sources */,
 				03A006DD4A36D8E6BD0E0BC5 /* AssistantView.swift in Sources */,
 				2FC3E3DABC199EC2206ADE1F /* AssistantViewModel.swift in Sources */,
+				B2C3D4E5F60718293A4B5C6D /* PulseVoiceView.swift in Sources */,
 				371FF31014CA54C06D6F2EB3 /* AuthLandingView.swift in Sources */,
 				B236D2665FB2BC2B11E5ED97 /* AuthService.swift in Sources */,
 				21C83BBE5DF8B21B052B22E6 /* AuthViewModels.swift in Sources */,
