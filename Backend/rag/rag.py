@@ -238,7 +238,9 @@ def make_server(engine,port=8787,developer_engine=None,voice=None,host="127.0.0.
             raw=json.dumps(data,ensure_ascii=False).encode()
             self.send_response(status); self.send_header("Content-Type","application/json; charset=utf-8")
             self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
-            self.send_header("X-Content-Type-Options","nosniff"); self.end_headers(); self.wfile.write(raw)
+            self.send_header("X-Content-Type-Options","nosniff"); self.end_headers()
+            try: self.wfile.write(raw)
+            except (BrokenPipeError,ConnectionResetError): pass  # the phone hung up (e.g. asked again)
         def allowed(self):
             # The Mac itself (simulator) is trusted; another device on the Wi-Fi (the phone) must send the
             # LAN token. Without a token configured, nothing off this machine gets in.
@@ -250,7 +252,9 @@ def make_server(engine,port=8787,developer_engine=None,voice=None,host="127.0.0.
         def audio(self,raw):
             self.send_response(200); self.send_header("Content-Type","audio/mpeg")
             self.send_header("Content-Length",str(len(raw))); self.send_header("Cache-Control","no-store")
-            self.end_headers(); self.wfile.write(raw)
+            self.end_headers()
+            try: self.wfile.write(raw)
+            except (BrokenPipeError,ConnectionResetError): pass
         def do_GET(self):
             if not self.allowed(): return
             if self.path.startswith("/v1/roads?"):
