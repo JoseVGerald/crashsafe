@@ -23,6 +23,8 @@ struct AssistantContext: Sendable {
     var incident: AssistantIncident? = nil
     /// What the phone's motion says the driver is doing now (transport mode, recent harsh events).
     var activity: AssistantActivity? = nil
+    /// One per conversation, so Pulse's agent on the backend remembers earlier turns (random, not tied to the person).
+    var conversationID: String? = nil
 }
 
 /// Derived from the rolling sensor history by `MotionIntelligence`; no raw telemetry.
@@ -49,6 +51,13 @@ protocol AssistantService: AnyObject {
     func greeting(for context: AssistantContext) -> String
     /// Reply to the latest user message given the full history.
     func reply(to history: [ChatMessage], context: AssistantContext) async throws -> String
+    /// What Pulse asked the app to offer with its last reply ("emergency_call_prompt", "find_tow"). The app only
+    /// shows these as buttons; nothing happens until the person taps one.
+    var requestedActions: [String] { get }
+}
+
+extension AssistantService {
+    var requestedActions: [String] { [] }
 }
 
 /// Returns canned, safety-first replies based on simple keywords.
@@ -393,6 +402,7 @@ final class RAGAssistantService: AssistantService {
     private let endpoint: URL?
     private let fallback = LocalEvidenceAssistant()
     private let session: URLSession
+    private(set) var requestedActions: [String] = []
 
     init(endpoint: URL?, session: URLSession? = nil) {
         self.endpoint = endpoint
@@ -422,7 +432,11 @@ final class RAGAssistantService: AssistantService {
 
     func reply(to history: [ChatMessage], context: AssistantContext) async throws -> String {
         let query = history.last(where: { $0.role == .user })?.text ?? ""
-        if let urgent = LocalEvidenceAssistant.emergencyReply(query) { return urgent }
+        requestedActions = []
+        if let urgent = LocalEvidenceAssistant.emergencyReply(query) {
+            requestedActions = ["emergency_call_prompt"]
+            return urgent
+        }
         // Questions about the phone's own measurements are answered from those measurements.
         if let measured = LocalEvidenceAssistant.motionReply(query, context: context) { return measured }
         guard context.isOnline, let endpoint else {
@@ -457,7 +471,8 @@ final class RAGAssistantService: AssistantService {
         }
     }
 
-    /// `POST /v1/converse`: the last turns go along; the server keeps nothing.
+    /// `POST /v1/converse`: the last turns go along. With a conversation id the team's Pulse agent answers and keeps
+    /// the conversation in its memory (30 idle minutes at most, never on disk); otherwise the server keeps nothing.
     private func converse(_ history: [ChatMessage], context: AssistantContext, endpoint: URL) async throws -> String? {
         do {
             var request = URLRequest(url: endpoint.appendingPathComponent("v1/converse"))
@@ -467,12 +482,16 @@ final class RAGAssistantService: AssistantService {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
             let turns = history.suffix(12).map { ConverseRequest.Turn(role: $0.role == .user ? "user" : "assistant", text: $0.text) }
-            request.httpBody = try encoder.encode(ConverseRequest(messages: turns, jurisdiction: context.jurisdiction,
-                stage: context.assistanceStage, incident: context.incident, activity: context.activity))
+            request.httpBody = try encoder.encode(ConverseRequest(messages: turns, conversationId: context.conversationID,
+                jurisdiction: context.jurisdiction, stage: context.assistanceStage,
+                incident: context.incident, activity: context.activity))
             let (data, response) = try await conversationSession.data(for: request)
             guard (response as? HTTPURLResponse)?.statusCode == 200, data.count < 100_000 else { return nil }
             let result = try JSONDecoder().decode(Response.self, from: data)
             guard ["answered", "emergency"].contains(result.status), !result.answer.isEmpty else { return nil }
+            requestedActions = (result.actions ?? [])
+                .filter { ["offered", "requested", "app_action_requested"].contains($0.status) }
+                .map(\.action)
             let sources = result.citations.map { "\($0.title): \($0.url)" }.joined(separator: "\n")
             return result.answer + (sources.isEmpty ? "" : "\n\nSources:\n" + sources)
         } catch is CancellationError {
@@ -485,6 +504,7 @@ final class RAGAssistantService: AssistantService {
     private nonisolated struct ConverseRequest: Encodable {
         nonisolated struct Turn: Encodable { let role: String; let text: String }
         let messages: [Turn]
+        let conversationId: String?
         let jurisdiction: String
         let stage: String
         let incident: AssistantIncident?
@@ -501,8 +521,10 @@ final class RAGAssistantService: AssistantService {
     }
     private nonisolated struct Response: Decodable {
         nonisolated struct Citation: Decodable { let title: String; let url: String }
+        nonisolated struct Action: Decodable { let action: String; let status: String }
         let status: String
         let answer: String
         let citations: [Citation]
+        var actions: [Action]? = nil
     }
 }

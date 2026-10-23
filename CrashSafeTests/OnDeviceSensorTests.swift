@@ -94,6 +94,28 @@ struct OnDeviceSensorTests {
         #expect(audio.count > 5_000)
     }
 
+    /// The team's Pulse agent on the Mac answers the phone and remembers the conversation (needs
+    /// `run_pulse_agent.py` running next to the backend).
+    @Test(.enabled(if: hasHardware && PulseBackend.endpoint() != nil)) func pulseAgentRemembersTheConversationOverWiFi() async throws {
+        let endpoint = try #require(PulseBackend.endpoint())
+        let conversation = UUID().uuidString
+        func say(_ text: String) async throws -> [String: Any] {
+            var talk = URLRequest(url: endpoint.appendingPathComponent("v1/converse"), timeoutInterval: 20)
+            talk.httpMethod = "POST"
+            talk.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            PulseBackend.authorize(&talk)
+            talk.httpBody = try JSONSerialization.data(withJSONObject: [
+                "conversation_id": conversation, "messages": [["role": "user", "text": text]]])
+            let (reply, _) = try await URLSession.shared.data(for: talk)
+            return try #require(try JSONSerialization.jsonObject(with: reply) as? [String: Any])
+        }
+        let first = try await say("A red sedan just hit my car at a stop sign. I'm okay.")
+        #expect(first["generation_mode"] as? String == "pulse_agent")
+        let second = try await say("What color was the car that hit me?")   // only this turn is sent
+        #expect(second["generation_mode"] as? String == "pulse_agent")
+        #expect((second["answer"] as? String)?.lowercased().contains("red") == true, "\(second["answer"] ?? "")")
+    }
+
     /// Apple's speech recognizer on this phone understands Pulse's own Corey clip (the same engine the
     /// mic buttons use; asks for Speech Recognition permission the first time).
     @Test(.enabled(if: hasHardware)) func speechRecognitionUnderstandsSpokenWords() async throws {

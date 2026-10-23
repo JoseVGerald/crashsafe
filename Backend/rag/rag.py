@@ -292,7 +292,7 @@ def make_server(engine,port=8787,developer_engine=None,voice=None,host="127.0.0.
                     except LookupError: return self.reply(503,{"error":"Speech not configured"})
                     except OSError: return self.reply(502,{"error":"Speech service unavailable"})
                 if self.path=="/v1/converse":
-                    if set(payload)-{"messages","stage","jurisdiction","incident","activity","flags"}: raise ValueError("Unsupported fields")
+                    if set(payload)-{"messages","conversation_id","stage","jurisdiction","incident","activity","flags"}: raise ValueError("Unsupported fields")
                     return self.reply(200,pulse_voice().converse(**payload))
                 if self.path=="/v1/retrieve": result=engine.retrieve(**payload)
                 elif self.path=="/v1/assist":
