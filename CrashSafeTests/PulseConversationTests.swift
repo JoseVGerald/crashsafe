@@ -133,43 +133,65 @@ final class EchoAssistant: AssistantService {
     }
 }
 
-@MainActor
-struct TapToTalkTests {
-    @Test func whatYouSayGoesToPulseAndFollowUpsKeepTheConversation() async throws {
-        let voice = ScriptedVoice(["Someone hit my bumper", "Do I call the police?"])
-        let assistant = EchoAssistant()
-        let talk = PressToTalkViewModel(assistant: assistant, voice: voice) {
-            AssistantContext(userName: "Test", isOnline: true, scenario: .general, carDescription: "", insurer: "",
-                             medicalNotes: "", familyContactNames: [])
+/// A caller who says each scripted line after a beat, says nothing once (silence), then stays on the line.
+final class CallScriptVoice: VoiceInputService {
+    var lines: [String?]
+    private(set) var partial = ""
+    init(_ lines: [String?]) { self.lines = lines }
+    func start() async throws {}
+    func finish() async throws -> String { throw SpeechVoiceInput.Failure.heardNothing }
+    func cancel() {}
+    func listen() async throws -> String {
+        try await Task.sleep(for: .milliseconds(10))
+        guard !lines.isEmpty else {
+            try await Task.sleep(for: .seconds(60))  // Quiet line until the call ends.
+            throw SpeechVoiceInput.Failure.heardNothing
         }
-        talk.pressBegan()
-        talk.pressEnded()
-        for _ in 0..<50 where !(talk.phase.isAnswered) { try await Task.sleep(for: .milliseconds(20)) }
-        #expect(talk.phase == .answered(transcript: "Someone hit my bumper", reply: "Pulse heard: Someone hit my bumper"))
-        talk.pressBegan()
-        talk.pressEnded()
-        for _ in 0..<50 where assistant.lastHistory.count < 3 { try await Task.sleep(for: .milliseconds(20)) }
-        #expect(assistant.lastHistory.map(\.text) == ["Someone hit my bumper", "Pulse heard: Someone hit my bumper", "Do I call the police?"])
-        #expect(assistant.conversationIDs.count == 2 && assistant.conversationIDs[0] != nil)
-        #expect(assistant.conversationIDs[0] == assistant.conversationIDs[1])   // one conversation for Pulse's agent
-        #expect(!talk.offersEmergencyCall)
-
-        // Pulse asks for the call prompt: the card offers a Call 911 button. A new conversation starts fresh.
-        talk.reset()
-        assistant.requestedActions = ["emergency_call_prompt"]
-        voice.lines = ["I can't breathe right"]
-        talk.pressBegan()
-        talk.pressEnded()
-        for _ in 0..<50 where !(talk.phase.isAnswered) { try await Task.sleep(for: .milliseconds(20)) }
-        #expect(talk.offersEmergencyCall)
-        #expect(!talk.offersTowSearch)
-        #expect(assistant.conversationIDs[2] != assistant.conversationIDs[1])
+        guard let line = lines.removeFirst() else { throw SpeechVoiceInput.Failure.heardNothing }
+        return line
     }
 }
 
-extension PressToTalkViewModel.Phase {
-    var isAnswered: Bool { if case .answered = self { true } else { false } }
+@MainActor
+struct PulseCallTests {
+    private func call(_ voice: CallScriptVoice, _ assistant: EchoAssistant) -> PulseCallViewModel {
+        PulseCallViewModel(assistant: assistant, voice: voice) {
+            AssistantContext(userName: "Test", isOnline: true, scenario: .general, carDescription: "", insurer: "",
+                             medicalNotes: "", familyContactNames: [])
+        }
+    }
+
+    /// One tap, then back and forth with no more taps: Pulse greets, answers each turn, and keeps listening.
+    @Test func turnsFlowBackAndForthUntilHangUp() async throws {
+        let voice = CallScriptVoice(["Someone hit my bumper", nil, "Do I call the police?"])  // a silence in between
+        let assistant = EchoAssistant()
+        let pulse = call(voice, assistant)
+        pulse.startCall()
+        #expect(pulse.inCall)
+        for _ in 0..<100 where assistant.lastHistory.count < 4 { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(assistant.lastHistory.map(\.text) == [PulseCallViewModel.greeting, "Someone hit my bumper",
+                                                     "Pulse heard: Someone hit my bumper", "Do I call the police?"])
+        #expect(assistant.conversationIDs.count == 2 && assistant.conversationIDs[0] == assistant.conversationIDs[1])
+        for _ in 0..<100 where pulse.phase != .listening { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(pulse.lastReply == "Pulse heard: Do I call the police?")   // still on the line, listening again
+        pulse.endCall()
+        #expect(pulse.phase == .idle && !pulse.inCall && pulse.startedAt == nil)
+    }
+
+    @Test func pulsesCallPromptShowsDuringTheCall() async throws {
+        let assistant = EchoAssistant()
+        assistant.requestedActions = ["emergency_call_prompt"]
+        let pulse = call(CallScriptVoice(["my friend hit her head and is confused"]), assistant)
+        pulse.startCall()
+        for _ in 0..<100 where !pulse.offersEmergencyCall { try await Task.sleep(for: .milliseconds(20)) }
+        #expect(pulse.offersEmergencyCall && !pulse.offersTowSearch)
+        pulse.endCall()
+        pulse.startCall()                                  // a new call starts clean
+        #expect(!pulse.offersEmergencyCall && pulse.history.count <= 1)
+        pulse.endCall()
+    }
 }
+
 
 /// Pulse straight from the phone: OpenRouter for the reply, Cartesia for Corey. No server involved.
 @MainActor
@@ -194,15 +216,21 @@ struct DirectPulseTests {
         let spoken = PulseSpeaker.spokenPart(of: reply)
         #expect(spoken == "I'm right here with you. I can't give a medication dose. I don't have confirmation that worked. Turn on your hazard lights if you can, Exchange insurance details.")
         #expect(service.lastModel == "nvidia/nemotron-3.5-lightning:free")
+        #expect(!reply.contains("Sources:"))
         let request = try #require(StubBackend.log.first)
         #expect(request.headers["Authorization"] == "Bearer sk-test-0123456789abcdef")
         let body = try #require(request.body)
         #expect(body["model"] as? String == "nvidia/nemotron-3.5-lightning:free")
+        #expect(body["max_tokens"] as? Int == 384 && body["temperature"] as? Int == 0)
         #expect((body["reasoning"] as? [String: Any])?["enabled"] as? Bool == false)
+        // The team's request: Core, then [PULSE_TURN], then their knowledge notes, then the conversation.
         let messages = try #require(body["messages"] as? [[String: Any]])
-        let system = try #require(messages.first?["content"] as? String)
-        #expect(system.contains("[PULSE_CORE]") && system.contains("[EVIDENCE]") && system.contains("DOCUMENT"))
-        #expect(messages.dropFirst().compactMap { $0["role"] as? String } == ["user", "assistant", "user"])   // the conversation so far
+        let system = messages.filter { $0["role"] as? String == "system" }.compactMap { $0["content"] as? String }
+        #expect(system.first == PulseTeamAgent.core && system.first?.hasPrefix("[PULSE_CORE]") == true)
+        #expect(system.dropFirst().first?.hasPrefix("[PULSE_TURN]\n{") == true)
+        #expect(system.dropFirst().first?.contains(#""mode":"standby""#) == true)
+        #expect(system.count == 2 || system.last?.hasPrefix("[PULSE_KNOWLEDGE]") == true)
+        #expect(messages.dropFirst(system.count).compactMap { $0["role"] as? String } == ["user", "assistant", "user"])
     }
 
     @Test func toolRequestsBecomeButtonsAndTheModelFinishesItsReply() async throws {
@@ -257,8 +285,36 @@ struct DirectPulseTests {
         let prompt = OnDevicePulse.prompt(history: history, query: "what color was the truck?")
         #expect(prompt.hasSuffix("Reply to the latest:\nPerson: what color was the truck?"))
         #expect(prompt.contains("Pulse: turn 11") && !prompt.contains("turn 3\n"))   // the last eight turns
-        #expect(OnDevicePulse.instructions(evidence: []).hasPrefix("[PULSE_MINI]"))
+        #expect(PulseTeamAgent.coreMini.hasPrefix("[PULSE_MINI]"))
     }
+
+    /// As the team's agent: possible self-harm offers the Call 911 prompt alongside the model's reply.
+    @Test func possibleSelfHarmOffersTheCallPrompt() async throws {
+        StubBackend.reset()
+        StubBackend.routes[completions] = chat(#"{"content":"I'm really glad you told me. I'm right here with you."}"#)
+        let service = DirectPulseService(key: "sk-test-0123456789abcdef", fallback: LocalEvidenceAssistant(), session: StubBackend.session(), onDevice: { _, _ in nil })
+        _ = try await service.reply(to: [ChatMessage(role: .user, text: "honestly I want to die")], context: context())
+        #expect(service.requestedActions == ["emergency_call_prompt"])
+        let turn = (StubBackend.log.first?.body?["messages"] as? [[String: Any]])?[1]["content"] as? String
+        #expect(turn?.contains(#""possible_self_harm":true"#) == true)
+    }
+
+    #if targetEnvironment(simulator)
+    /// The port reproduces the team's own code exactly: the [PULSE_TURN] text byte for byte, and the same
+    /// knowledge notes chosen (golden outputs from Tools/Pulse/export_team_pulse.py, run on their pulse_agent).
+    @Test func turnAndKnowledgeMatchTheTeamsAgentExactly() throws {
+        let fixture = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appending(path: "Fixtures/pulse_golden.json")
+        let cases = try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: fixture)) as? [[String: Any]])
+        #expect(cases.count == 7)
+        for item in cases {
+            let text = try #require(item["text"] as? String), mode = try #require(item["mode"] as? String)
+            let connectivity = try #require(item["connectivity"] as? String)
+            let crash = try #require(item["crash"] as? [String: Any])
+            #expect(PulseTeamAgent.turn(text: text, mode: mode, connectivity: connectivity, crash: crash) == item["turn"] as? String, "\(text)")
+            #expect(PulseKnowledgeIndex.shared.search(text, mode: mode, connectivity: connectivity).ids == item["knowledge_ids"] as? [String], "\(text)")
+        }
+    }
+    #endif
 
     /// The same cases as the team's Python filter tests (Backend/rag/tests/test_pulse_voice.py).
     @Test func theTeamsSentenceFilterHoldsInSwift() {
@@ -290,7 +346,7 @@ struct DirectPulseTests {
     /// The app's copy of the team's prompt is the same as the backend's (both unchanged from the team's repo).
     @Test func bundledCoreMatchesTheTeamsFiles() throws {
         let repo = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-        for (bundled, original) in [("pulse_core", "core.md"), ("pulse_hard_lines", "hard_lines.md"), ("pulse_core_mini", "core_mini.md")] {
+        for (bundled, original) in [("pulse_core", "core.md"), ("pulse_core_mini", "core_mini.md")] {
             let app = try String(contentsOf: try #require(Bundle.main.url(forResource: bundled, withExtension: "txt")), encoding: .utf8)
             #expect(app == (try String(contentsOf: repo.appending(path: "Backend/rag/pulse_core/\(original)"), encoding: .utf8)))
         }

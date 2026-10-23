@@ -20,7 +20,7 @@ struct MainTabView: View {
                 user: user,
                 viewModel: HomeViewModel(detector: env.crashDetector, driving: env.driving,
                                          conditions: env.conditions, userID: user.id),
-                talk: PressToTalkViewModel(assistant: env.assistant, voice: env.voiceInput, speaker: env.speaker) { [user, env] in
+                talk: PulseCallViewModel(assistant: env.assistant, voice: env.voiceInput, speaker: env.speaker) { [user, env] in
                     AssistantContext.make(user: user, profile: nil, activeTrip: nil, isOnline: env.connectivity.isOnline,
                                           activity: env.intelligence.assistantActivity)
                 }
