@@ -19,6 +19,7 @@
 		1D1B2D27658CC7D2F38F9A89 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93586F6E4AC1D4296DB0C62 /* SplashView.swift */; };
 		204EF7185E671B15515A016B /* DriveCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8BFCCE656ACD48501DF6AA /* DriveCoach.swift */; };
 		21C83BBE5DF8B21B052B22E6 /* AuthViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A825ADD0BC035D33E0EB527 /* AuthViewModels.swift */; };
+		21E06D39A97C87C1D111AE44 /* AppleHealthImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3E765AA206E085A4475BC5 /* AppleHealthImport.swift */; };
 		2694948830F1DC93DBD498B5 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2BB3CCF6B5D3ADF307DCB3D /* ForgotPasswordView.swift */; };
 		28C5C48D0E7369D4FCCFFE73 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8964FF768E716765240E0FB5 /* OnboardingFlowView.swift */; };
 		2A2A535A29138FACCE93DA3E /* ConnectivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93FC2C4AED55455A5CEAB7C3 /* ConnectivityMonitor.swift */; };
@@ -90,6 +91,7 @@
 		A97811D94D3200A010138747 /* RealCrashPulse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41227F19FE935E194E2C1B5A /* RealCrashPulse.swift */; };
 		B236D2665FB2BC2B11E5ED97 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309C2E2B6FE3DA1077EAFC4 /* AuthService.swift */; };
 		B2B761BEBE5575A8312F8DE9 /* PulseVoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD25929C2B1DC2E2D4FA025 /* PulseVoice.swift */; };
+		B54D51BEC927ECB1AB557FCA /* AppleHealthFillButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E3B8EE309F44FB424B665F /* AppleHealthFillButton.swift */; };
 		B7808DC0B089AF7500BDC907 /* motionsense-jogging.csv in Resources */ = {isa = PBXBuildFile; fileRef = C72D1C766900266933BE3B64 /* motionsense-jogging.csv */; };
 		BE896A2B2E5512B88A53E925 /* CrashSafeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B9A643E9FE471C031707 /* CrashSafeApp.swift */; };
 		C1CC2CF9212A2D9F2835ED24 /* CrashSafeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */; };
@@ -159,6 +161,7 @@
 		359E6749D361B8B5808C2704 /* pulse_turn.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pulse_turn.json; sourceTree = "<group>"; };
 		36057062EA5399EA3EFBDA37 /* pulse_core.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = pulse_core.txt; sourceTree = "<group>"; };
 		365ED656BB8AA78C84C34EC0 /* CrashSafe-CarPlay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrashSafe-CarPlay.entitlements"; sourceTree = "<group>"; };
+		3859B85797C0203DA6E5262C /* CrashSafe-Device.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrashSafe-Device.entitlements"; sourceTree = "<group>"; };
 		385BB92C401F2CDF2B963CAD /* ReplayMotionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplayMotionSource.swift; sourceTree = "<group>"; };
 		389C94DF8A2FA1AF52C9446E /* CrashSafeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashSafeTests.swift; sourceTree = "<group>"; };
 		38E83097D679184F30038226 /* DrivingAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrivingAdvisor.swift; sourceTree = "<group>"; };
@@ -247,6 +250,7 @@
 		E71081F509E40ABC55732821 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		E73F6A49957B27238D1BA09B /* Editors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Editors.swift; sourceTree = "<group>"; };
 		E78538B95EBA79A6530A4CE4 /* AssistantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantView.swift; sourceTree = "<group>"; };
+		E8E3B8EE309F44FB424B665F /* AppleHealthFillButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHealthFillButton.swift; sourceTree = "<group>"; };
 		EB6A0B93C97FCB3D32E6C3A5 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		EC16382702C757F16D00A9D3 /* SensorLabMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorLabMath.swift; sourceTree = "<group>"; };
 		F84372694B6F771A09C0C84D /* ImpactAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpactAnalysis.swift; sourceTree = "<group>"; };
@@ -258,6 +262,7 @@
 		FBECFC0CC0EBA2654A113684 /* ContactPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactPicker.swift; sourceTree = "<group>"; };
 		FC8DB5ED46BD44F967A50D2D /* checkin-tap-ok.m4a */ = {isa = PBXFileReference; path = "checkin-tap-ok.m4a"; sourceTree = "<group>"; };
 		FCCBBE80EC490BE199FD311F /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		FD3E765AA206E085A4475BC5 /* AppleHealthImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHealthImport.swift; sourceTree = "<group>"; };
 		FE2D32FF091FAE3CB800CC5C /* pulse_golden.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pulse_golden.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -341,6 +346,7 @@
 				CE3CA149AD65DB0B4CD6D057 /* Connectivity */,
 				E2DD3B8A62E66360E7577196 /* CrashDetection */,
 				2913C752EA60FB0EFF1E77AA /* Driving */,
+				925BECDDFF78EEF240A7F95E /* Health */,
 				901A07B77500009A8A3993F3 /* Intelligence */,
 				C25DCC8DCAC7D19EB3D85135 /* Location */,
 				F11D4B527B026669B8709B3A /* Sensors */,
@@ -403,6 +409,7 @@
 		5B29C741EE243CAD8378C983 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				E8E3B8EE309F44FB424B665F /* AppleHealthFillButton.swift */,
 				FBECFC0CC0EBA2654A113684 /* ContactPicker.swift */,
 				E73F6A49957B27238D1BA09B /* Editors.swift */,
 				155BF8D9D850158D2A834217 /* InsurerPicker.swift */,
@@ -503,6 +510,14 @@
 				FA5597DA4BEC0D682F6847E7 /* TransportMode.swift */,
 			);
 			path = Intelligence;
+			sourceTree = "<group>";
+		};
+		925BECDDFF78EEF240A7F95E /* Health */ = {
+			isa = PBXGroup;
+			children = (
+				FD3E765AA206E085A4475BC5 /* AppleHealthImport.swift */,
+			);
+			path = Health;
 			sourceTree = "<group>";
 		};
 		9547EC2F3B9C729514DC17CE /* Resources */ = {
@@ -624,6 +639,7 @@
 			children = (
 				365ED656BB8AA78C84C34EC0 /* CrashSafe-CarPlay.entitlements */,
 				7213A5B059323E4F0C490E94 /* CrashSafe-Device-WeatherKit.entitlements */,
+				3859B85797C0203DA6E5262C /* CrashSafe-Device.entitlements */,
 				BAFC0302F9B65F983E111596 /* Info.plist */,
 				BACE073DFE9B0AB0C9265118 /* App */,
 				0E28E4E8D2EBCA5454942629 /* DesignSystem */,
@@ -835,6 +851,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				038A4434D278882551D4D92B /* AppEnvironment.swift in Sources */,
+				B54D51BEC927ECB1AB557FCA /* AppleHealthFillButton.swift in Sources */,
+				21E06D39A97C87C1D111AE44 /* AppleHealthImport.swift in Sources */,
 				55A55DAC0CB9B359929814D1 /* AppleSignInCoordinator.swift in Sources */,
 				A15519DBB090E04C0E5D56A8 /* AppleWeatherService.swift in Sources */,
 				DC6C9908F0808E00EA66E68D /* AssistantContext+Make.swift in Sources */,
@@ -976,6 +994,8 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cac.crashsafe;
+				PULSE_HEALTHKIT = NO;
+				"PULSE_HEALTHKIT[sdk=iphonesimulator*]" = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1003,6 +1023,8 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cac.crashsafe;
+				PULSE_HEALTHKIT = NO;
+				"PULSE_HEALTHKIT[sdk=iphonesimulator*]" = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

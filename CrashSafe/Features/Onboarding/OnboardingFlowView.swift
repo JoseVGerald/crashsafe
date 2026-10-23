@@ -344,6 +344,7 @@ private struct HealthStep: View {
     var body: some View {
         StepScaffold(title: "Medical info",
                      subtitle: "Shown to responders on your crash screen. Apps can't read Apple's Medical ID, so add anything important here.") {
+            AppleHealthFillButton(profile: profile)
             VStack(alignment: .leading, spacing: 10) {
                 Text("Allergies, conditions, medications")
                     .font(.subheadline.weight(.medium))
