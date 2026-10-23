@@ -1,4 +1,5 @@
 import Foundation
+import HealthKit
 import Testing
 @testable import CrashSafe
 
@@ -66,5 +67,25 @@ struct ImpactReportTests {
         #expect(lines.first == "Your car's speed changed by about 18 mph in a split second (about 0.12 s).")
         #expect(lines.contains("You were going about 32 mph just before."))
         #expect(facts().headline.hasPrefix("Moderate impact"))
+    }
+}
+
+@MainActor
+struct AppleHealthImportTests {
+    @Test func healthFillsTheProfileWithoutOverwritingWhatWasTyped() {
+        let profile = Profile(ownerID: "u1", medicalNotes: "Allergic to penicillin. Takes Lisinopril.")
+        profile.ageBand = .adult
+        let filled = profile.apply(.init(bloodType: "O−", ageBand: .senior, medications: ["Lisinopril", "Metformin"]))
+        #expect(profile.bloodType == "O−")
+        #expect(profile.ageBand == .adult)  // already answered
+        #expect(profile.medicalNotes == "Allergic to penicillin. Takes Lisinopril.\nMedications: Metformin")
+        #expect(filled == ["blood type O−", "1 medication"])
+        #expect(profile.apply(.init(bloodType: "O−", ageBand: nil, medications: ["metformin"])).isEmpty)  // nothing new
+    }
+
+    @Test func birthdaysAndBloodTypesMapLikeTheProfile() {
+        #expect(AgeBand(age: 17) == .teen && AgeBand(age: 22) == .young && AgeBand(age: 44) == .adult)
+        #expect(AgeBand(age: 64) == .midlife && AgeBand(age: 80) == .senior)
+        #expect(AppleHealthImport.label(.abNegative) == "AB−" && AppleHealthImport.label(.notSet) == nil)
     }
 }

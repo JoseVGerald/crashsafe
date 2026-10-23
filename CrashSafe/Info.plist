@@ -23,6 +23,8 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSHealthShareUsageDescription</key>
+	<string>CrashSafe reads your blood type, birthday and the medications you track in Health to fill in your safety profile, so responders see them after a crash. Nothing is written to Health.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>In development builds, CrashSafe talks to the Pulse server on your Mac over Wi-Fi.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -39,6 +41,8 @@
 	<string>$(PULSE_CARTESIA_BACKUP_KEY)</string>
 	<key>PulseCartesiaKey</key>
 	<string>$(PULSE_CARTESIA_KEY)</string>
+	<key>PulseHealthImport</key>
+	<string>$(PULSE_HEALTHKIT)</string>
 	<key>PulseLANHost</key>
 	<string>$(PULSE_LAN_HOST)</string>
 	<key>PulseLANToken</key>
