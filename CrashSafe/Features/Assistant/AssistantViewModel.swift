@@ -15,6 +15,8 @@ final class AssistantViewModel {
     /// Says replies out loud after a spoken question (hands-free after a crash).
     @ObservationIgnored var speaker: PulseSpeaker?
     @ObservationIgnored private var lastInputWasVoice = false
+    /// Lets Pulse's agent on the backend keep this conversation's earlier turns.
+    @ObservationIgnored private var conversationID = UUID().uuidString
     /// Rebuilt on every request so replies use the latest profile and connectivity.
     @ObservationIgnored var contextProvider: () -> AssistantContext
 
@@ -38,6 +40,7 @@ final class AssistantViewModel {
     func begin(_ scenario: AssistantScenario) {
         guard scenario != .general || messages.isEmpty else { return }
         self.scenario = scenario
+        conversationID = UUID().uuidString
         var context = contextProvider()
         context.scenario = scenario
         messages = [ChatMessage(role: .assistant, text: service.greeting(for: context))]
@@ -55,6 +58,7 @@ final class AssistantViewModel {
         do {
             var context = contextProvider()
             context.scenario = scenario
+            context.conversationID = conversationID
             let reply = try await service.reply(to: messages, context: context)
             messages.append(ChatMessage(role: .assistant, text: reply))
             if lastInputWasVoice { speaker?.speak(PulseSpeaker.spokenPart(of: reply)) }

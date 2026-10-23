@@ -2,7 +2,7 @@ import Observation
 import SwiftUI
 
 /// Tap-to-talk with Pulse: the microphone (on-device speech recognition) → Pulse on the backend (the
-/// team's Pulse core) → spoken back as Corey. Follow-up questions keep the conversation.
+/// team's Pulse agent) → spoken back as Corey. Follow-up questions keep the conversation.
 @Observable
 final class PressToTalkViewModel {
     enum Phase: Equatable {
@@ -14,6 +14,9 @@ final class PressToTalkViewModel {
     }
 
     private(set) var phase: Phase = .idle
+    /// Buttons Pulse asked for with its reply; they act only when tapped.
+    private(set) var offersEmergencyCall = false
+    private(set) var offersTowSearch = false
     @ObservationIgnored private let assistant: any AssistantService
     @ObservationIgnored private let voice: any VoiceInputService
     @ObservationIgnored private let speaker: PulseSpeaker?
@@ -21,6 +24,7 @@ final class PressToTalkViewModel {
     @ObservationIgnored private var task: Task<Void, Never>?
     /// This conversation's turns, so "what about the other driver?" makes sense to Pulse.
     @ObservationIgnored private var history: [ChatMessage] = []
+    @ObservationIgnored private var conversationID = UUID().uuidString
 
     init(assistant: any AssistantService, voice: any VoiceInputService, speaker: PulseSpeaker? = nil,
          contextProvider: @escaping () -> AssistantContext) {
@@ -56,10 +60,14 @@ final class PressToTalkViewModel {
                 let transcript = try await voice.finish()
                 phase = .thinking(transcript: transcript)
                 history.append(ChatMessage(role: .user, text: transcript))
-                let reply = (try? await assistant.reply(to: Array(history.suffix(12)), context: contextProvider()))
+                var context = contextProvider()
+                context.conversationID = conversationID
+                let reply = (try? await assistant.reply(to: Array(history.suffix(12)), context: context))
                     ?? "I couldn't answer that right now."
                 guard !Task.isCancelled else { return }
                 history.append(ChatMessage(role: .assistant, text: reply))
+                offersEmergencyCall = assistant.requestedActions.contains("emergency_call_prompt")
+                offersTowSearch = assistant.requestedActions.contains("find_tow")
                 phase = .answered(transcript: transcript, reply: reply)
                 speaker?.speak(PulseSpeaker.spokenPart(of: reply))
             } catch {
@@ -73,6 +81,9 @@ final class PressToTalkViewModel {
         voice.cancel()
         speaker?.stop()
         history = []
+        conversationID = UUID().uuidString
+        offersEmergencyCall = false
+        offersTowSearch = false
         phase = .idle
     }
 }
@@ -81,6 +92,7 @@ final class PressToTalkViewModel {
 struct PressToTalkCard: View {
     @State var viewModel: PressToTalkViewModel
     var onOpenChat: () -> Void
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         VStack(spacing: Space.md) {
@@ -108,6 +120,7 @@ struct PressToTalkCard: View {
                     .background(Brand.surfaceRaised, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onTapGesture { viewModel.reset() }
+                offers
             }
 
             Button(action: onOpenChat) {
@@ -121,6 +134,31 @@ struct PressToTalkCard: View {
         .padding(.horizontal, Space.md)
         .padding(.vertical, Space.sm)
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: viewModel.phase)
+    }
+
+    /// What Pulse asked the app to offer (the agent's tools): shown, never done for the person.
+    @ViewBuilder private var offers: some View {
+        if viewModel.offersEmergencyCall {
+            Button {
+                if let url = URL(string: "tel://911") { openURL(url) }
+            } label: {
+                Label("Call 911", systemImage: "phone.fill")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, minHeight: 50)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
+        }
+        if viewModel.offersTowSearch {
+            Button {
+                if let url = URL(string: "maps://?q=tow%20truck") { openURL(url) }
+            } label: {
+                Label("Find a tow nearby", systemImage: "truck.box.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .buttonStyle(.bordered)
+        }
     }
 
     private var orb: some View {
