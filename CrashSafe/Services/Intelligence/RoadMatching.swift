@@ -1,7 +1,7 @@
 import Foundation
 
-/// One road from OpenStreetMap (the free data CrashSafe uses for speed limits: Apple Maps doesn't
-/// give apps speed limits). Built from an Overpass `way … out tags geom` response.
+/// One road from OpenStreetMap (CrashSafe's offline speed limit data: Apple Maps doesn't give apps speed
+/// limits, and TomTom is only reachable online). Built from an Overpass `way … out tags geom` response.
 nonisolated struct RoadWay: Codable, Equatable, Sendable {
     nonisolated struct Point: Codable, Equatable, Sendable {
         var lat: Double
@@ -357,6 +357,100 @@ nonisolated enum RoadMatcher {
             : RoadSegment.classify(highway: highway ?? "service", mph: mph, density: edge.density, unpaved: edge.unpaved == true)
         return SpeedLimitReading(mph: mph, isPosted: posted != nil, roadName: edge.names?.first, highway: highway ?? "service",
                                  wayID: edge.way_id ?? 0, distanceMeters: distance, segment: segment, features: features)
+    }
+
+    /// RoadKind-style highway tag for TomTom's functional road class (0 = freeway … 8 = minor), road use and
+    /// form of way.
+    static func highway(tomTomFRC frc: Int?, use: String?, formOfWay: String?) -> String {
+        let form = formOfWay ?? ""
+        if form == "ServiceRoad" || form.hasPrefix("ETA") || form == "EntranceToOrExitFromACarPark" || form == "RoadInEnclosedTrafficArea" { return "service" }
+        if form == "RoadInPedestrianZone" { return "living_street" }
+        let base = switch frc ?? 6 {
+        case 0: "motorway"
+        case 1: use == "LimitedAccess" ? "motorway" : "trunk"
+        case 2: "primary"
+        case 3: "secondary"
+        case 4: "tertiary"
+        case 5: "unclassified"
+        case 6, 7: "residential"
+        default: "service"
+        }
+        if use == "Ramp" || form.hasSuffix("SlipRoad") {
+            return ["motorway", "trunk", "primary", "secondary", "tertiary"].contains(base) ? base + "_link" : "primary_link"
+        }
+        return base
+    }
+
+    /// Parses TomTom's Snap to Roads response: the road the last point of a short GPS trace matched, with its
+    /// posted limit. TomTom matches the whole trace to a route, so a frontage road or ramp beside the car
+    /// doesn't win just for being a few meters closer. A missing or advisory ("Recommended") limit falls back
+    /// to the typical limit for the road class, marked not posted.
+    /// - Parameter lastPoint: the trace's last GPS point, to measure how far the match is from the car.
+    static func decodeTomTomSnap(_ data: Data, lastPoint: (lat: Double, lon: Double)? = nil,
+                                 maxDistance: Double = 35) throws -> SpeedLimitReading? {
+        struct Response: Decodable {
+            struct Measure: Decodable { var value: Double?; var unit: String?; var type: String? }
+            struct Route: Decodable {
+                struct Properties: Decodable {
+                    struct Address: Decodable { var roadName: String?; var roadNumbers: [String]? }
+                    struct Lanes: Decodable { var numberOfLanes: Int? }
+                    var id: String?
+                    var speedLimits: Measure?
+                    var address: Address?
+                    var frc: Int?
+                    var formOfWay: String?
+                    var roadUse: String?
+                    var laneInfo: Lanes?
+                    var partOfTunnel: Bool?
+                    var urbanArea: Bool?
+                }
+                var properties: Properties?
+            }
+            struct Projected: Decodable {
+                struct Geometry: Decodable { var coordinates: [Double]? }
+                struct Properties: Decodable { var routeIndex: Int?; var snapResult: String? }
+                var geometry: Geometry?
+                var properties: Properties?
+            }
+            var route: [Route]?
+            var projectedPoints: [Projected]?
+        }
+        let response = try JSONDecoder().decode(Response.self, from: data)
+        let routes = response.route ?? []
+        guard let point = response.projectedPoints?.last, point.properties?.snapResult == "Matched",
+              let index = point.properties?.routeIndex, routes.indices.contains(index),
+              let road = routes[index].properties else { return nil }
+        var distance = 0.0
+        if let lastPoint, let snapped = point.geometry?.coordinates, snapped.count >= 2 {
+            distance = TransportFeatures.haversine(lastPoint.lat, lastPoint.lon, snapped[1], snapped[0])
+        }
+        guard distance <= maxDistance else { return nil }
+        let highway = highway(tomTomFRC: road.frc, use: road.roadUse, formOfWay: road.formOfWay)
+        let posted: Double? = road.speedLimits.flatMap { limit in
+            guard limit.type != "Recommended", let value = limit.value, value > 0, value < 250 else { return nil }
+            return limit.unit == "mph" ? value : (value * 0.621371).rounded()
+        }
+        let lot = (road.formOfWay ?? "").hasPrefix("ETAParking") || road.formOfWay == "EntranceToOrExitFromACarPark"
+        guard let mph = posted ?? (lot ? 10 : typicalLimitMPH(for: highway)) else { return nil }
+        var features: RoadFeatures = []
+        if road.partOfTunnel == true { features.insert(.tunnel) }
+        if road.formOfWay == "Roundabout" || road.roadUse == "Rotary" { features.insert(.roundabout) }
+        if road.laneInfo?.numberOfLanes == 1, !["residential", "service", "living_street"].contains(highway) { features.insert(.singleLane) }
+        // TomTom says urban or not; Valhalla-style density stands in for it (≤ 3 reads as rural).
+        let segment: RoadSegment = lot ? .parkingLot
+            : RoadSegment.classify(highway: highway, mph: mph, density: road.urbanArea == false ? 2 : nil)
+        return SpeedLimitReading(mph: mph, isPosted: posted != nil,
+                                 roadName: road.address?.roadName ?? road.address?.roadNumbers?.first,
+                                 highway: highway, wayID: stableID(road.id), distanceMeters: distance,
+                                 segment: segment, features: features)
+    }
+
+    /// TomTom road IDs are strings; a stable 64-bit FNV-1a hash stands in for an OpenStreetMap way ID.
+    static func stableID(_ text: String?) -> Int64 {
+        guard let text else { return 0 }
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in text.utf8 { hash = (hash ^ UInt64(byte)) &* 0x100_0000_01b3 }
+        return Int64(bitPattern: hash)
     }
 
     /// Parses an Overpass JSON response (`out tags geom`).

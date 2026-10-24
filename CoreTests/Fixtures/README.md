@@ -15,6 +15,9 @@
 - `valhalla_i5_north.json`, `valhalla_sw_main_west.json`: real `trace_attributes` responses from the
   OpenStreetMap community's Valhalla server (valhalla1.openstreetmap.de) for short traces on I-5 and
   SW Main Street, fetched 2026-10-22. Data © OpenStreetMap contributors, ODbL.
+- `tomtom_snap_freeway.json`: a hand-written TomTom Snap to Roads response (not fetched; it follows the
+  documented response schema at docs.tomtom.com) for a short trace on I-5 with a 35 mph frontage road
+  beside it, the case where matching a single GPS point picks the wrong road.
 - `default_speeds.json`: legal default speed limits per region and road category, built by
   `Tools/Roads/build_default_speeds.py` from osm-legal-default-speeds (BSD-3-Clause,
   https://github.com/westnordost/osm-legal-default-speeds); the app bundles the same file with its license.

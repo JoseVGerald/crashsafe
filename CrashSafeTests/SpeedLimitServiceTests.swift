@@ -14,7 +14,10 @@ nonisolated final class CallCounter: @unchecked Sendable {
 nonisolated struct FakeQuickSource: QuickSpeedLimitSource {
     var reading: SpeedLimitReading?
     var delay: Duration = .milliseconds(50)
+    var primary = false
     let calls = CallCounter()
+    var isPrimary: Bool { primary }
+    var label: String { primary ? "TomTom" : "quick lookup" }
     func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading? {
         calls.increment()
         try await Task.sleep(for: delay)
@@ -78,6 +81,37 @@ struct SpeedLimitServiceTests {
         #expect(service.current?.mph == 35)
         #expect(service.firstLimit?.basis == "road data")
         #expect(quick.calls.count == 0 && area.calls.count == 1)
+    }
+
+    /// TomTom's trace match beats the local one-point OpenStreetMap match, even with road data on the phone.
+    @Test func primarySourceWinsOverLocalRoadData() async throws {
+        let quick = FakeQuickSource(reading: Self.quickReading, primary: true)
+        let area = FakeRoadSource(ways: [Self.street], delay: .milliseconds(10))
+        let service = SpeedLimitService(source: area, quick: quick, store: nil)
+        service.prefetch(lat: 45.5050, lon: -122.6)
+        try await Task.sleep(for: .milliseconds(200))
+        service.startDrive()
+        service.observe(Self.fix(45.5050))
+        #expect(service.current?.mph == 35)                  // road data until TomTom answers
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(service.current?.mph == 30 && service.current?.isPosted == true)
+        service.observe(Self.fix(45.5051))
+        #expect(service.current?.mph == 30)                  // and it stays the source
+        #expect(quick.calls.count == 1)
+    }
+
+    @Test func fallbackQuickSourceMovesOnOnlyWhenOneFails() async throws {
+        struct Broken: QuickSpeedLimitSource {
+            var isPrimary: Bool { true }
+            func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading? { throw URLError(.timedOut) }
+        }
+        let backup = FakeQuickSource(reading: Self.quickReading, delay: .zero)
+        let chain = FallbackQuickSource(sources: [Broken(), backup])
+        #expect(chain.isPrimary)
+        #expect(try await chain.speedLimit(along: [(45.5, -122.6)])?.mph == 30)
+        let noRoad = FakeQuickSource(reading: nil, delay: .zero)
+        #expect(try await FallbackQuickSource(sources: [noRoad, backup]).speedLimit(along: [(45.5, -122.6)]) == nil)
+        #expect(backup.calls.count == 1)
     }
 
     @Test func quickLookupsAreThrottled() async throws {

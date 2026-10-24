@@ -10,6 +10,8 @@ nonisolated enum PulseKeys {
     static func cartesia(bundle: Bundle = .main) -> String? { value("PulseCartesiaKey", bundle) }
     /// Used when the main Cartesia key is refused (out of credits, revoked, rate-limited).
     static func cartesiaBackup(bundle: Bundle = .main) -> String? { value("PulseCartesiaBackupKey", bundle) }
+    /// TomTom Snap to Roads, for speed limits (`TomTomSpeedLimitSource`).
+    static func tomTom(bundle: Bundle = .main) -> String? { value("PulseTomTomKey", bundle) }
 
     private static func value(_ key: String, _ bundle: Bundle) -> String? {
         guard let value = bundle.object(forInfoDictionaryKey: key) as? String,
