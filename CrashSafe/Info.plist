@@ -49,6 +49,8 @@
 	<string>$(PULSE_LAN_TOKEN)</string>
 	<key>PulseOpenRouterKey</key>
 	<string>$(PULSE_OPENROUTER_KEY)</string>
+	<key>PulseTomTomKey</key>
+	<string>$(PULSE_TOMTOM_KEY)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

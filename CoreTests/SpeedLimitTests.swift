@@ -99,6 +99,41 @@ struct ValhallaTraceTests {
     }
 }
 
+struct TomTomSnapTests {
+    static func decode(_ properties: String, snap: String = "Matched") throws -> SpeedLimitReading? {
+        try RoadMatcher.decodeTomTomSnap(Data("""
+        {"route":[{"properties":\(properties)}],
+         "projectedPoints":[{"geometry":{"coordinates":[-122.6,45.5]},"properties":{"routeIndex":0,"snapResult":"\(snap)"}}]}
+        """.utf8), lastPoint: (45.5, -122.6))
+    }
+
+    @Test func theTraceMatchWinsOverTheCloserFrontageRoad() throws {
+        let url = try #require(Bundle.module.url(forResource: "tomtom_snap_freeway", withExtension: "json", subdirectory: "Fixtures"))
+        let reading = try #require(try RoadMatcher.decodeTomTomSnap(Data(contentsOf: url), lastPoint: (45.54102, -122.67180)))
+        #expect(reading.mph == 50 && reading.isPosted)
+        #expect(reading.roadName == "I-5 N" && reading.highway == "motorway" && reading.environment == .highway)
+        #expect(reading.segment == .interstate && reading.distanceMeters < 5)
+        // Too far from where the car really is: not trusted.
+        #expect(try RoadMatcher.decodeTomTomSnap(Data(contentsOf: url), lastPoint: (45.5420, -122.6718)) == nil)
+    }
+
+    @Test func unitsRoadClassesAndMissingLimits() throws {
+        #expect(try Self.decode(#"{"speedLimits":{"value":80,"unit":"kmph","type":"Maximum"},"frc":2}"#)?.mph == 50)
+        let untagged = try #require(try Self.decode(#"{"frc":6,"address":{"roadName":"NE 7th Ave"}}"#))
+        #expect(untagged.mph == 25 && !untagged.isPosted && untagged.highway == "residential")
+        // An advisory speed (ramp curves) isn't the legal limit.
+        let ramp = try #require(try Self.decode(#"{"speedLimits":{"value":25,"unit":"mph","type":"Recommended"},"frc":0,"roadUse":"Ramp"}"#))
+        #expect(ramp.highway == "motorway_link" && !ramp.isPosted && ramp.mph == 35)
+        let lot = try Self.decode(#"{"frc":7,"formOfWay":"ETAParkingArea"}"#)
+        #expect(lot?.segment == .parkingLot && lot?.mph == 10)
+        let rural = try Self.decode(#"{"speedLimits":{"value":55,"unit":"mph","type":"Maximum"},"frc":2,"urbanArea":false}"#)
+        #expect(rural?.segment == .ruralRoad)
+        #expect(try Self.decode(#"{"frc":3,"partOfTunnel":true,"formOfWay":"Roundabout"}"#)?.features == [.tunnel, .roundabout])
+        #expect(try Self.decode(#"{"frc":2}"#, snap: "OffRoad") == nil)
+        #expect(RoadMatcher.stableID("abc") == RoadMatcher.stableID("abc") && RoadMatcher.stableID("abc") != RoadMatcher.stableID("abd"))
+    }
+}
+
 struct RoadSegmentTests {
     @Test func classifiesFinerRoadTypes() {
         #expect(RoadSegment.classify(highway: "motorway", mph: 60) == .interstate)

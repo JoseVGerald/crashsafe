@@ -5,4 +5,6 @@
 PULSE_OPENROUTER_KEY =
 PULSE_CARTESIA_KEY =
 PULSE_CARTESIA_BACKUP_KEY =
+// TomTom (speed limits). Without it, speed limits come from OpenStreetMap only.
+PULSE_TOMTOM_KEY =
 #include? "Pulse.xcconfig.local"

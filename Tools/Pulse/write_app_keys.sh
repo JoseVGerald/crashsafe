@@ -12,5 +12,6 @@ umask 077
   echo "PULSE_OPENROUTER_KEY = $(value OPENROUTER_API_KEY)"
   echo "PULSE_CARTESIA_KEY = $(value CARTESIA_API_KEY)"
   echo "PULSE_CARTESIA_BACKUP_KEY = $(value CARTESIA_API_KEY_BACKUP)"
+  echo "PULSE_TOMTOM_KEY = $(value TOMTOM_API_KEY)"
 } > "$out"
 echo "Wrote $out"
