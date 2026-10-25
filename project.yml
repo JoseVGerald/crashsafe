@@ -52,6 +52,8 @@ targets:
         PulseOpenRouterKey: "$(PULSE_OPENROUTER_KEY)"
         PulseCartesiaKey: "$(PULSE_CARTESIA_KEY)"
         PulseCartesiaBackupKey: "$(PULSE_CARTESIA_BACKUP_KEY)"
+        # TomTom Snap to Roads (speed limits). Same git-ignored file; without it, OpenStreetMap only.
+        PulseTomTomKey: "$(PULSE_TOMTOM_KEY)"
         # YES where the build is signed with HealthKit (see CODE_SIGN_ENTITLEMENTS below).
         PulseHealthImport: "$(PULSE_HEALTHKIT)"
         NSHealthShareUsageDescription: "CrashSafe reads your blood type, birthday and the medications you track in Health to fill in your safety profile, so responders see them after a crash. Nothing is written to Health."

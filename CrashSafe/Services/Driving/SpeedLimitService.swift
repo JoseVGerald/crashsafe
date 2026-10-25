@@ -100,6 +100,92 @@ nonisolated struct RacingRoadSource: RoadDataSource {
 /// The speed limit of the road the car is on right now, from a short trace of recent GPS points.
 nonisolated protocol QuickSpeedLimitSource: Sendable {
     func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading?
+    /// True when this source's limits beat the local OpenStreetMap match even once road data is on the
+    /// phone (TomTom: better limits, matched along the trace). False: only used until road data arrives.
+    var isPrimary: Bool { get }
+    /// Where a limit came from, for the log.
+    var label: String { get }
+}
+
+nonisolated extension QuickSpeedLimitSource {
+    var isPrimary: Bool { false }
+    var label: String { "quick lookup" }
+}
+
+/// TomTom's Snap to Roads API: matches the last few GPS points to the road the car is driving on and
+/// returns TomTom's speed limit for it (the same map data as in-car navigation, far more complete than
+/// OpenStreetMap's `maxspeed` tags in the US). Needs a TomTom key (`PulseKeys.tomTom`); the free tier
+/// covers 2,500 requests a day, and the service asks about once every 120 m in town, 400 m on highways.
+nonisolated struct TomTomSpeedLimitSource: QuickSpeedLimitSource {
+    let key: String
+    var endpoint = URL(string: "https://api.tomtom.com/snapToRoads/1")!
+    var session: URLSession = .shared
+    var timeout: TimeInterval = 6
+
+    var isPrimary: Bool { true }
+    var label: String { "TomTom" }
+
+    static let fields = "{projectedPoints{type,geometry{type,coordinates},properties{routeIndex,snapResult}},"
+        + "route{type,properties{id,speedLimits{value,unit,type},address{roadName,roadNumbers},frc,formOfWay,roadUse,"
+        + "laneInfo{numberOfLanes},partOfTunnel,urbanArea}}}"
+
+    /// With a key in this build; nil without one.
+    static func configured() -> TomTomSpeedLimitSource? {
+        PulseKeys.tomTom().map { TomTomSpeedLimitSource(key: $0) }
+    }
+
+    func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading? {
+        guard !points.isEmpty else { return nil }
+        // ~11 m rounding, like the Valhalla lookup; TomTom needs two points, so a lone one is sent twice.
+        var trace = points.suffix(5).map { (lat: ($0.lat * 1e4).rounded() / 1e4, lon: ($0.lon * 1e4).rounded() / 1e4) }
+        if trace.count == 1 { trace.append(trace[0]) }
+        // Direction of travel at each point (from the one before it) keeps the match off the opposite carriageway.
+        let headings = trace.indices.map { i -> String in
+            let (a, b) = i == 0 ? (trace[0], trace[1]) : (trace[i - 1], trace[i])
+            guard a != b else { return "" }
+            return String(Int(RoadMatcher.bearing(fromLat: a.lat, lon: a.lon, toLat: b.lat, lon: b.lon).rounded()) % 360)
+        }
+        var components = URLComponents(url: endpoint, resolvingAgainstBaseURL: false)!
+        components.queryItems = [
+            URLQueryItem(name: "key", value: key),
+            URLQueryItem(name: "points", value: trace.map { String(format: "%.4f,%.4f", $0.lon, $0.lat) }.joined(separator: ";")),
+            URLQueryItem(name: "headings", value: headings.joined(separator: ";")),
+            URLQueryItem(name: "fields", value: Self.fields),
+            URLQueryItem(name: "vehicleType", value: "PassengerCar"),
+            URLQueryItem(name: "measurementSystem", value: "imperial"),
+        ]
+        var request = URLRequest(url: components.url!, timeoutInterval: timeout)
+        request.setValue("CrashSafe/0.1 (Congressional App Challenge student project)", forHTTPHeaderField: "User-Agent")
+        let (data, response) = try await session.data(for: request)
+        guard let status = (response as? HTTPURLResponse)?.statusCode else { throw URLError(.badServerResponse) }
+        // 400 with a lone point TomTom can't place counts as "no road"; 403 (bad key) and 429 (out of quota) throw.
+        if status == 400 { return nil }
+        guard status == 200 else { throw URLError(.badServerResponse) }
+        return try RoadMatcher.decodeTomTomSnap(data, lastPoint: points.last)
+    }
+}
+
+/// Tries each quick source in order, moving on only when one fails (no key quota, server down);
+/// "no road here" from the first one is an answer, not a failure.
+nonisolated struct FallbackQuickSource: QuickSpeedLimitSource {
+    let sources: [any QuickSpeedLimitSource]
+
+    /// TomTom when this build has a key, with the free Valhalla server behind it.
+    static func standard() -> FallbackQuickSource {
+        let sources: [(any QuickSpeedLimitSource)?] = [TomTomSpeedLimitSource.configured(), ValhallaSpeedLimitSource()]
+        return FallbackQuickSource(sources: sources.compactMap { $0 })
+    }
+
+    var isPrimary: Bool { sources.first?.isPrimary ?? false }
+    var label: String { sources.first?.label ?? "quick lookup" }
+
+    func speedLimit(along points: [(lat: Double, lon: Double)]) async throws -> SpeedLimitReading? {
+        var lastError: any Error = URLError(.cannotFindHost)
+        for source in sources {
+            do { return try await source.speedLimit(along: points) } catch { lastError = error }
+        }
+        throw lastError
+    }
 }
 
 /// The OpenStreetMap community's Valhalla routing server (FOSSGIS, Germany): the same OpenStreetMap
@@ -215,12 +301,16 @@ nonisolated struct FallbackRoadSource: RoadDataSource {
 ///
 /// Two layers, so a limit shows within a second of the first GPS fix:
 /// - Road data for the ~1 km around the car (OpenStreetMap via Overpass, or the trip pack), kept on disk
-///   and matched locally: works offline and costs nothing per fix, but a new area takes 30–60 s to arrive.
-/// - Until it does, a quick lookup of just the road the car is on (`QuickSpeedLimitSource`, < 1 s).
+///   and matched locally: works offline and costs nothing per fix, but a new area takes 30–60 s to arrive,
+///   many US roads have no posted limit in it, and matching one GPS point can pick a road beside the car.
+/// - A quick lookup of just the road the car is on, matched along its last few GPS points
+///   (`QuickSpeedLimitSource`, < 1 s). With a TomTom key it is the main source the whole drive and the
+///   local match only fills in when TomTom can't be reached; without one (Valhalla) it covers the wait
+///   for road data.
 ///
 /// Privacy: the area lookup sends a position rounded to ~100 m; the quick lookup sends the last few
-/// GPS points rounded to ~11 m, only while no road data for the area is on the phone. Neither sends
-/// anything that identifies the driver.
+/// GPS points rounded to ~11 m (with TomTom, all drive; with Valhalla, only while no road data for the
+/// area is on the phone). Neither sends anything that identifies the driver.
 @MainActor
 @Observable
 final class SpeedLimitService {
@@ -268,7 +358,7 @@ final class SpeedLimitService {
     static let quickInterval: TimeInterval = 3
 
     init(source: any RoadDataSource = FallbackRoadSource.standard(),
-         quick: (any QuickSpeedLimitSource)? = ValhallaSpeedLimitSource(),
+         quick: (any QuickSpeedLimitSource)? = FallbackQuickSource.standard(),
          store: RoadAreaStore? = RoadAreaStore()) {
         self.source = source
         self.quick = quick
@@ -331,16 +421,22 @@ final class SpeedLimitService {
             useArea(saved)
         }
         let hasRoadData = (cache.map { covers($0, fix) } ?? false) || !offline.isEmpty
-        if let local = match(fix) {
+        let primary = quick?.isPrimary == true
+        let quickHere = quickReading.flatMap {
+            TransportFeatures.haversine($0.lat, $0.lon, fix.latitude, fix.longitude) <= Self.validity(of: $0.reading) ? $0.reading : nil
+        }
+        if primary, let quickHere {
+            show(quickHere, basis: quick?.label ?? "quick lookup")
+        } else if let local = match(fix) {
             show(local, basis: "road data")
-        } else if let quick = quickReading,
-                  TransportFeatures.haversine(quick.lat, quick.lon, fix.latitude, fix.longitude) <= Self.validity(of: quick.reading) {
-            show(quick.reading, basis: "quick lookup")
+        } else if let quickHere {
+            show(quickHere, basis: quick?.label ?? "quick lookup")
         } else {
             current = nil
         }
+        if primary { lookUpQuickly(fix) }
         if !(cache.map { covers($0, fix) } ?? false) {
-            if match(fix) == nil { lookUpQuickly(fix) }
+            if !primary, match(fix) == nil { lookUpQuickly(fix) }
             if !(current != nil && hasRoadData) { fetch(lat: fix.latitude, lon: fix.longitude) }
         }
     }
@@ -380,7 +476,8 @@ final class SpeedLimitService {
         TransportFeatures.haversine(area.lat, area.lon, fix.latitude, fix.longitude) < Self.radius - Self.refetchMargin
     }
 
-    /// The road the car is on, from the quick source, while the area's road data is still on its way.
+    /// The road the car is on, from the quick source: all drive for a primary source (TomTom), otherwise
+    /// while the area's road data is still on its way.
     private func lookUpQuickly(_ fix: LocationSample) {
         guard let quick, !quickInFlight, Date.now >= quickAfter else { return }
         if let previous = quickReading,
@@ -398,11 +495,12 @@ final class SpeedLimitService {
                 quickAfter = Date.now.addingTimeInterval(Self.quickInterval)
                 if let reading {
                     quickReading = (reading, fix.latitude, fix.longitude)
-                    // Road data that arrived meanwhile wins; a reading for where the car no longer is doesn't count.
+                    // Road data that arrived meanwhile wins (unless this source is primary); a reading for where the
+                    // car no longer is doesn't count.
                     let last = lastFix ?? fix
-                    if match(last) == nil,
+                    if quick.isPrimary || match(last) == nil,
                        TransportFeatures.haversine(fix.latitude, fix.longitude, last.latitude, last.longitude) <= Self.validity(of: reading) {
-                        show(reading, basis: "quick lookup")
+                        show(reading, basis: quick.label)
                     }
                 }
             } catch {
