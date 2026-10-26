@@ -125,6 +125,23 @@ The iOS integration has two pieces. For the Android car integration, see [Androi
 
 Coaching runs whenever a drive is active (not only on the CarPlay screen). With **Profile → Watch every drive** on, Core Motion's automotive activity starts live monitoring automatically, and the `location` + `audio` background modes keep spoken coaching going with the phone locked.
 
+## Limitations
+
+Some parts of CrashSafe are fully written but held back by something outside the codebase. We list them here.
+
+### CarPlay and Android Auto
+
+**What's built.** The native CarPlay integration is written: [`CarPlaySceneDelegate.swift`](CrashSafe/Features/CarPlay/CarPlaySceneDelegate.swift) is a real CarPlay scene that uses Apple's templates. It has a live information screen (speed, speed limit, road type, "safe now" speed, status, Pulse's advice) and alert pop-ups when coaching turns into a warning, all driven by the same `DriveCoach` the phone uses. The [Android branch](https://github.com/JoseVGerald/crashsafe/tree/feature/android-app) has the matching Android Auto car app (`services/carapp/CrashSafeCarAppService.kt`).
+
+**What's holding it back.** We don't have a working connection to a real car. If you plug an iPhone into a CarPlay car, CrashSafe won't show up on the car's screen. Apple only shows an app in real CarPlay after it approves the **CarPlay Driving Task** entitlement for that app, and that takes a paid Apple Developer Program account plus an application to Apple. We don't have that approval, so `project.yml` applies the entitlement to simulator builds only, and the native scene runs only in Xcode's CarPlay Simulator. Android Auto has the same kind of gate: Google has to review an app in the car app category before it can run in real cars. We have only confirmed that the Android Auto app builds. It hasn't been run in Google's Desktop Head Unit or in a car.
+
+**How we got around it.** We built our own CarPlay mode into the app: **Home → CarPlay** on iOS ([`CarPlayModeView.swift`](CrashSafe/Features/CarPlay/CarPlayModeView.swift)) and **Profile → Testing → Drive mode** on Android (`features/carplay/DriveModeScreen.kt`). It does everything the car screen would do:
+
+- **Phone unlocked:** a full-screen driving dashboard shows your speed, the speed limit next to a "safe now" speed for the current weather and time of day, Pulse's advice, g-force, hard brakes and road type. The screen stays on while it's open. Because it isn't limited to Apple's and Google's car templates, it shows more than the native car screens can.
+- **Phone locked:** coaching keeps running, and Pulse tells you out loud when you're breaking the rules, for example when you go over the speed limit or enter a residential street or gravel road. On iOS this uses the `location` + `audio` background modes. On Android it uses a location foreground service with a partial wake lock. That Android screen-off behavior is built but hasn't been tested on a device yet.
+
+Once Apple approves the entitlement, turning on real CarPlay is a configuration change, not new code: add `com.apple.developer.carplay-driving-task` to the device entitlements and provisioning profile (see [CarPlay](#carplay)). Android Auto needs Google's review in the same way.
+
 ## Design notes
 
 The details below describe the iOS design system; Android uses Jetpack Compose with the same brand palette and corresponding native components.
