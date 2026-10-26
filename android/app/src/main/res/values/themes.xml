@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Pulse brand is a dark, night-driving theme (warm near-black canvas). -->
+    <style name="Theme.CrashSafe" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/canvas</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/canvas</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:colorAccent">@color/blue_ink</item>
+    </style>
+</resources>

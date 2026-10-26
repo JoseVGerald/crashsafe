@@ -1,0 +1,3720 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-22T05:46:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "way",
+  "id": 5516811,
+  "bounds": {
+    "minlat": 45.5366863,
+    "minlon": -122.6717617,
+    "maxlat": 45.5386768,
+    "maxlon": -122.6717253
+  },
+  "geometry": [
+    { "lat": 45.5366863, "lon": -122.6717253 },
+    { "lat": 45.5367265, "lon": -122.6717595 },
+    { "lat": 45.5372535, "lon": -122.6717617 },
+    { "lat": 45.5377092, "lon": -122.6717495 },
+    { "lat": 45.5377884, "lon": -122.6717474 },
+    { "lat": 45.5382288, "lon": -122.6717456 },
+    { "lat": 45.5382533, "lon": -122.6717455 },
+    { "lat": 45.5386237, "lon": -122.6717439 },
+    { "lat": 45.5386768, "lon": -122.6717437 }
+  ],
+  "tags": {
+    "hgv": "designated",
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5535934,
+  "bounds": {
+    "minlat": 45.5342849,
+    "minlon": -122.6720952,
+    "maxlat": 45.5356212,
+    "maxlon": -122.6697103
+  },
+  "geometry": [
+    { "lat": 45.5356212, "lon": -122.6697103 },
+    { "lat": 45.5355842, "lon": -122.6697767 },
+    { "lat": 45.5352189, "lon": -122.6704335 },
+    { "lat": 45.5351839, "lon": -122.6704964 },
+    { "lat": 45.5351458, "lon": -122.6705631 },
+    { "lat": 45.5351407, "lon": -122.6705721 },
+    { "lat": 45.5347372, "lon": -122.6712883 },
+    { "lat": 45.5346801, "lon": -122.6713902 },
+    { "lat": 45.5342849, "lon": -122.6720952 }
+  ],
+  "tags": {
+    "hgv": "destination",
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Dixon Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5539648,
+  "bounds": {
+    "minlat": 45.5373901,
+    "minlon": -122.6765177,
+    "maxlat": 45.5383488,
+    "maxlon": -122.6754810
+  },
+  "geometry": [
+    { "lat": 45.5373901, "lon": -122.6765177 },
+    { "lat": 45.5374389, "lon": -122.6764650 },
+    { "lat": 45.5376275, "lon": -122.6762615 },
+    { "lat": 45.5379430, "lon": -122.6759220 },
+    { "lat": 45.5383488, "lon": -122.6754810 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Albina Avenue",
+    "name:pronunciation": "nɔɹθ ælˈbaɪnə ˈævɪnjuː",
+    "sidewalk:both": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 5542195,
+  "bounds": {
+    "minlat": 45.5344409,
+    "minlon": -122.6704964,
+    "maxlat": 45.5351839,
+    "maxlon": -122.6696544
+  },
+  "geometry": [
+    { "lat": 45.5344409, "lon": -122.6696544 },
+    { "lat": 45.5345061, "lon": -122.6697279 },
+    { "lat": 45.5348618, "lon": -122.6701314 },
+    { "lat": 45.5351223, "lon": -122.6704266 },
+    { "lat": 45.5351839, "lon": -122.6704964 }
+  ],
+  "tags": {
+    "hgv": "destination",
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Ross Avenue",
+    "sidewalk:both": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 177370087,
+  "bounds": {
+    "minlat": 45.5354739,
+    "minlon": -122.6708796,
+    "maxlat": 45.5366427,
+    "maxlon": -122.6695416
+  },
+  "geometry": [
+    { "lat": 45.5354739, "lon": -122.6695416 },
+    { "lat": 45.5356212, "lon": -122.6697103 },
+    { "lat": 45.5356413, "lon": -122.6697338 },
+    { "lat": 45.5360965, "lon": -122.6702658 },
+    { "lat": 45.5365959, "lon": -122.6707858 },
+    { "lat": 45.5366243, "lon": -122.6708277 },
+    { "lat": 45.5366427, "lon": -122.6708796 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Wheeler Avenue",
+    "sidewalk": "left"
+  }
+},
+{
+  "type": "way",
+  "id": 418972074,
+  "bounds": {
+    "minlat": 45.5369194,
+    "minlon": -122.6744873,
+    "maxlat": 45.5377914,
+    "maxlon": -122.6744805
+  },
+  "geometry": [
+    { "lat": 45.5369194, "lon": -122.6744805 },
+    { "lat": 45.5369385, "lon": -122.6744811 },
+    { "lat": 45.5371891, "lon": -122.6744873 },
+    { "lat": 45.5376463, "lon": -122.6744863 },
+    { "lat": 45.5376598, "lon": -122.6744863 },
+    { "lat": 45.5377914, "lon": -122.6744816 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "left|"
+  }
+},
+{
+  "type": "way",
+  "id": 1092208842,
+  "bounds": {
+    "minlat": 45.5376252,
+    "minlon": -122.6747311,
+    "maxlat": 45.5377423,
+    "maxlon": -122.6747227
+  },
+  "geometry": [
+    { "lat": 45.5377423, "lon": -122.6747227 },
+    { "lat": 45.5376694, "lon": -122.6747311 },
+    { "lat": 45.5376252, "lon": -122.6747279 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk": "right",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5512197,
+  "bounds": {
+    "minlat": 45.5365255,
+    "minlon": -122.6748020,
+    "maxlat": 45.5372027,
+    "maxlon": -122.6747267
+  },
+  "geometry": [
+    { "lat": 45.5372027, "lon": -122.6747267 },
+    { "lat": 45.5367961, "lon": -122.6748020 },
+    { "lat": 45.5366770, "lon": -122.6748001 },
+    { "lat": 45.5366049, "lon": -122.6747959 },
+    { "lat": 45.5365255, "lon": -122.6747907 }
+  ],
+  "tags": {
+    "destination": "Broadway Bridge;Coliseum",
+    "foot": "no",
+    "highway": "tertiary_link",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "oneway": "yes",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5524935,
+  "bounds": {
+    "minlat": 45.5366427,
+    "minlon": -122.6717253,
+    "maxlat": 45.5366863,
+    "maxlon": -122.6708796
+  },
+  "geometry": [
+    { "lat": 45.5366427, "lon": -122.6708796 },
+    { "lat": 45.5366599, "lon": -122.6709354 },
+    { "lat": 45.5366618, "lon": -122.6709880 },
+    { "lat": 45.5366608, "lon": -122.6716395 },
+    { "lat": 45.5366607, "lon": -122.6716708 },
+    { "lat": 45.5366863, "lon": -122.6717253 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Wheeler Place",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5531006,
+  "bounds": {
+    "minlat": 45.5354087,
+    "minlon": -122.6733185,
+    "maxlat": 45.5358239,
+    "maxlon": -122.6726009
+  },
+  "geometry": [
+    { "lat": 45.5358239, "lon": -122.6726009 },
+    { "lat": 45.5354575, "lon": -122.6732343 },
+    { "lat": 45.5354087, "lon": -122.6733185 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Hancock Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 23630346,
+  "bounds": {
+    "minlat": 45.5354087,
+    "minlon": -122.6742079,
+    "maxlat": 45.5362319,
+    "maxlon": -122.6733185
+  },
+  "geometry": [
+    { "lat": 45.5354087, "lon": -122.6733185 },
+    { "lat": 45.5360151, "lon": -122.6739886 },
+    { "lat": 45.5362319, "lon": -122.6742079 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Larrabee Avenue",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 31779669,
+  "bounds": {
+    "minlat": 45.5350958,
+    "minlon": -122.6747907,
+    "maxlat": 45.5365255,
+    "maxlon": -122.6731655
+  },
+  "geometry": [
+    { "lat": 45.5365255, "lon": -122.6747907 },
+    { "lat": 45.5364308, "lon": -122.6747690 },
+    { "lat": 45.5363691, "lon": -122.6747501 },
+    { "lat": 45.5362860, "lon": -122.6747160 },
+    { "lat": 45.5361149, "lon": -122.6746247 },
+    { "lat": 45.5356401, "lon": -122.6743301 },
+    { "lat": 45.5355644, "lon": -122.6742752 },
+    { "lat": 45.5355165, "lon": -122.6742378 },
+    { "lat": 45.5354693, "lon": -122.6741964 },
+    { "lat": 45.5354383, "lon": -122.6741613 },
+    { "lat": 45.5354060, "lon": -122.6741197 },
+    { "lat": 45.5353563, "lon": -122.6740409 },
+    { "lat": 45.5353254, "lon": -122.6739759 },
+    { "lat": 45.5352991, "lon": -122.6739078 },
+    { "lat": 45.5352741, "lon": -122.6738185 },
+    { "lat": 45.5352554, "lon": -122.6737282 },
+    { "lat": 45.5352282, "lon": -122.6735675 },
+    { "lat": 45.5352099, "lon": -122.6734609 },
+    { "lat": 45.5351897, "lon": -122.6733803 },
+    { "lat": 45.5351631, "lon": -122.6732974 },
+    { "lat": 45.5351342, "lon": -122.6732376 },
+    { "lat": 45.5350958, "lon": -122.6731655 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "destination": "Broadway Bridge;Coliseum",
+    "foot": "no",
+    "highway": "tertiary_link",
+    "lanes": "1",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "oneway": "yes",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 125696253,
+  "bounds": {
+    "minlat": 45.5348191,
+    "minlon": -122.6733185,
+    "maxlat": 45.5354087,
+    "maxlon": -122.6726639
+  },
+  "geometry": [
+    { "lat": 45.5348191, "lon": -122.6726639 },
+    { "lat": 45.5351188, "lon": -122.6729980 },
+    { "lat": 45.5354087, "lon": -122.6733185 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "tertiary",
+    "maxspeed": "30 mph",
+    "name": "North Larrabee Avenue",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 126575249,
+  "bounds": {
+    "minlat": 45.5322204,
+    "minlon": -122.6743949,
+    "maxlat": 45.5363658,
+    "maxlon": -122.6709290
+  },
+  "geometry": [
+    { "lat": 45.5322204, "lon": -122.6709290 },
+    { "lat": 45.5323237, "lon": -122.6710386 },
+    { "lat": 45.5326091, "lon": -122.6713686 },
+    { "lat": 45.5327827, "lon": -122.6715697 },
+    { "lat": 45.5329928, "lon": -122.6717847 },
+    { "lat": 45.5333473, "lon": -122.6721191 },
+    { "lat": 45.5338446, "lon": -122.6725458 },
+    { "lat": 45.5343336, "lon": -122.6729640 },
+    { "lat": 45.5346081, "lon": -122.6731821 },
+    { "lat": 45.5349864, "lon": -122.6734682 },
+    { "lat": 45.5356998, "lon": -122.6740069 },
+    { "lat": 45.5359385, "lon": -122.6741671 },
+    { "lat": 45.5360455, "lon": -122.6742363 },
+    { "lat": 45.5361378, "lon": -122.6742951 },
+    { "lat": 45.5361968, "lon": -122.6743275 },
+    { "lat": 45.5362653, "lon": -122.6743588 },
+    { "lat": 45.5362809, "lon": -122.6743644 },
+    { "lat": 45.5363658, "lon": -122.6743949 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 126575252,
+  "bounds": {
+    "minlat": 45.5372027,
+    "minlon": -122.6747279,
+    "maxlat": 45.5376252,
+    "maxlon": -122.6747225
+  },
+  "geometry": [
+    { "lat": 45.5376252, "lon": -122.6747279 },
+    { "lat": 45.5374100, "lon": -122.6747225 },
+    { "lat": 45.5372027, "lon": -122.6747267 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "track",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 205288371,
+  "bounds": {
+    "minlat": 45.5329128,
+    "minlon": -122.6745148,
+    "maxlat": 45.5361685,
+    "maxlon": -122.6719792
+  },
+  "geometry": [
+    { "lat": 45.5361685, "lon": -122.6745148 },
+    { "lat": 45.5360179, "lon": -122.6744285 },
+    { "lat": 45.5358100, "lon": -122.6742911 },
+    { "lat": 45.5356777, "lon": -122.6741916 },
+    { "lat": 45.5354528, "lon": -122.6740194 },
+    { "lat": 45.5351679, "lon": -122.6738014 },
+    { "lat": 45.5347573, "lon": -122.6734873 },
+    { "lat": 45.5340475, "lon": -122.6729463 },
+    { "lat": 45.5336850, "lon": -122.6726702 },
+    { "lat": 45.5333739, "lon": -122.6724147 },
+    { "lat": 45.5331559, "lon": -122.6722142 },
+    { "lat": 45.5329128, "lon": -122.6719792 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "foot": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 320597574,
+  "bounds": {
+    "minlat": 45.5363658,
+    "minlon": -122.6744805,
+    "maxlat": 45.5369194,
+    "maxlon": -122.6743949
+  },
+  "geometry": [
+    { "lat": 45.5363658, "lon": -122.6743949 },
+    { "lat": 45.5364486, "lon": -122.6744205 },
+    { "lat": 45.5365701, "lon": -122.6744522 },
+    { "lat": 45.5366922, "lon": -122.6744692 },
+    { "lat": 45.5367966, "lon": -122.6744763 },
+    { "lat": 45.5369194, "lon": -122.6744805 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1092208841,
+  "bounds": {
+    "minlat": 45.5368041,
+    "minlon": -122.6747267,
+    "maxlat": 45.5372027,
+    "maxlon": -122.6747030
+  },
+  "geometry": [
+    { "lat": 45.5372027, "lon": -122.6747267 },
+    { "lat": 45.5368041, "lon": -122.6747030 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "foot": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 1092945233,
+  "bounds": {
+    "minlat": 45.5362319,
+    "minlon": -122.6743949,
+    "maxlat": 45.5363658,
+    "maxlon": -122.6742079
+  },
+  "geometry": [
+    { "lat": 45.5362319, "lon": -122.6742079 },
+    { "lat": 45.5363128, "lon": -122.6742904 },
+    { "lat": 45.5363658, "lon": -122.6743949 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Larrabee Avenue",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 1092945234,
+  "bounds": {
+    "minlat": 45.5361685,
+    "minlon": -122.6747030,
+    "maxlat": 45.5368041,
+    "maxlon": -122.6745148
+  },
+  "geometry": [
+    { "lat": 45.5368041, "lon": -122.6747030 },
+    { "lat": 45.5366720, "lon": -122.6746852 },
+    { "lat": 45.5365628, "lon": -122.6746615 },
+    { "lat": 45.5364626, "lon": -122.6746369 },
+    { "lat": 45.5363653, "lon": -122.6746050 },
+    { "lat": 45.5362668, "lon": -122.6745650 },
+    { "lat": 45.5361685, "lon": -122.6745148 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "foot": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 5511234,
+  "bounds": {
+    "minlat": 45.5362787,
+    "minlon": -122.6692674,
+    "maxlat": 45.5378040,
+    "maxlon": -122.6683521
+  },
+  "geometry": [
+    { "lat": 45.5378040, "lon": -122.6692674 },
+    { "lat": 45.5376355, "lon": -122.6692539 },
+    { "lat": 45.5371027, "lon": -122.6688990 },
+    { "lat": 45.5366360, "lon": -122.6685609 },
+    { "lat": 45.5362787, "lon": -122.6683521 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Northeast I5 Freeway - Broadway Ramp",
+    "description_2": "City Street Connection #3",
+    "destination": "Broadway;Weidler Street;Moda Center",
+    "destination:lanes": "Weidler Street;Convention Center;Lloyd Center;Moda Center|Broadway",
+    "highway": "motorway_link",
+    "junction:ref": "302A",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed:advisory": "45 mph",
+    "oneway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 5515981,
+  "bounds": {
+    "minlat": 45.5370670,
+    "minlon": -122.6666637,
+    "maxlat": 45.5370748,
+    "maxlon": -122.6617113
+  },
+  "geometry": [
+    { "lat": 45.5370748, "lon": -122.6666637 },
+    { "lat": 45.5370748, "lon": -122.6665840 },
+    { "lat": 45.5370747, "lon": -122.6660818 },
+    { "lat": 45.5370745, "lon": -122.6642673 },
+    { "lat": 45.5370745, "lon": -122.6641772 },
+    { "lat": 45.5370742, "lon": -122.6640849 },
+    { "lat": 45.5370701, "lon": -122.6626979 },
+    { "lat": 45.5370680, "lon": -122.6619977 },
+    { "lat": 45.5370672, "lon": -122.6617775 },
+    { "lat": 45.5370670, "lon": -122.6617113 }
+  ],
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "20 mph",
+    "name": "Northeast San Rafael Street",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 30288605,
+  "bounds": {
+    "minlat": 45.5319725,
+    "minlon": -122.6697836,
+    "maxlat": 45.5386714,
+    "maxlon": -122.6652420
+  },
+  "geometry": [
+    { "lat": 45.5319725, "lon": -122.6652420 },
+    { "lat": 45.5326004, "lon": -122.6654104 },
+    { "lat": 45.5328406, "lon": -122.6654924 },
+    { "lat": 45.5330508, "lon": -122.6655678 },
+    { "lat": 45.5332292, "lon": -122.6656422 },
+    { "lat": 45.5334600, "lon": -122.6657455 },
+    { "lat": 45.5336873, "lon": -122.6658556 },
+    { "lat": 45.5339860, "lon": -122.6660197 },
+    { "lat": 45.5342799, "lon": -122.6661984 },
+    { "lat": 45.5345879, "lon": -122.6664005 },
+    { "lat": 45.5348630, "lon": -122.6666101 },
+    { "lat": 45.5352779, "lon": -122.6669463 },
+    { "lat": 45.5358221, "lon": -122.6674012 },
+    { "lat": 45.5365055, "lon": -122.6679764 },
+    { "lat": 45.5368976, "lon": -122.6683076 },
+    { "lat": 45.5372447, "lon": -122.6685986 },
+    { "lat": 45.5376139, "lon": -122.6689044 },
+    { "lat": 45.5386714, "lon": -122.6697836 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "2",
+    "maxheight:signed": "no",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "sidewalk": "no",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 117058403,
+  "bounds": {
+    "minlat": 45.5365536,
+    "minlon": -122.6687440,
+    "maxlat": 45.5379985,
+    "maxlon": -122.6687325
+  },
+  "geometry": [
+    { "lat": 45.5365536, "lon": -122.6687440 },
+    { "lat": 45.5379985, "lon": -122.6687325 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "bridge": "yes",
+    "cycleway": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "layer": "1",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 119112613,
+  "bounds": {
+    "minlat": 45.5310017,
+    "minlon": -122.6684213,
+    "maxlat": 45.5368362,
+    "maxlon": -122.6653455
+  },
+  "geometry": [
+    { "lat": 45.5368362, "lon": -122.6684213 },
+    { "lat": 45.5363837, "lon": -122.6680378 },
+    { "lat": 45.5357755, "lon": -122.6675316 },
+    { "lat": 45.5352298, "lon": -122.6670809 },
+    { "lat": 45.5349827, "lon": -122.6668777 },
+    { "lat": 45.5347317, "lon": -122.6666889 },
+    { "lat": 45.5345435, "lon": -122.6665418 },
+    { "lat": 45.5342109, "lon": -122.6663242 },
+    { "lat": 45.5339618, "lon": -122.6661678 },
+    { "lat": 45.5337110, "lon": -122.6660300 },
+    { "lat": 45.5335031, "lon": -122.6659235 },
+    { "lat": 45.5333099, "lon": -122.6658326 },
+    { "lat": 45.5330004, "lon": -122.6657024 },
+    { "lat": 45.5325749, "lon": -122.6655576 },
+    { "lat": 45.5323090, "lon": -122.6654890 },
+    { "lat": 45.5320316, "lon": -122.6654359 },
+    { "lat": 45.5316788, "lon": -122.6654057 },
+    { "lat": 45.5313542, "lon": -122.6653699 },
+    { "lat": 45.5310017, "lon": -122.6653455 }
+  ],
+  "tags": {
+    "access": "yes",
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "2",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "sidewalk": "no",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 160390323,
+  "bounds": {
+    "minlat": 45.5370076,
+    "minlon": -122.6692674,
+    "maxlat": 45.5378040,
+    "maxlon": -122.6685666
+  },
+  "geometry": [
+    { "lat": 45.5378040, "lon": -122.6692674 },
+    { "lat": 45.5373789, "lon": -122.6688996 },
+    { "lat": 45.5370076, "lon": -122.6685666 }
+  ],
+  "tags": {
+    "access": "yes",
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "destination": "The Dalles",
+    "destination:ref": "I 84 East;US 30 East",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "3",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt",
+    "turn:lanes": "||merge_to_left"
+  }
+},
+{
+  "type": "way",
+  "id": 204191015,
+  "bounds": {
+    "minlat": 45.5356238,
+    "minlon": -122.6666931,
+    "maxlat": 45.5405470,
+    "maxlon": -122.6666571
+  },
+  "geometry": [
+    { "lat": 45.5356238, "lon": -122.6666894 },
+    { "lat": 45.5364481, "lon": -122.6666928 },
+    { "lat": 45.5365146, "lon": -122.6666931 },
+    { "lat": 45.5365820, "lon": -122.6666896 },
+    { "lat": 45.5370748, "lon": -122.6666637 },
+    { "lat": 45.5373384, "lon": -122.6666636 },
+    { "lat": 45.5376504, "lon": -122.6666643 },
+    { "lat": 45.5379790, "lon": -122.6666659 },
+    { "lat": 45.5380467, "lon": -122.6666661 },
+    { "lat": 45.5381079, "lon": -122.6666661 },
+    { "lat": 45.5390013, "lon": -122.6666664 },
+    { "lat": 45.5392769, "lon": -122.6666665 },
+    { "lat": 45.5395200, "lon": -122.6666665 },
+    { "lat": 45.5395895, "lon": -122.6666665 },
+    { "lat": 45.5399661, "lon": -122.6666572 },
+    { "lat": 45.5403323, "lon": -122.6666571 },
+    { "lat": 45.5404357, "lon": -122.6666679 },
+    { "lat": 45.5405470, "lon": -122.6666752 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:left": "lane",
+    "cycleway:left:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Williams Avenue",
+    "name:etymology": "George Henry Williams",
+    "name:etymology:wikidata": "Q725008",
+    "name:etymology:wikipedia": "en:George Henry Williams",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "concrete",
+    "surface": "asphalt",
+    "wikidata": "Q19877184",
+    "wikipedia": "en:North Williams Avenue"
+  }
+},
+{
+  "type": "way",
+  "id": 587064715,
+  "bounds": {
+    "minlat": 45.5370325,
+    "minlon": -122.6677226,
+    "maxlat": 45.5405625,
+    "maxlon": -122.6676915
+  },
+  "geometry": [
+    { "lat": 45.5405625, "lon": -122.6677020 },
+    { "lat": 45.5404606, "lon": -122.6676915 },
+    { "lat": 45.5399860, "lon": -122.6676926 },
+    { "lat": 45.5396527, "lon": -122.6676934 },
+    { "lat": 45.5395906, "lon": -122.6676935 },
+    { "lat": 45.5395109, "lon": -122.6676943 },
+    { "lat": 45.5386790, "lon": -122.6677030 },
+    { "lat": 45.5381249, "lon": -122.6677049 },
+    { "lat": 45.5380516, "lon": -122.6677051 },
+    { "lat": 45.5379849, "lon": -122.6677052 },
+    { "lat": 45.5374647, "lon": -122.6677061 },
+    { "lat": 45.5370325, "lon": -122.6677226 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 604724909,
+  "bounds": {
+    "minlat": 45.5369639,
+    "minlon": -122.6697836,
+    "maxlat": 45.5386714,
+    "maxlon": -122.6680960
+  },
+  "geometry": [
+    { "lat": 45.5369639, "lon": -122.6680960 },
+    { "lat": 45.5376244, "lon": -122.6687255 },
+    { "lat": 45.5381050, "lon": -122.6691770 },
+    { "lat": 45.5384314, "lon": -122.6694764 },
+    { "lat": 45.5386714, "lon": -122.6697836 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "North Williams Avenue - I5 Freeway Ramp",
+    "description_2": "City Street Connection #2",
+    "highway": "motorway_link",
+    "lanes": "1",
+    "oneway": "yes",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5511410,
+  "bounds": {
+    "minlat": 45.5352068,
+    "minlon": -122.6671016,
+    "maxlat": 45.5359304,
+    "maxlon": -122.6667669
+  },
+  "geometry": [
+    { "lat": 45.5352068, "lon": -122.6667669 },
+    { "lat": 45.5353340, "lon": -122.6667758 },
+    { "lat": 45.5353963, "lon": -122.6667866 },
+    { "lat": 45.5354460, "lon": -122.6667999 },
+    { "lat": 45.5355535, "lon": -122.6668384 },
+    { "lat": 45.5356541, "lon": -122.6668899 },
+    { "lat": 45.5357469, "lon": -122.6669525 },
+    { "lat": 45.5359304, "lon": -122.6671016 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "North Williams Avenue - I5 Freeway Ramp",
+    "description_2": "City Street Connection #2",
+    "highway": "motorway_link",
+    "lanes": "2",
+    "oneway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 5531007,
+  "bounds": {
+    "minlat": 45.5365214,
+    "minlon": -122.6697888,
+    "maxlat": 45.5365243,
+    "maxlon": -122.6687440
+  },
+  "geometry": [
+    { "lat": 45.5365219, "lon": -122.6687440 },
+    { "lat": 45.5365230, "lon": -122.6688478 },
+    { "lat": 45.5365232, "lon": -122.6688679 },
+    { "lat": 45.5365243, "lon": -122.6689774 },
+    { "lat": 45.5365214, "lon": -122.6694478 },
+    { "lat": 45.5365224, "lon": -122.6697888 }
+  ],
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "maxspeed": "20 mph",
+    "name": "North Hancock Street",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5531008,
+  "bounds": {
+    "minlat": 45.5365146,
+    "minlon": -122.6672458,
+    "maxlat": 45.5365152,
+    "maxlon": -122.6666931
+  },
+  "geometry": [
+    { "lat": 45.5365146, "lon": -122.6666931 },
+    { "lat": 45.5365147, "lon": -122.6667993 },
+    { "lat": 45.5365152, "lon": -122.6672458 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Hancock Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5534630,
+  "bounds": {
+    "minlat": 45.5351144,
+    "minlon": -122.6677567,
+    "maxlat": 45.5356189,
+    "maxlon": -122.6677160
+  },
+  "geometry": [
+    { "lat": 45.5356189, "lon": -122.6677216 },
+    { "lat": 45.5355042, "lon": -122.6677169 },
+    { "lat": 45.5352132, "lon": -122.6677160 },
+    { "lat": 45.5351144, "lon": -122.6677567 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "share_busway",
+    "highway": "secondary",
+    "lanes": "3",
+    "lanes:bus": "1",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt",
+    "turn:lanes": "through|through|through"
+  }
+},
+{
+  "type": "way",
+  "id": 5538159,
+  "bounds": {
+    "minlat": 45.5365224,
+    "minlon": -122.6697888,
+    "maxlat": 45.5371229,
+    "maxlon": -122.6697844
+  },
+  "geometry": [
+    { "lat": 45.5365224, "lon": -122.6697888 },
+    { "lat": 45.5371229, "lon": -122.6697844 }
+  ],
+  "tags": {
+    "cycleway:both": "no",
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "maxspeed": "20 mph",
+    "name": "North Gantenbein Avenue",
+    "sidewalk": "no",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5541642,
+  "bounds": {
+    "minlat": 45.5365114,
+    "minlon": -122.6666931,
+    "maxlat": 45.5365146,
+    "maxlon": -122.6646765
+  },
+  "geometry": [
+    { "lat": 45.5365146, "lon": -122.6666931 },
+    { "lat": 45.5365144, "lon": -122.6666028 },
+    { "lat": 45.5365134, "lon": -122.6660372 },
+    { "lat": 45.5365128, "lon": -122.6656878 },
+    { "lat": 45.5365119, "lon": -122.6650092 },
+    { "lat": 45.5365114, "lon": -122.6646765 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "lane_markings": "no",
+    "maxspeed": "20 mph",
+    "name": "Northeast Hancock Street",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 30474349,
+  "bounds": {
+    "minlat": 45.5359287,
+    "minlon": -122.6677280,
+    "maxlat": 45.5369726,
+    "maxlon": -122.6677238
+  },
+  "geometry": [
+    { "lat": 45.5369726, "lon": -122.6677238 },
+    { "lat": 45.5369010, "lon": -122.6677254 },
+    { "lat": 45.5363648, "lon": -122.6677280 },
+    { "lat": 45.5359287, "lon": -122.6677240 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "bridge": "yes",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "2",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 125696256,
+  "bounds": {
+    "minlat": 45.5348701,
+    "minlon": -122.6689995,
+    "maxlat": 45.5350006,
+    "maxlon": -122.6688813
+  },
+  "geometry": [
+    { "lat": 45.5350006, "lon": -122.6689995 },
+    { "lat": 45.5349555, "lon": -122.6689905 },
+    { "lat": 45.5349459, "lon": -122.6689810 },
+    { "lat": 45.5349332, "lon": -122.6689681 },
+    { "lat": 45.5349103, "lon": -122.6689457 },
+    { "lat": 45.5348701, "lon": -122.6688813 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Wheeler Avenue",
+    "oneway": "yes",
+    "sidewalk:both": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 131753402,
+  "bounds": {
+    "minlat": 45.5350120,
+    "minlon": -122.6687512,
+    "maxlat": 45.5351985,
+    "maxlon": -122.6686324
+  },
+  "geometry": [
+    { "lat": 45.5350120, "lon": -122.6686324 },
+    { "lat": 45.5350802, "lon": -122.6686995 },
+    { "lat": 45.5350971, "lon": -122.6687150 },
+    { "lat": 45.5351298, "lon": -122.6687351 },
+    { "lat": 45.5351613, "lon": -122.6687452 },
+    { "lat": 45.5351985, "lon": -122.6687512 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:left": "lane",
+    "cycleway:right": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk:both": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 408701414,
+  "bounds": {
+    "minlat": 45.5350006,
+    "minlon": -122.6695416,
+    "maxlat": 45.5354739,
+    "maxlon": -122.6689995
+  },
+  "geometry": [
+    { "lat": 45.5350006, "lon": -122.6689995 },
+    { "lat": 45.5352916, "lon": -122.6693328 },
+    { "lat": 45.5354739, "lon": -122.6695416 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "20 mph",
+    "name": "North Wheeler Avenue",
+    "sidewalk:both": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 425260598,
+  "bounds": {
+    "minlat": 45.5351985,
+    "minlon": -122.6687512,
+    "maxlat": 45.5365536,
+    "maxlon": -122.6687440
+  },
+  "geometry": [
+    { "lat": 45.5351985, "lon": -122.6687512 },
+    { "lat": 45.5355066, "lon": -122.6687495 },
+    { "lat": 45.5357020, "lon": -122.6687485 },
+    { "lat": 45.5359979, "lon": -122.6687469 },
+    { "lat": 45.5360742, "lon": -122.6687465 },
+    { "lat": 45.5361172, "lon": -122.6687462 },
+    { "lat": 45.5361967, "lon": -122.6687458 },
+    { "lat": 45.5365219, "lon": -122.6687440 },
+    { "lat": 45.5365536, "lon": -122.6687440 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk:both": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 425260599,
+  "bounds": {
+    "minlat": 45.5351238,
+    "minlon": -122.6681572,
+    "maxlat": 45.5355233,
+    "maxlon": -122.6679560
+  },
+  "geometry": [
+    { "lat": 45.5355233, "lon": -122.6679655 },
+    { "lat": 45.5353714, "lon": -122.6679562 },
+    { "lat": 45.5353225, "lon": -122.6679560 },
+    { "lat": 45.5352622, "lon": -122.6679752 },
+    { "lat": 45.5352456, "lon": -122.6679859 },
+    { "lat": 45.5352014, "lon": -122.6680273 },
+    { "lat": 45.5351238, "lon": -122.6681572 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Northeast I5 Freeway - Broadway Ramp",
+    "description_2": "City Street Connection #4",
+    "destination": "Broadway",
+    "highway": "motorway_link",
+    "lanes": "1",
+    "lit": "yes",
+    "maxspeed:advisory": "45 mph",
+    "oneway": "yes",
+    "turn:lanes": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 587064714,
+  "bounds": {
+    "minlat": 45.5369726,
+    "minlon": -122.6677238,
+    "maxlat": 45.5370325,
+    "maxlon": -122.6677226
+  },
+  "geometry": [
+    { "lat": 45.5370325, "lon": -122.6677226 },
+    { "lat": 45.5369726, "lon": -122.6677238 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 773604252,
+  "bounds": {
+    "minlat": 45.5351144,
+    "minlon": -122.6679655,
+    "maxlat": 45.5355233,
+    "maxlon": -122.6677567
+  },
+  "geometry": [
+    { "lat": 45.5355233, "lon": -122.6679655 },
+    { "lat": 45.5354149, "lon": -122.6678947 },
+    { "lat": 45.5352175, "lon": -122.6678167 },
+    { "lat": 45.5351144, "lon": -122.6677567 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Northeast I5 Freeway - Broadway Ramp",
+    "description_2": "City Street Connection #3",
+    "destination": "Weidler Street;Convention Center;Lloyd Center;Moda Center",
+    "highway": "motorway_link",
+    "lanes": "2",
+    "lit": "yes",
+    "maxspeed:advisory": "45 mph",
+    "oneway": "yes",
+    "turn:lanes": "through|through"
+  }
+},
+{
+  "type": "way",
+  "id": 1023324501,
+  "bounds": {
+    "minlat": 45.5359304,
+    "minlon": -122.6680960,
+    "maxlat": 45.5369639,
+    "maxlon": -122.6671016
+  },
+  "geometry": [
+    { "lat": 45.5359304, "lon": -122.6671016 },
+    { "lat": 45.5369639, "lon": -122.6680960 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "North Williams Avenue - I5 Freeway Ramp",
+    "description_2": "City Street Connection #2",
+    "highway": "motorway_link",
+    "lanes": "2",
+    "oneway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1092669115,
+  "bounds": {
+    "minlat": 45.5356189,
+    "minlon": -122.6677240,
+    "maxlat": 45.5359287,
+    "maxlon": -122.6677216
+  },
+  "geometry": [
+    { "lat": 45.5359287, "lon": -122.6677240 },
+    { "lat": 45.5356189, "lon": -122.6677216 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "bridge": "yes",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 1391120164,
+  "bounds": {
+    "minlat": 45.5355233,
+    "minlon": -122.6683521,
+    "maxlat": 45.5362787,
+    "maxlon": -122.6679655
+  },
+  "geometry": [
+    { "lat": 45.5362787, "lon": -122.6683521 },
+    { "lat": 45.5359470, "lon": -122.6681617 },
+    { "lat": 45.5357307, "lon": -122.6680531 },
+    { "lat": 45.5355233, "lon": -122.6679655 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Northeast I5 Freeway - Broadway Ramp",
+    "description_2": "City Street Connection #3",
+    "destination": "Broadway;Weidler Street;Moda Center",
+    "destination:lanes": "Weidler Street;Convention Center;Lloyd Center;Moda Center|Broadway",
+    "highway": "motorway_link",
+    "junction:ref": "302A",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed:advisory": "45 mph",
+    "oneway": "yes",
+    "turn:lanes": "through|through|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1436859454,
+  "bounds": {
+    "minlat": 45.5368362,
+    "minlon": -122.6685666,
+    "maxlat": 45.5370076,
+    "maxlon": -122.6684213
+  },
+  "geometry": [
+    { "lat": 45.5370076, "lon": -122.6685666 },
+    { "lat": 45.5368362, "lon": -122.6684213 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "3",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|merge_to_left"
+  }
+},
+{
+  "type": "way",
+  "id": 5515833,
+  "bounds": {
+    "minlat": 45.5386672,
+    "minlon": -122.6717437,
+    "maxlat": 45.5386768,
+    "maxlon": -122.6703383
+  },
+  "geometry": [
+    { "lat": 45.5386672, "lon": -122.6703383 },
+    { "lat": 45.5386702, "lon": -122.6707773 },
+    { "lat": 45.5386704, "lon": -122.6708126 },
+    { "lat": 45.5386768, "lon": -122.6717437 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Thompson Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5516804,
+  "bounds": {
+    "minlat": 45.5411813,
+    "minlon": -122.6718903,
+    "maxlat": 45.5424589,
+    "maxlon": -122.6711409
+  },
+  "geometry": [
+    { "lat": 45.5411813, "lon": -122.6711409 },
+    { "lat": 45.5412270, "lon": -122.6712347 },
+    { "lat": 45.5412742, "lon": -122.6713096 },
+    { "lat": 45.5413299, "lon": -122.6713728 },
+    { "lat": 45.5414278, "lon": -122.6714592 },
+    { "lat": 45.5415884, "lon": -122.6715883 },
+    { "lat": 45.5418629, "lon": -122.6718115 },
+    { "lat": 45.5418956, "lon": -122.6718311 },
+    { "lat": 45.5419568, "lon": -122.6718606 },
+    { "lat": 45.5420213, "lon": -122.6718795 },
+    { "lat": 45.5421074, "lon": -122.6718873 },
+    { "lat": 45.5422261, "lon": -122.6718891 },
+    { "lat": 45.5424589, "lon": -122.6718903 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 5518369,
+  "bounds": {
+    "minlat": 45.5402444,
+    "minlon": -122.6722812,
+    "maxlat": 45.5405689,
+    "maxlon": -122.6717996
+  },
+  "geometry": [
+    { "lat": 45.5402444, "lon": -122.6717996 },
+    { "lat": 45.5403042, "lon": -122.6718550 },
+    { "lat": 45.5403923, "lon": -122.6719886 },
+    { "lat": 45.5405482, "lon": -122.6722250 },
+    { "lat": 45.5405689, "lon": -122.6722812 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "sidewalk": "left"
+  }
+},
+{
+  "type": "way",
+  "id": 5525224,
+  "bounds": {
+    "minlat": 45.5395997,
+    "minlon": -122.6737999,
+    "maxlat": 45.5410031,
+    "maxlon": -122.6737889
+  },
+  "geometry": [
+    { "lat": 45.5395997, "lon": -122.6737999 },
+    { "lat": 45.5396720, "lon": -122.6737993 },
+    { "lat": 45.5409363, "lon": -122.6737894 },
+    { "lat": 45.5410031, "lon": -122.6737889 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Borthwick Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5526116,
+  "bounds": {
+    "minlat": 45.5402914,
+    "minlon": -122.6707837,
+    "maxlat": 45.5410518,
+    "maxlon": -122.6707049
+  },
+  "geometry": [
+    { "lat": 45.5402914, "lon": -122.6707049 },
+    { "lat": 45.5403537, "lon": -122.6707325 },
+    { "lat": 45.5404035, "lon": -122.6707422 },
+    { "lat": 45.5404767, "lon": -122.6707453 },
+    { "lat": 45.5409272, "lon": -122.6707415 },
+    { "lat": 45.5409901, "lon": -122.6707412 },
+    { "lat": 45.5410518, "lon": -122.6707837 }
+  ],
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "20 mph",
+    "name": "North Commercial Avenue",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 5532702,
+  "bounds": {
+    "minlat": 45.5377884,
+    "minlon": -122.6744816,
+    "maxlat": 45.5377914,
+    "maxlon": -122.6717474
+  },
+  "geometry": [
+    { "lat": 45.5377884, "lon": -122.6717474 },
+    { "lat": 45.5377885, "lon": -122.6718499 },
+    { "lat": 45.5377892, "lon": -122.6724470 },
+    { "lat": 45.5377901, "lon": -122.6732644 },
+    { "lat": 45.5377908, "lon": -122.6739563 },
+    { "lat": 45.5377909, "lon": -122.6743588 },
+    { "lat": 45.5377909, "lon": -122.6743842 },
+    { "lat": 45.5377914, "lon": -122.6744816 }
+  ],
+  "tags": {
+    "hgv": "designated",
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5534022,
+  "bounds": {
+    "minlat": 45.5395980,
+    "minlon": -122.6732060,
+    "maxlat": 45.5396250,
+    "maxlon": -122.6727888
+  },
+  "geometry": [
+    { "lat": 45.5396250, "lon": -122.6727888 },
+    { "lat": 45.5396099, "lon": -122.6728079 },
+    { "lat": 45.5396016, "lon": -122.6728375 },
+    { "lat": 45.5395980, "lon": -122.6728852 },
+    { "lat": 45.5395986, "lon": -122.6732060 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Page Street",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 5542198,
+  "bounds": {
+    "minlat": 45.5396250,
+    "minlon": -122.6727888,
+    "maxlat": 45.5396860,
+    "maxlon": -122.6727787
+  },
+  "geometry": [
+    { "lat": 45.5396250, "lon": -122.6727888 },
+    { "lat": 45.5396493, "lon": -122.6727787 },
+    { "lat": 45.5396860, "lon": -122.6727794 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Ross Avenue",
+    "sidewalk": "left"
+  }
+},
+{
+  "type": "way",
+  "id": 30474343,
+  "bounds": {
+    "minlat": 45.5395092,
+    "minlon": -122.6717211,
+    "maxlat": 45.5406965,
+    "maxlon": -122.6707107
+  },
+  "geometry": [
+    { "lat": 45.5406965, "lon": -122.6717211 },
+    { "lat": 45.5405729, "lon": -122.6716189 },
+    { "lat": 45.5397960, "lon": -122.6709525 },
+    { "lat": 45.5395092, "lon": -122.6707107 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "destination:lanes": "none|none|The Dalles;Broadway;Weidler Street;Moda Center|Broadway;Weidler Street;Moda Center",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "4",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "turn:lanes": "none|none|through;slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 39636244,
+  "bounds": {
+    "minlat": 45.5410000,
+    "minlon": -122.6759714,
+    "maxlat": 45.5410094,
+    "maxlon": -122.6727727
+  },
+  "geometry": [
+    { "lat": 45.5410000, "lon": -122.6727727 },
+    { "lat": 45.5410000, "lon": -122.6727853 },
+    { "lat": 45.5410003, "lon": -122.6728901 },
+    { "lat": 45.5410010, "lon": -122.6733188 },
+    { "lat": 45.5410031, "lon": -122.6737889 },
+    { "lat": 45.5410044, "lon": -122.6746005 },
+    { "lat": 45.5410046, "lon": -122.6747044 },
+    { "lat": 45.5410047, "lon": -122.6747976 },
+    { "lat": 45.5410064, "lon": -122.6752798 },
+    { "lat": 45.5410075, "lon": -122.6755969 },
+    { "lat": 45.5410077, "lon": -122.6756471 },
+    { "lat": 45.5410079, "lon": -122.6757035 },
+    { "lat": 45.5410080, "lon": -122.6758456 },
+    { "lat": 45.5410094, "lon": -122.6759714 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "highway": "tertiary",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 51758603,
+  "bounds": {
+    "minlat": 45.5407617,
+    "minlon": -122.6734638,
+    "maxlat": 45.5424746,
+    "maxlon": -122.6715020
+  },
+  "geometry": [
+    { "lat": 45.5407617, "lon": -122.6715020 },
+    { "lat": 45.5408634, "lon": -122.6716372 },
+    { "lat": 45.5410829, "lon": -122.6718571 },
+    { "lat": 45.5413526, "lon": -122.6721370 },
+    { "lat": 45.5416215, "lon": -122.6724344 },
+    { "lat": 45.5424746, "lon": -122.6734638 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "destination:lanes": "none|none;Greeley Avenue;Swan Island",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "2",
+    "layer": "1",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt",
+    "turn:lanes": "none|through;slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 51758604,
+  "bounds": {
+    "minlat": 45.5406965,
+    "minlon": -122.6729714,
+    "maxlat": 45.5418631,
+    "maxlon": -122.6717211
+  },
+  "geometry": [
+    { "lat": 45.5418631, "lon": -122.6729714 },
+    { "lat": 45.5413677, "lon": -122.6723735 },
+    { "lat": 45.5410790, "lon": -122.6720733 },
+    { "lat": 45.5409013, "lon": -122.6719115 },
+    { "lat": 45.5406965, "lon": -122.6717211 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "description": "Pacific Highway #1",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "4",
+    "layer": "1",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+  }
+},
+{
+  "type": "way",
+  "id": 117315103,
+  "bounds": {
+    "minlat": 45.5388527,
+    "minlon": -122.6749492,
+    "maxlat": 45.5389898,
+    "maxlon": -122.6747989
+  },
+  "geometry": [
+    { "lat": 45.5389898, "lon": -122.6747989 },
+    { "lat": 45.5389435, "lon": -122.6748612 },
+    { "lat": 45.5388527, "lon": -122.6749492 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Albina Avenue",
+    "name:pronunciation": "nɔɹθ ælˈbaɪnə ˈævɪnjuː",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 117315126,
+  "bounds": {
+    "minlat": 45.5387684,
+    "minlon": -122.6749492,
+    "maxlat": 45.5388527,
+    "maxlon": -122.6746859
+  },
+  "geometry": [
+    { "lat": 45.5388527, "lon": -122.6749492 },
+    { "lat": 45.5388003, "lon": -122.6747992 },
+    { "lat": 45.5387684, "lon": -122.6746859 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Albina Avenue",
+    "name:pronunciation": "nɔɹθ ælˈbaɪnə ˈævɪnjuː",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 117315137,
+  "bounds": {
+    "minlat": 45.5384865,
+    "minlon": -122.6753226,
+    "maxlat": 45.5388527,
+    "maxlon": -122.6749492
+  },
+  "geometry": [
+    { "lat": 45.5384865, "lon": -122.6753226 },
+    { "lat": 45.5385285, "lon": -122.6752794 },
+    { "lat": 45.5388527, "lon": -122.6749492 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Albina Avenue",
+    "name:pronunciation": "nɔɹθ ælˈbaɪnə ˈævɪnjuː",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 117315162,
+  "bounds": {
+    "minlat": 45.5393384,
+    "minlon": -122.6749361,
+    "maxlat": 45.5410047,
+    "maxlon": -122.6747976
+  },
+  "geometry": [
+    { "lat": 45.5393384, "lon": -122.6749361 },
+    { "lat": 45.5393744, "lon": -122.6748932 },
+    { "lat": 45.5393995, "lon": -122.6748660 },
+    { "lat": 45.5394245, "lon": -122.6748388 },
+    { "lat": 45.5394606, "lon": -122.6748173 },
+    { "lat": 45.5394990, "lon": -122.6748094 },
+    { "lat": 45.5396040, "lon": -122.6748072 },
+    { "lat": 45.5409438, "lon": -122.6747993 },
+    { "lat": 45.5410047, "lon": -122.6747976 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Albina Avenue",
+    "name:pronunciation": "nɔɹθ ælˈbaɪnə ˈævɪnjuː",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 119661518,
+  "bounds": {
+    "minlat": 45.5410079,
+    "minlon": -122.6715187,
+    "maxlat": 45.5410518,
+    "maxlon": -122.6707837
+  },
+  "geometry": [
+    { "lat": 45.5410518, "lon": -122.6707837 },
+    { "lat": 45.5410449, "lon": -122.6709732 },
+    { "lat": 45.5410369, "lon": -122.6714331 },
+    { "lat": 45.5410079, "lon": -122.6715187 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 119661526,
+  "bounds": {
+    "minlat": 45.5410079,
+    "minlon": -122.6720540,
+    "maxlat": 45.5428347,
+    "maxlon": -122.6715099
+  },
+  "geometry": [
+    { "lat": 45.5428347, "lon": -122.6719650 },
+    { "lat": 45.5427641, "lon": -122.6720471 },
+    { "lat": 45.5423234, "lon": -122.6720540 },
+    { "lat": 45.5420781, "lon": -122.6720494 },
+    { "lat": 45.5420036, "lon": -122.6720432 },
+    { "lat": 45.5419444, "lon": -122.6720236 },
+    { "lat": 45.5418820, "lon": -122.6719942 },
+    { "lat": 45.5418283, "lon": -122.6719648 },
+    { "lat": 45.5417537, "lon": -122.6719127 },
+    { "lat": 45.5413782, "lon": -122.6715993 },
+    { "lat": 45.5413157, "lon": -122.6715482 },
+    { "lat": 45.5412798, "lon": -122.6715233 },
+    { "lat": 45.5412436, "lon": -122.6715149 },
+    { "lat": 45.5411731, "lon": -122.6715099 },
+    { "lat": 45.5411186, "lon": -122.6715128 },
+    { "lat": 45.5410079, "lon": -122.6715187 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 124812186,
+  "bounds": {
+    "minlat": 45.5410010,
+    "minlon": -122.6733267,
+    "maxlat": 45.5428270,
+    "maxlon": -122.6733188
+  },
+  "geometry": [
+    { "lat": 45.5410010, "lon": -122.6733188 },
+    { "lat": 45.5410781, "lon": -122.6733191 },
+    { "lat": 45.5412593, "lon": -122.6733197 },
+    { "lat": 45.5414235, "lon": -122.6733202 },
+    { "lat": 45.5419275, "lon": -122.6733219 },
+    { "lat": 45.5427670, "lon": -122.6733264 },
+    { "lat": 45.5428270, "lon": -122.6733267 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Borthwick Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 126575250,
+  "bounds": {
+    "minlat": 45.5385216,
+    "minlon": -122.6749361,
+    "maxlat": 45.5393384,
+    "maxlon": -122.6744829
+  },
+  "geometry": [
+    { "lat": 45.5385216, "lon": -122.6744829 },
+    { "lat": 45.5387706, "lon": -122.6744910 },
+    { "lat": 45.5388604, "lon": -122.6745120 },
+    { "lat": 45.5389528, "lon": -122.6745527 },
+    { "lat": 45.5390369, "lon": -122.6746068 },
+    { "lat": 45.5391159, "lon": -122.6746688 },
+    { "lat": 45.5391824, "lon": -122.6747342 },
+    { "lat": 45.5392314, "lon": -122.6747888 },
+    { "lat": 45.5392407, "lon": -122.6748009 },
+    { "lat": 45.5392868, "lon": -122.6748614 },
+    { "lat": 45.5393384, "lon": -122.6749361 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "track",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 139307241,
+  "bounds": {
+    "minlat": 45.5377445,
+    "minlon": -122.6754260,
+    "maxlat": 45.5378038,
+    "maxlon": -122.6748723
+  },
+  "geometry": [
+    { "lat": 45.5378038, "lon": -122.6754260 },
+    { "lat": 45.5377513, "lon": -122.6752978 },
+    { "lat": 45.5377445, "lon": -122.6748723 }
+  ],
+  "tags": {
+    "bicycle": "yes",
+    "bridge": "yes",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "unclassified",
+    "lanes": "2",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "turn:lanes": "left|through;right"
+  }
+},
+{
+  "type": "way",
+  "id": 160390329,
+  "bounds": {
+    "minlat": 45.5396569,
+    "minlon": -122.6714574,
+    "maxlat": 45.5407096,
+    "maxlon": -122.6705892
+  },
+  "geometry": [
+    { "lat": 45.5396569, "lon": -122.6705892 },
+    { "lat": 45.5400257, "lon": -122.6709013 },
+    { "lat": 45.5407096, "lon": -122.6714574 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "destination:lanes": "Seattle|Seattle;Saint Helens|Saint Helens",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt",
+    "turn:lanes": "through|through;slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 171946643,
+  "bounds": {
+    "minlat": 45.5409873,
+    "minlon": -122.6727727,
+    "maxlat": 45.5410079,
+    "maxlon": -122.6715187
+  },
+  "geometry": [
+    { "lat": 45.5410079, "lon": -122.6715187 },
+    { "lat": 45.5409873, "lon": -122.6721431 },
+    { "lat": 45.5409873, "lon": -122.6722851 },
+    { "lat": 45.5409982, "lon": -122.6725498 },
+    { "lat": 45.5409986, "lon": -122.6726036 },
+    { "lat": 45.5410000, "lon": -122.6727727 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:both": "lane",
+    "cycleway:both:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 171946644,
+  "bounds": {
+    "minlat": 45.5409814,
+    "minlon": -122.6715187,
+    "maxlat": 45.5410079,
+    "maxlon": -122.6707412
+  },
+  "geometry": [
+    { "lat": 45.5410079, "lon": -122.6715187 },
+    { "lat": 45.5409884, "lon": -122.6714331 },
+    { "lat": 45.5409814, "lon": -122.6712386 },
+    { "lat": 45.5409857, "lon": -122.6709685 },
+    { "lat": 45.5409901, "lon": -122.6707412 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 205288373,
+  "bounds": {
+    "minlat": 45.5394039,
+    "minlon": -122.6757948,
+    "maxlat": 45.5398022,
+    "maxlon": -122.6750575
+  },
+  "geometry": [
+    { "lat": 45.5394039, "lon": -122.6750575 },
+    { "lat": 45.5395178, "lon": -122.6752684 },
+    { "lat": 45.5398022, "lon": -122.6757948 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 205288374,
+  "bounds": {
+    "minlat": 45.5382986,
+    "minlon": -122.6751811,
+    "maxlat": 45.5392892,
+    "maxlon": -122.6746584
+  },
+  "geometry": [
+    { "lat": 45.5392892, "lon": -122.6751811 },
+    { "lat": 45.5392429, "lon": -122.6750987 },
+    { "lat": 45.5392201, "lon": -122.6750614 },
+    { "lat": 45.5391968, "lon": -122.6750232 },
+    { "lat": 45.5391519, "lon": -122.6749589 },
+    { "lat": 45.5390995, "lon": -122.6748967 },
+    { "lat": 45.5390520, "lon": -122.6748483 },
+    { "lat": 45.5389898, "lon": -122.6747989 },
+    { "lat": 45.5389343, "lon": -122.6747607 },
+    { "lat": 45.5388817, "lon": -122.6747320 },
+    { "lat": 45.5388394, "lon": -122.6747125 },
+    { "lat": 45.5387684, "lon": -122.6746859 },
+    { "lat": 45.5387239, "lon": -122.6746750 },
+    { "lat": 45.5386816, "lon": -122.6746664 },
+    { "lat": 45.5386165, "lon": -122.6746609 },
+    { "lat": 45.5384736, "lon": -122.6746584 },
+    { "lat": 45.5382986, "lon": -122.6746721 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 205288379,
+  "bounds": {
+    "minlat": 45.5378038,
+    "minlon": -122.6754260,
+    "maxlat": 45.5378591,
+    "maxlon": -122.6748695
+  },
+  "geometry": [
+    { "lat": 45.5378591, "lon": -122.6748695 },
+    { "lat": 45.5378571, "lon": -122.6749763 },
+    { "lat": 45.5378468, "lon": -122.6752991 },
+    { "lat": 45.5378038, "lon": -122.6754260 }
+  ],
+  "tags": {
+    "bicycle": "yes",
+    "bridge": "yes",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "unclassified",
+    "lanes": "1",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 205288380,
+  "bounds": {
+    "minlat": 45.5377914,
+    "minlon": -122.6748695,
+    "maxlat": 45.5378591,
+    "maxlon": -122.6744816
+  },
+  "geometry": [
+    { "lat": 45.5377914, "lon": -122.6744816 },
+    { "lat": 45.5378141, "lon": -122.6745545 },
+    { "lat": 45.5378310, "lon": -122.6746086 },
+    { "lat": 45.5378441, "lon": -122.6746507 },
+    { "lat": 45.5378581, "lon": -122.6746957 },
+    { "lat": 45.5378584, "lon": -122.6747548 },
+    { "lat": 45.5378586, "lon": -122.6747891 },
+    { "lat": 45.5378591, "lon": -122.6748695 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "oneway": "yes",
+    "sidewalk": "right",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 205288381,
+  "bounds": {
+    "minlat": 45.5377423,
+    "minlon": -122.6748723,
+    "maxlat": 45.5377914,
+    "maxlon": -122.6744816
+  },
+  "geometry": [
+    { "lat": 45.5377445, "lon": -122.6748723 },
+    { "lat": 45.5377438, "lon": -122.6748258 },
+    { "lat": 45.5377436, "lon": -122.6748105 },
+    { "lat": 45.5377430, "lon": -122.6747702 },
+    { "lat": 45.5377423, "lon": -122.6747227 },
+    { "lat": 45.5377651, "lon": -122.6746109 },
+    { "lat": 45.5377763, "lon": -122.6745559 },
+    { "lat": 45.5377914, "lon": -122.6744816 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "oneway": "yes",
+    "sidewalk": "right",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 205288382,
+  "bounds": {
+    "minlat": 45.5377907,
+    "minlon": -122.6768370,
+    "maxlat": 45.5378106,
+    "maxlon": -122.6754260
+  },
+  "geometry": [
+    { "lat": 45.5378038, "lon": -122.6754260 },
+    { "lat": 45.5377907, "lon": -122.6764887 },
+    { "lat": 45.5377972, "lon": -122.6766775 },
+    { "lat": 45.5378049, "lon": -122.6767812 },
+    { "lat": 45.5378106, "lon": -122.6768370 }
+  ],
+  "tags": {
+    "bicycle": "yes",
+    "bridge": "yes",
+    "cycleway:both": "lane",
+    "cycleway:both:buffer": "no",
+    "highway": "unclassified",
+    "lanes": "2",
+    "layer": "1",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 335704629,
+  "bounds": {
+    "minlat": 45.5414157,
+    "minlon": -122.6732690,
+    "maxlat": 45.5428840,
+    "maxlon": -122.6719551
+  },
+  "geometry": [
+    { "lat": 45.5414157, "lon": -122.6719551 },
+    { "lat": 45.5418242, "lon": -122.6722981 },
+    { "lat": 45.5422194, "lon": -122.6726036 },
+    { "lat": 45.5426190, "lon": -122.6729520 },
+    { "lat": 45.5427647, "lon": -122.6731150 },
+    { "lat": 45.5428840, "lon": -122.6732690 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "description": "East Fremont Interchange Connection",
+    "destination": "Saint Helens",
+    "destination:ref": "I 405 West;US 30 West",
+    "foot": "no",
+    "highway": "motorway_link",
+    "junction:ref": "302B",
+    "lanes": "2",
+    "layer": "4",
+    "maxspeed": "50 mph",
+    "motorway_link": "connector",
+    "oneway": "yes",
+    "ref": "US 30"
+  }
+},
+{
+  "type": "way",
+  "id": 408720190,
+  "bounds": {
+    "minlat": 45.5385216,
+    "minlon": -122.6744829,
+    "maxlat": 45.5386805,
+    "maxlon": -122.6736911
+  },
+  "geometry": [
+    { "lat": 45.5386805, "lon": -122.6736911 },
+    { "lat": 45.5386693, "lon": -122.6737677 },
+    { "lat": 45.5385325, "lon": -122.6744303 },
+    { "lat": 45.5385216, "lon": -122.6744829 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxheight": "50'",
+    "maxspeed": "25 mph",
+    "name": "North Thompson Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 408720194,
+  "bounds": {
+    "minlat": 45.5386805,
+    "minlon": -122.6736911,
+    "maxlat": 45.5386845,
+    "maxlon": -122.6732191
+  },
+  "geometry": [
+    { "lat": 45.5386810, "lon": -122.6732191 },
+    { "lat": 45.5386845, "lon": -122.6736047 },
+    { "lat": 45.5386805, "lon": -122.6736911 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxlength": "50'",
+    "maxspeed": "25 mph",
+    "name": "North Thompson Street",
+    "sidewalk:both": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 408720198,
+  "bounds": {
+    "minlat": 45.5377848,
+    "minlon": -122.6717474,
+    "maxlat": 45.5377884,
+    "maxlon": -122.6704541
+  },
+  "geometry": [
+    { "lat": 45.5377848, "lon": -122.6704541 },
+    { "lat": 45.5377884, "lon": -122.6717474 }
+  ],
+  "tags": {
+    "hgv": "designated",
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Tillamook Street",
+    "sidewalk": "left"
+  }
+},
+{
+  "type": "way",
+  "id": 408722785,
+  "bounds": {
+    "minlat": 45.5405689,
+    "minlon": -122.6727763,
+    "maxlat": 45.5405771,
+    "maxlon": -122.6722812
+  },
+  "geometry": [
+    { "lat": 45.5405689, "lon": -122.6722812 },
+    { "lat": 45.5405771, "lon": -122.6723393 },
+    { "lat": 45.5405765, "lon": -122.6725848 },
+    { "lat": 45.5405763, "lon": -122.6726787 },
+    { "lat": 45.5405761, "lon": -122.6727763 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 408722787,
+  "bounds": {
+    "minlat": 45.5399659,
+    "minlon": -122.6717996,
+    "maxlat": 45.5402444,
+    "maxlon": -122.6717706
+  },
+  "geometry": [
+    { "lat": 45.5399659, "lon": -122.6717706 },
+    { "lat": 45.5401947, "lon": -122.6717803 },
+    { "lat": 45.5402444, "lon": -122.6717996 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "sidewalk": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 408722790,
+  "bounds": {
+    "minlat": 45.5395952,
+    "minlon": -122.6727888,
+    "maxlat": 45.5396250,
+    "maxlon": -122.6722767
+  },
+  "geometry": [
+    { "lat": 45.5395952, "lon": -122.6722767 },
+    { "lat": 45.5396167, "lon": -122.6727115 },
+    { "lat": 45.5396250, "lon": -122.6727888 }
+  ],
+  "tags": {
+    "access": "private",
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Page Street",
+    "sidewalk": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 408722792,
+  "bounds": {
+    "minlat": 45.5395986,
+    "minlon": -122.6748072,
+    "maxlat": 45.5396040,
+    "maxlon": -122.6732060
+  },
+  "geometry": [
+    { "lat": 45.5395986, "lon": -122.6732060 },
+    { "lat": 45.5395986, "lon": -122.6732265 },
+    { "lat": 45.5395997, "lon": -122.6737999 },
+    { "lat": 45.5396002, "lon": -122.6739152 },
+    { "lat": 45.5396036, "lon": -122.6747245 },
+    { "lat": 45.5396040, "lon": -122.6748072 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Page Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 408722795,
+  "bounds": {
+    "minlat": 45.5396860,
+    "minlon": -122.6727794,
+    "maxlat": 45.5410000,
+    "maxlon": -122.6727727
+  },
+  "geometry": [
+    { "lat": 45.5396860, "lon": -122.6727794 },
+    { "lat": 45.5401972, "lon": -122.6727776 },
+    { "lat": 45.5402854, "lon": -122.6727773 },
+    { "lat": 45.5404053, "lon": -122.6727769 },
+    { "lat": 45.5405761, "lon": -122.6727763 },
+    { "lat": 45.5409438, "lon": -122.6727732 },
+    { "lat": 45.5410000, "lon": -122.6727727 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Ross Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 587064711,
+  "bounds": {
+    "minlat": 45.5410518,
+    "minlon": -122.6711409,
+    "maxlat": 45.5411813,
+    "maxlon": -122.6707837
+  },
+  "geometry": [
+    { "lat": 45.5410518, "lon": -122.6707837 },
+    { "lat": 45.5411125, "lon": -122.6709299 },
+    { "lat": 45.5411350, "lon": -122.6710013 },
+    { "lat": 45.5411813, "lon": -122.6711409 }
+  ],
+  "tags": {
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 658557668,
+  "bounds": {
+    "minlat": 45.5392201,
+    "minlon": -122.6750614,
+    "maxlat": 45.5393384,
+    "maxlon": -122.6749361
+  },
+  "geometry": [
+    { "lat": 45.5392201, "lon": -122.6750614 },
+    { "lat": 45.5392608, "lon": -122.6750210 },
+    { "lat": 45.5393106, "lon": -122.6749715 },
+    { "lat": 45.5393384, "lon": -122.6749361 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Albina Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 658557669,
+  "bounds": {
+    "minlat": 45.5393384,
+    "minlon": -122.6750575,
+    "maxlat": 45.5394039,
+    "maxlon": -122.6749361
+  },
+  "geometry": [
+    { "lat": 45.5393384, "lon": -122.6749361 },
+    { "lat": 45.5394039, "lon": -122.6750575 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 778459541,
+  "bounds": {
+    "minlat": 45.5377423,
+    "minlon": -122.6747227,
+    "maxlat": 45.5382986,
+    "maxlon": -122.6746721
+  },
+  "geometry": [
+    { "lat": 45.5382986, "lon": -122.6746721 },
+    { "lat": 45.5381310, "lon": -122.6746728 },
+    { "lat": 45.5379874, "lon": -122.6746772 },
+    { "lat": 45.5379489, "lon": -122.6746784 },
+    { "lat": 45.5379301, "lon": -122.6746790 },
+    { "lat": 45.5378581, "lon": -122.6746957 },
+    { "lat": 45.5377423, "lon": -122.6747227 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt",
+    "turn:lanes": "left|"
+  }
+},
+{
+  "type": "way",
+  "id": 778459542,
+  "bounds": {
+    "minlat": 45.5392892,
+    "minlon": -122.6755434,
+    "maxlat": 45.5394698,
+    "maxlon": -122.6751811
+  },
+  "geometry": [
+    { "lat": 45.5394698, "lon": -122.6755434 },
+    { "lat": 45.5394114, "lon": -122.6754226 },
+    { "lat": 45.5393052, "lon": -122.6752126 },
+    { "lat": 45.5393045, "lon": -122.6752112 },
+    { "lat": 45.5392892, "lon": -122.6751811 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "turn:lanes": "left|"
+  }
+},
+{
+  "type": "way",
+  "id": 1207621005,
+  "bounds": {
+    "minlat": 45.5395075,
+    "minlon": -122.6705892,
+    "maxlat": 45.5396569,
+    "maxlon": -122.6704671
+  },
+  "geometry": [
+    { "lat": 45.5395075, "lon": -122.6704671 },
+    { "lat": 45.5396569, "lon": -122.6705892 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+  }
+},
+{
+  "type": "way",
+  "id": 1228768273,
+  "bounds": {
+    "minlat": 45.5397269,
+    "minlon": -122.6717706,
+    "maxlat": 45.5399659,
+    "maxlon": -122.6717607
+  },
+  "geometry": [
+    { "lat": 45.5397269, "lon": -122.6717607 },
+    { "lat": 45.5399659, "lon": -122.6717706 }
+  ],
+  "tags": {
+    "access": "private",
+    "highway": "unclassified",
+    "maxspeed": "25 mph",
+    "name": "North Kerby Avenue",
+    "sidewalk": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 1292202460,
+  "bounds": {
+    "minlat": 45.5377914,
+    "minlon": -122.6744829,
+    "maxlat": 45.5385216,
+    "maxlon": -122.6744767
+  },
+  "geometry": [
+    { "lat": 45.5377914, "lon": -122.6744816 },
+    { "lat": 45.5379329, "lon": -122.6744767 },
+    { "lat": 45.5384294, "lon": -122.6744828 },
+    { "lat": 45.5385216, "lon": -122.6744829 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "30 mph",
+    "name": "North Interstate Avenue",
+    "old_name": "Pacific Highway West #1W (91)",
+    "old_ref": "OR 99W (old US 99W)",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1359095687,
+  "bounds": {
+    "minlat": 45.5386768,
+    "minlon": -122.6718643,
+    "maxlat": 45.5386773,
+    "maxlon": -122.6717437
+  },
+  "geometry": [
+    { "lat": 45.5386768, "lon": -122.6717437 },
+    { "lat": 45.5386773, "lon": -122.6718643 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxlength": "50'",
+    "maxspeed": "25 mph",
+    "name": "North Thompson Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 1434137029,
+  "bounds": {
+    "minlat": 45.5386773,
+    "minlon": -122.6732191,
+    "maxlat": 45.5386810,
+    "maxlon": -122.6718643
+  },
+  "geometry": [
+    { "lat": 45.5386773, "lon": -122.6718643 },
+    { "lat": 45.5386810, "lon": -122.6732191 }
+  ],
+  "tags": {
+    "highway": "unclassified",
+    "maxlength": "50'",
+    "maxspeed": "25 mph",
+    "name": "North Thompson Street",
+    "sidewalk": "left"
+  }
+},
+{
+  "type": "way",
+  "id": 1434482342,
+  "bounds": {
+    "minlat": 45.5407096,
+    "minlon": -122.6715020,
+    "maxlat": 45.5407617,
+    "maxlon": -122.6714574
+  },
+  "geometry": [
+    { "lat": 45.5407096, "lon": -122.6714574 },
+    { "lat": 45.5407617, "lon": -122.6715020 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "description": "Pacific Highway #1",
+    "destination:lanes": "Seattle|Seattle;Saint Helens|Saint Helens",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "3",
+    "layer": "1",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "turn:lanes": "through|through;slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 1459998201,
+  "bounds": {
+    "minlat": 45.5407617,
+    "minlon": -122.6719551,
+    "maxlat": 45.5414157,
+    "maxlon": -122.6715020
+  },
+  "geometry": [
+    { "lat": 45.5407617, "lon": -122.6715020 },
+    { "lat": 45.5408796, "lon": -122.6715361 },
+    { "lat": 45.5414157, "lon": -122.6719551 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "description": "East Fremont Interchange Connection",
+    "destination": "Saint Helens",
+    "destination:ref": "I 405 West;US 30 West",
+    "foot": "no",
+    "highway": "motorway_link",
+    "junction:ref": "302B",
+    "lanes": "2",
+    "layer": "1",
+    "maxspeed": "50 mph",
+    "motorway_link": "connector",
+    "oneway": "yes",
+    "ref": "US 30"
+  }
+},
+{
+  "type": "way",
+  "id": 171946642,
+  "bounds": {
+    "minlat": 45.5409901,
+    "minlon": -122.6707412,
+    "maxlat": 45.5409979,
+    "maxlon": -122.6694248
+  },
+  "geometry": [
+    { "lat": 45.5409901, "lon": -122.6707412 },
+    { "lat": 45.5409979, "lon": -122.6700568 },
+    { "lat": 45.5409934, "lon": -122.6694248 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 587064713,
+  "bounds": {
+    "minlat": 45.5410518,
+    "minlon": -122.6707837,
+    "maxlat": 45.5410692,
+    "maxlon": -122.6692969
+  },
+  "geometry": [
+    { "lat": 45.5410689, "lon": -122.6692969 },
+    { "lat": 45.5410690, "lon": -122.6694247 },
+    { "lat": 45.5410692, "lon": -122.6703811 },
+    { "lat": 45.5410649, "lon": -122.6705342 },
+    { "lat": 45.5410518, "lon": -122.6707837 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 613540294,
+  "bounds": {
+    "minlat": 45.5396164,
+    "minlon": -122.6707049,
+    "maxlat": 45.5402914,
+    "maxlon": -122.6701008
+  },
+  "geometry": [
+    { "lat": 45.5396164, "lon": -122.6701008 },
+    { "lat": 45.5396558, "lon": -122.6701444 },
+    { "lat": 45.5402914, "lon": -122.6707049 }
+  ],
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "25 mph",
+    "name": "North Commercial Avenue",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 1008822277,
+  "bounds": {
+    "minlat": 45.5386714,
+    "minlon": -122.6704671,
+    "maxlat": 45.5395075,
+    "maxlon": -122.6697836
+  },
+  "geometry": [
+    { "lat": 45.5386714, "lon": -122.6697836 },
+    { "lat": 45.5395075, "lon": -122.6704671 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "description": "Pacific Highway #1",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "3",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+  }
+},
+{
+  "type": "way",
+  "id": 1207621006,
+  "bounds": {
+    "minlat": 45.5384040,
+    "minlon": -122.6707107,
+    "maxlat": 45.5395092,
+    "maxlon": -122.6697771
+  },
+  "geometry": [
+    { "lat": 45.5395092, "lon": -122.6707107 },
+    { "lat": 45.5387051, "lon": -122.6700329 },
+    { "lat": 45.5384040, "lon": -122.6697771 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "bridge": "yes",
+    "description": "Pacific Highway #1",
+    "destination:lanes": "none|none|The Dalles;Broadway;Weidler Street;Moda Center|Broadway;Weidler Street;Moda Center",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "4",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|through;slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 5530529,
+  "bounds": {
+    "minlat": 45.5409926,
+    "minlon": -122.6674149,
+    "maxlat": 45.5410666,
+    "maxlon": -122.6663265
+  },
+  "geometry": [
+    { "lat": 45.5409926, "lon": -122.6663265 },
+    { "lat": 45.5410266, "lon": -122.6664412 },
+    { "lat": 45.5410463, "lon": -122.6665854 },
+    { "lat": 45.5410574, "lon": -122.6666753 },
+    { "lat": 45.5410626, "lon": -122.6668088 },
+    { "lat": 45.5410666, "lon": -122.6674149 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 5532703,
+  "bounds": {
+    "minlat": 45.5380467,
+    "minlon": -122.6687329,
+    "maxlat": 45.5380564,
+    "maxlon": -122.6666661
+  },
+  "geometry": [
+    { "lat": 45.5380467, "lon": -122.6666661 },
+    { "lat": 45.5380475, "lon": -122.6668284 },
+    { "lat": 45.5380511, "lon": -122.6676042 },
+    { "lat": 45.5380512, "lon": -122.6676234 },
+    { "lat": 45.5380516, "lon": -122.6677051 },
+    { "lat": 45.5380521, "lon": -122.6678138 },
+    { "lat": 45.5380522, "lon": -122.6678482 },
+    { "lat": 45.5380559, "lon": -122.6686284 },
+    { "lat": 45.5380560, "lon": -122.6686412 },
+    { "lat": 45.5380564, "lon": -122.6687329 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Tillamook Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 5534023,
+  "bounds": {
+    "minlat": 45.5395888,
+    "minlon": -122.6687219,
+    "maxlat": 45.5395920,
+    "maxlon": -122.6666665
+  },
+  "geometry": [
+    { "lat": 45.5395895, "lon": -122.6666665 },
+    { "lat": 45.5395889, "lon": -122.6667926 },
+    { "lat": 45.5395888, "lon": -122.6668216 },
+    { "lat": 45.5395904, "lon": -122.6675893 },
+    { "lat": 45.5395905, "lon": -122.6676365 },
+    { "lat": 45.5395906, "lon": -122.6676935 },
+    { "lat": 45.5395907, "lon": -122.6677843 },
+    { "lat": 45.5395908, "lon": -122.6678159 },
+    { "lat": 45.5395914, "lon": -122.6683053 },
+    { "lat": 45.5395918, "lon": -122.6686088 },
+    { "lat": 45.5395920, "lon": -122.6687219 }
+  ],
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "20 mph",
+    "name": "North Page Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 30474347,
+  "bounds": {
+    "minlat": 45.5379985,
+    "minlon": -122.6687330,
+    "maxlat": 45.5380564,
+    "maxlon": -122.6687325
+  },
+  "geometry": [
+    { "lat": 45.5379985, "lon": -122.6687325 },
+    { "lat": 45.5380080, "lon": -122.6687330 },
+    { "lat": 45.5380357, "lon": -122.6687329 },
+    { "lat": 45.5380564, "lon": -122.6687329 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:both": "shared_lane",
+    "cycleway:both:lane": "pictogram",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 141411480,
+  "bounds": {
+    "minlat": 45.5380564,
+    "minlon": -122.6687329,
+    "maxlat": 45.5384163,
+    "maxlon": -122.6687303
+  },
+  "geometry": [
+    { "lat": 45.5380564, "lon": -122.6687329 },
+    { "lat": 45.5381265, "lon": -122.6687317 },
+    { "lat": 45.5383186, "lon": -122.6687310 },
+    { "lat": 45.5384163, "lon": -122.6687303 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 194704184,
+  "bounds": {
+    "minlat": 45.5419035,
+    "minlon": -122.6694284,
+    "maxlat": 45.5419412,
+    "maxlon": -122.6681235
+  },
+  "geometry": [
+    { "lat": 45.5419035, "lon": -122.6681235 },
+    { "lat": 45.5419089, "lon": -122.6682494 },
+    { "lat": 45.5419081, "lon": -122.6685275 },
+    { "lat": 45.5419058, "lon": -122.6692692 },
+    { "lat": 45.5419056, "lon": -122.6693428 },
+    { "lat": 45.5419102, "lon": -122.6693723 },
+    { "lat": 45.5419205, "lon": -122.6693987 },
+    { "lat": 45.5419412, "lon": -122.6694284 }
+  ],
+  "tags": {
+    "access": "destination",
+    "highway": "residential",
+    "maxspeed": "20 mph",
+    "name": "North Knott Street",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 319635670,
+  "bounds": {
+    "minlat": 45.5409861,
+    "minlon": -122.6679114,
+    "maxlat": 45.5409879,
+    "maxlon": -122.6671869
+  },
+  "geometry": [
+    { "lat": 45.5409879, "lon": -122.6679114 },
+    { "lat": 45.5409875, "lon": -122.6677861 },
+    { "lat": 45.5409861, "lon": -122.6671869 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk": "right"
+  }
+},
+{
+  "type": "way",
+  "id": 319635671,
+  "bounds": {
+    "minlat": 45.5405625,
+    "minlon": -122.6679114,
+    "maxlat": 45.5409879,
+    "maxlon": -122.6677020
+  },
+  "geometry": [
+    { "lat": 45.5409879, "lon": -122.6679114 },
+    { "lat": 45.5409055, "lon": -122.6678437 },
+    { "lat": 45.5408674, "lon": -122.6678186 },
+    { "lat": 45.5408478, "lon": -122.6678060 },
+    { "lat": 45.5408023, "lon": -122.6677747 },
+    { "lat": 45.5407230, "lon": -122.6677384 },
+    { "lat": 45.5407030, "lon": -122.6677318 },
+    { "lat": 45.5406450, "lon": -122.6677147 },
+    { "lat": 45.5405625, "lon": -122.6677020 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt",
+    "turn:lanes": "merge_to_right|none"
+  }
+},
+{
+  "type": "way",
+  "id": 426066335,
+  "bounds": {
+    "minlat": 45.5400036,
+    "minlon": -122.6687187,
+    "maxlat": 45.5409887,
+    "maxlon": -122.6687110
+  },
+  "geometry": [
+    { "lat": 45.5400036, "lon": -122.6687187 },
+    { "lat": 45.5404611, "lon": -122.6687152 },
+    { "lat": 45.5406748, "lon": -122.6687135 },
+    { "lat": 45.5409138, "lon": -122.6687117 },
+    { "lat": 45.5409239, "lon": -122.6687110 },
+    { "lat": 45.5409887, "lon": -122.6687111 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 426066336,
+  "bounds": {
+    "minlat": 45.5384163,
+    "minlon": -122.6687303,
+    "maxlat": 45.5400036,
+    "maxlon": -122.6687187
+  },
+  "geometry": [
+    { "lat": 45.5384163, "lon": -122.6687303 },
+    { "lat": 45.5386186, "lon": -122.6687289 },
+    { "lat": 45.5390774, "lon": -122.6687256 },
+    { "lat": 45.5395279, "lon": -122.6687224 },
+    { "lat": 45.5395920, "lon": -122.6687219 },
+    { "lat": 45.5396619, "lon": -122.6687213 },
+    { "lat": 45.5398562, "lon": -122.6687198 },
+    { "lat": 45.5400036, "lon": -122.6687187 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 587064706,
+  "bounds": {
+    "minlat": 45.5405470,
+    "minlon": -122.6666785,
+    "maxlat": 45.5409813,
+    "maxlon": -122.6666752
+  },
+  "geometry": [
+    { "lat": 45.5405470, "lon": -122.6666752 },
+    { "lat": 45.5409111, "lon": -122.6666785 },
+    { "lat": 45.5409813, "lon": -122.6666770 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:left": "lane",
+    "cycleway:left:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Williams Avenue",
+    "name:etymology": "George Henry Williams",
+    "name:etymology:wikidata": "Q725008",
+    "name:etymology:wikipedia": "en:George Henry Williams",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "concrete",
+    "surface": "asphalt",
+    "wikidata": "Q19877184",
+    "wikipedia": "en:North Williams Avenue"
+  }
+},
+{
+  "type": "way",
+  "id": 587064707,
+  "bounds": {
+    "minlat": 45.5410644,
+    "minlon": -122.6684260,
+    "maxlat": 45.5410662,
+    "maxlon": -122.6679766
+  },
+  "geometry": [
+    { "lat": 45.5410644, "lon": -122.6679766 },
+    { "lat": 45.5410662, "lon": -122.6682265 },
+    { "lat": 45.5410660, "lon": -122.6684260 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 587064708,
+  "bounds": {
+    "minlat": 45.5410635,
+    "minlon": -122.6679766,
+    "maxlat": 45.5410666,
+    "maxlon": -122.6674149
+  },
+  "geometry": [
+    { "lat": 45.5410666, "lon": -122.6674149 },
+    { "lat": 45.5410637, "lon": -122.6678234 },
+    { "lat": 45.5410635, "lon": -122.6678550 },
+    { "lat": 45.5410644, "lon": -122.6679766 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk": "right",
+    "turn:lanes": "left|none"
+  }
+},
+{
+  "type": "way",
+  "id": 587064709,
+  "bounds": {
+    "minlat": 45.5409813,
+    "minlon": -122.6671869,
+    "maxlat": 45.5409861,
+    "maxlon": -122.6666770
+  },
+  "geometry": [
+    { "lat": 45.5409861, "lon": -122.6671869 },
+    { "lat": 45.5409852, "lon": -122.6668210 },
+    { "lat": 45.5409813, "lon": -122.6666770 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk": "right",
+    "turn:lanes": "left|none"
+  }
+},
+{
+  "type": "way",
+  "id": 587064712,
+  "bounds": {
+    "minlat": 45.5410656,
+    "minlon": -122.6687107,
+    "maxlat": 45.5410660,
+    "maxlon": -122.6684260
+  },
+  "geometry": [
+    { "lat": 45.5410660, "lon": -122.6684260 },
+    { "lat": 45.5410656, "lon": -122.6687107 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "turn:lanes": "left|none"
+  }
+},
+{
+  "type": "way",
+  "id": 587064716,
+  "bounds": {
+    "minlat": 45.5410644,
+    "minlon": -122.6681103,
+    "maxlat": 45.5414031,
+    "maxlon": -122.6679766
+  },
+  "geometry": [
+    { "lat": 45.5414031, "lon": -122.6681103 },
+    { "lat": 45.5412980, "lon": -122.6681085 },
+    { "lat": 45.5412509, "lon": -122.6680971 },
+    { "lat": 45.5412091, "lon": -122.6680792 },
+    { "lat": 45.5411769, "lon": -122.6680610 },
+    { "lat": 45.5411539, "lon": -122.6680479 },
+    { "lat": 45.5410644, "lon": -122.6679766 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "yes",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "concrete",
+    "surface": "asphalt",
+    "turn:lanes": "left|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 789175217,
+  "bounds": {
+    "minlat": 45.5409879,
+    "minlon": -122.6679766,
+    "maxlat": 45.5410644,
+    "maxlon": -122.6679114
+  },
+  "geometry": [
+    { "lat": 45.5410644, "lon": -122.6679766 },
+    { "lat": 45.5409879, "lon": -122.6679114 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "surface": "asphalt",
+    "turn:lanes": "left|none"
+  }
+},
+{
+  "type": "way",
+  "id": 1051483985,
+  "bounds": {
+    "minlat": 45.5414031,
+    "minlon": -122.6681185,
+    "maxlat": 45.5416746,
+    "maxlon": -122.6681103
+  },
+  "geometry": [
+    { "lat": 45.5416746, "lon": -122.6681185 },
+    { "lat": 45.5415141, "lon": -122.6681165 },
+    { "lat": 45.5414031, "lon": -122.6681103 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "secondary",
+    "lanes": "3",
+    "maxspeed": "25 mph",
+    "name": "North Vancouver Avenue",
+    "oneway": "yes",
+    "sidewalk": "both",
+    "sidewalk:both:surface": "concrete",
+    "surface": "asphalt",
+    "turn:lanes": "left|none|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1068473502,
+  "bounds": {
+    "minlat": 45.5409887,
+    "minlon": -122.6687111,
+    "maxlat": 45.5410656,
+    "maxlon": -122.6687107
+  },
+  "geometry": [
+    { "lat": 45.5409887, "lon": -122.6687111 },
+    { "lat": 45.5410656, "lon": -122.6687107 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "highway": "unclassified",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "North Flint Avenue",
+    "sidewalk": "both"
+  }
+},
+{
+  "type": "way",
+  "id": 1068473503,
+  "bounds": {
+    "minlat": 45.5409879,
+    "minlon": -122.6687111,
+    "maxlat": 45.5409922,
+    "maxlon": -122.6679114
+  },
+  "geometry": [
+    { "lat": 45.5409887, "lon": -122.6687111 },
+    { "lat": 45.5409888, "lon": -122.6683332 },
+    { "lat": 45.5409914, "lon": -122.6682155 },
+    { "lat": 45.5409922, "lon": -122.6681775 },
+    { "lat": 45.5409879, "lon": -122.6679114 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "2",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate",
+    "turn:lanes": "|right"
+  }
+},
+{
+  "type": "way",
+  "id": 1207621007,
+  "bounds": {
+    "minlat": 45.5378040,
+    "minlon": -122.6697771,
+    "maxlat": 45.5384040,
+    "maxlon": -122.6692674
+  },
+  "geometry": [
+    { "lat": 45.5384040, "lon": -122.6697771 },
+    { "lat": 45.5378040, "lon": -122.6692674 }
+  ],
+  "tags": {
+    "bicycle": "no",
+    "description": "Pacific Highway #1",
+    "destination:lanes": "none|none|The Dalles;Broadway;Weidler Street;Moda Center|Broadway;Weidler Street;Moda Center",
+    "hgv": "designated",
+    "hgv:national_network": "yes",
+    "highway": "motorway",
+    "lanes": "4",
+    "lit": "yes",
+    "maxspeed": "50 mph",
+    "noname": "yes",
+    "official_name": "Pacific Highway #1;Korean War Veterans Memorial Highway;Purple Heart Trail",
+    "oneway": "yes",
+    "ref": "I 5;US 30",
+    "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+    "surface": "asphalt",
+    "turn:lanes": "none|none|through;slight_right|slight_right"
+  }
+},
+{
+  "type": "way",
+  "id": 1436131399,
+  "bounds": {
+    "minlat": 45.5409887,
+    "minlon": -122.6694248,
+    "maxlat": 45.5409934,
+    "maxlon": -122.6687111
+  },
+  "geometry": [
+    { "lat": 45.5409934, "lon": -122.6694248 },
+    { "lat": 45.5409887, "lon": -122.6687111 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 1436131400,
+  "bounds": {
+    "minlat": 45.5410656,
+    "minlon": -122.6692969,
+    "maxlat": 45.5410689,
+    "maxlon": -122.6687107
+  },
+  "geometry": [
+    { "lat": 45.5410656, "lon": -122.6687107 },
+    { "lat": 45.5410689, "lon": -122.6692969 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway:right": "lane",
+    "cycleway:right:buffer": "no",
+    "highway": "tertiary",
+    "lanes": "1",
+    "maxspeed": "25 mph",
+    "name": "North Russell Street",
+    "name:etymology": "Edwin Russell",
+    "oneway": "yes",
+    "sidewalk:left": "no",
+    "sidewalk:right": "separate"
+  }
+},
+{
+  "type": "way",
+  "id": 5528197,
+  "bounds": {
+    "minlat": 45.5399564,
+    "minlon": -122.6666572,
+    "maxlat": 45.5399665,
+    "maxlon": -122.6616731
+  },
+  "geometry": [
+    { "lat": 45.5399661, "lon": -122.6666572 },
+    { "lat": 45.5399662, "lon": -122.6665673 },
+    { "lat": 45.5399665, "lon": -122.6661424 },
+    { "lat": 45.5399658, "lon": -122.6658970 },
+    { "lat": 45.5399653, "lon": -122.6657017 },
+    { "lat": 45.5399614, "lon": -122.6642478 },
+    { "lat": 45.5399612, "lon": -122.6641565 },
+    { "lat": 45.5399610, "lon": -122.6640735 },
+    { "lat": 45.5399591, "lon": -122.6633834 },
+    { "lat": 45.5399564, "lon": -122.6623721 },
+    { "lat": 45.5399572, "lon": -122.6619222 },
+    { "lat": 45.5399575, "lon": -122.6617528 },
+    { "lat": 45.5399573, "lon": -122.6616731 }
+  ],
+  "tags": {
+    "hgv": "delivery",
+    "highway": "residential",
+    "maxspeed": "20 mph",
+    "name": "Northeast Sacramento Street",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5536463,
+  "bounds": {
+    "minlat": 45.5380298,
+    "minlon": -122.6666661,
+    "maxlat": 45.5380469,
+    "maxlon": -122.6615839
+  },
+  "geometry": [
+    { "lat": 45.5380467, "lon": -122.6666661 },
+    { "lat": 45.5380469, "lon": -122.6666028 },
+    { "lat": 45.5380469, "lon": -122.6665923 },
+    { "lat": 45.5380453, "lon": -122.6663025 },
+    { "lat": 45.5380441, "lon": -122.6660884 },
+    { "lat": 45.5380439, "lon": -122.6660448 },
+    { "lat": 45.5380368, "lon": -122.6647811 },
+    { "lat": 45.5380339, "lon": -122.6642559 },
+    { "lat": 45.5380334, "lon": -122.6641733 },
+    { "lat": 45.5380322, "lon": -122.6634972 },
+    { "lat": 45.5380302, "lon": -122.6624023 },
+    { "lat": 45.5380300, "lon": -122.6623114 },
+    { "lat": 45.5380298, "lon": -122.6621844 },
+    { "lat": 45.5380305, "lon": -122.6618674 },
+    { "lat": 45.5380307, "lon": -122.6618048 },
+    { "lat": 45.5380307, "lon": -122.6617806 },
+    { "lat": 45.5380309, "lon": -122.6616909 },
+    { "lat": 45.5380312, "lon": -122.6615839 }
+  ],
+  "tags": {
+    "bicycle": "designated",
+    "cycleway": "shared_lane",
+    "hgv": "no",
+    "highway": "residential",
+    "lanes": "2",
+    "maxspeed": "20 mph",
+    "name": "Northeast Tillamook Street",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 5538503,
+  "bounds": {
+    "minlat": 45.5389970,
+    "minlon": -122.6666664,
+    "maxlat": 45.5390028,
+    "maxlon": -122.6615840
+  },
+  "geometry": [
+    { "lat": 45.5390013, "lon": -122.6666664 },
+    { "lat": 45.5390022, "lon": -122.6666011 },
+    { "lat": 45.5390028, "lon": -122.6665615 },
+    { "lat": 45.5389972, "lon": -122.6642472 },
+    { "lat": 45.5389970, "lon": -122.6641597 },
+    { "lat": 45.5389996, "lon": -122.6619017 },
+    { "lat": 45.5390005, "lon": -122.6617523 },
+    { "lat": 45.5390006, "lon": -122.6616797 },
+    { "lat": 45.5390007, "lon": -122.6615840 }
+  ],
+  "tags": {
+    "highway": "residential",
+    "maxspeed": "20 mph",
+    "name": "Northeast Thompson Street",
+    "sidewalk": "both",
+    "surface": "asphalt"
+  }
+}
+
+  ]
+}

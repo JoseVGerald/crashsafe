@@ -1,0 +1,32 @@
+{
+  "route": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "00004631-3400-0400-0000-0000000a7b21",
+        "speedLimits": {"value": 35, "unit": "mph", "type": "Maximum"},
+        "address": {"roadName": "N Interstate Ave", "roadNumbers": []},
+        "frc": 4, "formOfWay": "ParallelRoad", "roadUse": "LocalStreet",
+        "laneInfo": {"numberOfLanes": 2}, "partOfTunnel": false, "urbanArea": true
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "00004631-3400-0400-0000-0000000a7b22",
+        "speedLimits": {"value": 50, "unit": "mph", "type": "Maximum"},
+        "address": {"roadName": "I-5 N", "roadNumbers": ["I-5"]},
+        "frc": 0, "formOfWay": "DualCarriageway", "roadUse": "LimitedAccess",
+        "laneInfo": {"numberOfLanes": 4}, "partOfTunnel": false, "urbanArea": true
+      }
+    }
+  ],
+  "projectedPoints": [
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-122.67120, 45.54020]},
+     "properties": {"routeIndex": 1, "snapResult": "Matched"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-122.67150, 45.54060]},
+     "properties": {"routeIndex": 1, "snapResult": "Matched"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-122.67178, 45.54100]},
+     "properties": {"routeIndex": 1, "snapResult": "Matched"}}
+  ]
+}
