@@ -23,7 +23,7 @@ enum OnDevicePulse {
         guard #available(iOS 26.0, *), SystemLanguageModel.default.isAvailable,
               let query = history.last(where: { $0.role == .user })?.text else { return nil }
         let session = LanguageModelSession(instructions: PulseTeamAgent.coreMini + "\n\n" + turn)
-        let options = GenerationOptions(samplingMode: .greedy, maximumResponseTokens: 384)
+        let options = GenerationOptions(sampling: .greedy, maximumResponseTokens: 384)
         do {
             return try await session.respond(to: prompt(history: history, query: query), options: options).content
         } catch {
