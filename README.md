@@ -142,6 +142,30 @@ Some parts of CrashSafe are fully written but held back by something outside the
 
 Once Apple approves the entitlement, turning on real CarPlay is a configuration change, not new code: add `com.apple.developer.carplay-driving-task` to the device entitlements and provisioning profile (see [CarPlay](#carplay)). Android Auto needs Google's review in the same way.
 
+### Apple Health import
+
+**What's built.** **Fill from Apple Health** ([`AppleHealthImport.swift`](CrashSafe/Services/Health/AppleHealthImport.swift)) prefills the medical part of the safety profile from Health, read-only and only with permission: blood type, an age band from your birthday, and on iOS 26 and later the medications you track in Health.
+
+**What's holding it back.** On a real iPhone, Health access has to be added to the app's signed build, which needs Xcode signed in to the team's Apple ID so it can put HealthKit in the provisioning profile. Our device builds aren't set up that way, so `project.yml` turns the feature on (`PULSE_HEALTHKIT`) only for simulator builds.
+
+**How we got around it.** On a phone the button is hidden and you type your medical info in during onboarding or in Profile. Everything after that works the same. To turn it on, uncomment the device entitlements line in `project.yml` and set `PULSE_HEALTHKIT` to `YES`.
+
+### Apple Weather
+
+**What's built.** [`AppleWeatherService.swift`](CrashSafe/Services/Weather/AppleWeatherService.swift) gets current conditions from Apple Weather (WeatherKit) and shows Apple's required attribution.
+
+**What's holding it back.** Apple Weather only answers apps signed by a paid Apple Developer team with the WeatherKit capability turned on. We don't have one, so the WeatherKit entitlement is commented out for device builds in `project.yml`.
+
+**How we got around it.** The app falls back to [Open-Meteo](https://open-meteo.com) automatically, and its attribution changes to match. Live weather and the weather-based driving advice work either way. With a paid team, uncomment the WeatherKit entitlements line in `project.yml`.
+
+### Sign in with Apple and Firebase accounts
+
+**What's built.** [`FirebaseAuthService.swift`](CrashSafe/Services/Auth/FirebaseAuthService.swift) handles email/password accounts and Sign in with Apple through Firebase, and the app's sign-in screens use Apple's own Sign in with Apple button.
+
+**What's holding it back.** Real Sign in with Apple needs the Sign in with Apple capability, which requires a paid Apple Developer team. Firebase needs a Firebase project, its `GoogleService-Info.plist` and the Firebase SDK added to the build. We don't have the paid team, and Firebase isn't set up in this repo, so the Firebase code doesn't compile into the app yet.
+
+**How we got around it.** The app uses an offline mock ([`MockAuthService.swift`](CrashSafe/Services/Auth/MockAuthService.swift)). Accounts you create are stored on the phone, and **Sign in with Apple** signs in a demo user. The rest of the app doesn't depend on which one is running: once the SDK and plist are added, `AppEnvironment` switches to Firebase by itself. See [Switching from mock auth to Firebase on iOS](#switching-from-mock-auth-to-firebase-on-ios).
+
 ## Design notes
 
 The details below describe the iOS design system; Android uses Jetpack Compose with the same brand palette and corresponding native components.
