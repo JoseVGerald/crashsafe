@@ -1,4 +1,4 @@
-# CrashSafe (working name)
+# CrashSafe 
 
 Congressional App Challenge 2026 project. Other apps detect crashes; this one guides the driver through **what happens next**, even with no signal.
 
