@@ -1,6 +1,6 @@
 # CrashSafe for Android
 
-The Android version of the iOS app in `../CrashSafe`: the same screens, the same crash-detection pipeline, the same Pulse assistant and coaching. It's written in Kotlin with Jetpack Compose. The core logic (crash evidence, impact analysis, transport mode, speed limits, coaching, Pulse's knowledge search and sentence filter) is a line-by-line port, and the iOS test fixtures run against it unchanged.
+CrashSafe supports iOS and Android. This directory contains the native Android app, written in Kotlin with Jetpack Compose; the SwiftUI iOS app lives in `../CrashSafe`. Both implementations provide onboarding, trips, crash check-in, post-crash help, Pulse and driving coaching. The core logic (crash evidence, impact analysis, transport mode, speed limits, coaching, Pulse's knowledge search and sentence filter) is a line-by-line port, and the iOS test fixtures run against it unchanged. See the [main README](../README.md) for the project overview.
 
 ## Run it
 
@@ -20,7 +20,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 Or open this folder in Android Studio and press **Run**. The minimum version is Android 8.0 (API 26), and the target is API 35. Auth is the offline mock (the same as iOS), so create any account or tap **Continue with Google** for a demo user.
 
-**Keys:** the build reads the iOS app's git-ignored `../Config/Pulse.xcconfig.local` (OpenRouter, Cartesia, TomTom, RAG endpoint) into `BuildConfig`. Without that file, Pulse falls back to its offline guide cards, speech falls back to the phone's own voice, and speed limits come from OpenStreetMap.
+**Keys:** the build reads the shared git-ignored `../Config/Pulse.xcconfig.local` (OpenRouter, Cartesia, TomTom, RAG endpoint) into `BuildConfig`. Without that file, Pulse falls back to its offline guide cards, speech falls back to the phone's own voice, and speed limits come from OpenStreetMap.
 
 ## Tests
 

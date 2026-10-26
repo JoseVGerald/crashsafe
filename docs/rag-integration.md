@@ -1,6 +1,6 @@
 # Pulse RAG integration
 
-The assistant now uses source-linked evidence locally and can call the Python RAG API. It preserves the existing AssistantService protocol and the existing Xcode file list.
+The iOS and Android assistants use source-linked evidence locally and can call the shared Python RAG API through their native AssistantService implementations. The iOS implementation preserves the existing Xcode file list; the Android implementation lives in `android/app/src/main/java/org/cac/crashsafe/services/assistant/RAGAssistantService.kt`. See the [Android guide](../android/README.md) for backend key configuration.
 
 ## Data flow
 
@@ -15,9 +15,11 @@ The assistant now uses source-linked evidence locally and can call the Python RA
 
 ## Local and server behavior
 
-LocalEvidenceAssistant includes the 20 current source-linked cards as Swift constants. It filters by scope, incident stage and expiry. It is simple lexical retrieval, not on-device model inference.
+LocalEvidenceAssistant includes the source-linked cards as native Swift and Kotlin constants. It filters by scope, incident stage and expiry. It is simple lexical retrieval, not on-device model inference.
 
-RAGAssistantService checks urgent phrases locally before any request, uses a 1.5 second request timeout and falls back to local cards on network or decoding failure. The emergency keyword rules are a prototype and are not reliable medical triage. Emergency calling remains the user's explicit action.
+RAGAssistantService checks urgent phrases locally before any request and falls back to local cards on network or decoding failure. The iOS assist request uses a 1.5 second timeout; Android uses 2 seconds. The emergency keyword rules are a prototype and are not reliable medical triage. Emergency calling remains the user's explicit action.
+
+### iOS backend configuration
 
 In a Debug iPhone simulator, the default server is http://127.0.0.1:8787 on the Mac running the simulator. Start Python there. A Windows server is not the Mac's loopback server.
 
@@ -25,6 +27,10 @@ Real-device/release builds use local cards unless RAGEndpoint is explicitly conf
 
 Local simulator networking is enabled with NSAllowsLocalNetworking; ATS is not globally disabled. Apple reference:
 https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity/nsallowslocalnetworking
+
+### Android backend configuration
+
+Set `PULSE_RAG_ENDPOINT` in the shared `Config/Pulse.xcconfig.local` or in `android/local.properties`; the Android build exposes it as `BuildConfig.RAG_ENDPOINT`. See the [Android setup guide](../android/README.md#run-it) for configuration and offline fallbacks.
 
 ## ML boundary
 
@@ -40,7 +46,7 @@ Python integration and retrieval tests were run on Windows. Four Swift integrati
 
 The medical/insurance corpus remains an editorial prototype pending professional review. The repository index is a separate developer-only database and cannot be retrieved by the end-user medical endpoint.
 
-Before a release: run the iOS test workflow, review the content, update expired cards, test failures on a device, and document privacy handling for the deployed backend and user-entered question text.
+Before a release: run the iOS test workflow and Android tests, review the content, update expired cards, test failures on devices for both platforms, and document privacy handling for the deployed backend and user-entered question text.
 
 The adapter currently exposes only harsh_brake and harsh_accel. Rotational and speeding labels are suppressed pending physical-axis and actual-speed-limit integration.
 

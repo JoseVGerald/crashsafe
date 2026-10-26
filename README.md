@@ -2,14 +2,18 @@
 
 Congressional App Challenge 2026 project. Other apps detect crashes; this one guides the driver through **what happens next**, even with no signal.
 
-This repo is the iOS app: onboarding, a live Home dashboard, a map trip planner, the crash check-in and post-crash help hub, the Pulse assistant, and a CarPlay driving coach. It now includes shared sensor acquisition and an experimental offline crash-evidence evaluator. AI and family alerts remain behind protocols with mock implementations.
+CrashSafe is a mobile app for **iOS and Android**: onboarding, a live Home dashboard, a map trip planner, the crash check-in and post-crash help hub, the Pulse assistant, and a driving coach with CarPlay and Android Auto integrations. This repo contains native SwiftUI and Kotlin/Jetpack Compose implementations, sensor acquisition, and an experimental offline crash-evidence evaluator. AI and family alerts remain behind protocols with mock implementations.
 
-**Real today:** source-linked offline assistant cards, optional RAG backend integration, location, live weather (Open-Meteo, no key), Apple Maps search/routing, nearby hospitals/police/tow search, offline trip packs, shared timestamped acceleration/rotation/GPS acquisition, experimental crash evidence evaluation during active trips, rules-based coaching with spoken prompts.
+**Platforms:** iOS 17+ and Android 8.0+ (API 26). See the [Android guide](android/README.md) for setup, tests, and platform-specific integrations.
+
+**Real today:** source-linked offline assistant cards, optional RAG backend integration, location, live weather, map search/routing (Apple Maps on iOS; OpenStreetMap-based services on Android), nearby hospitals/police/tow search, offline trip packs, shared timestamped acceleration/rotation/GPS acquisition, experimental crash evidence evaluation during active trips, rules-based coaching with spoken prompts.
 **Mocked today:** voice input, family alert delivery, auth (offline mock unless Firebase is set up). *Test crash* still demonstrates the check-in without a physical impact.
 
 Crash thresholds are experimental and have not been validated against real crashes. Background monitoring and battery use require device testing. See [sensor acquisition and crash evaluation](docs/crash-detection.md) for architecture, defaults, tests, step 4 integration, and remaining work.
 
 ## Run it
+
+### iOS
 
 Requirements: Xcode 26+ (iOS 17+ target), [XcodeGen](https://github.com/yonaskolb/XcodeGen) only if you change `project.yml`. Xcode fetches one Swift package on first build: [ThinkingOrbsKit](https://github.com/Jakubantalik/Libraries.dev) (MIT) for Pulse's animated orb, pinned in `Package.resolved`.
 
@@ -32,20 +36,30 @@ xcodebuild test -project CrashSafe.xcodeproj -scheme CrashSafe -destination 'pla
 xcodegen
 ```
 
+### Android
+
+Requirements: JDK 17 and the Android SDK (platform 35, build-tools 35). Open `android/` in Android Studio and press **Run**, or build from that directory:
+
+```bash
+./gradlew :app:assembleDebug
+```
+
+On Windows, use `gradlew.bat :app:assembleDebug`. Install the resulting `android/app/build/outputs/apk/debug/app-debug.apk` on an Android device or emulator. Auth uses the offline mock; create any account or tap **Continue with Google** for a demo user. See the [Android guide](android/README.md) for installation, tests, keys, and Android Auto setup.
+
 ## Demo script
 
-In the simulator, set a location first: **Features → Location → Custom Location** (e.g. 47.6101, -122.2015 for Bellevue).
+Set a simulator or emulator location first (e.g. 47.6101, -122.2015 for Bellevue). In the iOS Simulator, use **Features → Location → Custom Location**; in the Android Emulator, use **Extended controls → Location**.
 
 1. **Create account** → onboarding: pick a coaching style (Facts or Heart), add one or more vehicles, medical info, insurance, a family contact, allow permissions.
 2. **Home**: hold the Pulse mic to talk (proof of concept), see live weather and how to drive in it, then **Try a demo drive** to see "You vs. conditions".
-3. **Trips**: From uses your current location; for To, search Apple Maps or **Choose on map** to drop a pin. Save — the route and offline trip pack (real hospitals, police, tow along the route) download automatically.
+3. **Trips**: From uses your current location; for To, search for a destination or **Choose on map** to drop a pin. Save — the route and offline trip pack (real hospitals, police, tow along the route) download automatically.
 4. **Home → Test crash**: answer **I need help** or **I'm OK** (or let the 30 s countdown run out) to open the help hub — 911, Pulse, crash location, nearby help with call buttons, share location, responder card, family, scene checklist, insurance.
-5. **Home → CarPlay**: the driving coach. Switch demo scenarios (forest at night, city rush hour, highway in rain) and switch Profile → Facts/Heart to hear the two coaching styles.
+5. **Driving coach**: open **Home → CarPlay** on iOS or **Profile → Testing → Drive mode** on Android. Switch demo scenarios (forest at night, city rush hour, highway in rain) and switch Profile → Facts/Heart to hear the two coaching styles.
 
 ## Project layout
 
 ```
-CrashSafe/
+CrashSafe/          Native iOS app
   App/              CrashSafeApp, AppEnvironment (service container + session + router), RootView, MainTabView
   DesignSystem/     Theme, button styles, cards, banners
   Models/           SwiftData models (Profile, FamilyContact, Trip, CheckInRecord) + AuthUser, ChatMessage
@@ -64,13 +78,19 @@ CrashSafe/
   Support/          PreviewData (mock data for SwiftUI previews)
   Resources/        Assets (placeholder app icon, AccentColor, Danger)
 CrashSafeTests/     Swift Testing unit tests
+android/           Native Android app (Kotlin + Jetpack Compose)
+  app/src/main/    Screens, services, core logic, resources and manifest
+  app/src/test/    Core logic tests, shared fixtures and screenshot tests
+Backend/rag/       Python assistant backend used by both platforms
 ```
 
-Architecture: SwiftUI + MVVM with `@Observable` view models, Swift Concurrency, SwiftData for local storage (profile and trips never leave the phone). Every screen has `#Preview`s with mock data.
+**iOS architecture:** SwiftUI + MVVM with `@Observable` view models, Swift Concurrency, SwiftData for local storage (profile and trips never leave the phone). Every screen has `#Preview`s with mock data.
+
+**Android architecture:** Kotlin + Jetpack Compose, observable services in `AppEnvironment`, and local JSON storage in `AppStore`. Crash evaluation, coaching and Pulse logic are ported to Kotlin with shared test fixtures. See the [platform mapping](android/README.md#what-maps-to-what) for native service differences.
 
 ## Where the stubs live
 
-Every service is swapped in one place: `AppEnvironment.live()` in [`CrashSafe/App/AppEnvironment.swift`](CrashSafe/App/AppEnvironment.swift).
+On iOS, every service is swapped in one place: `AppEnvironment.live()` in [`CrashSafe/App/AppEnvironment.swift`](CrashSafe/App/AppEnvironment.swift). The table below describes the iOS services. Android services are wired in [`android/app/src/main/java/org/cac/crashsafe/app/AppEnvironment.kt`](android/app/src/main/java/org/cac/crashsafe/app/AppEnvironment.kt).
 
 | Team | Protocol | Mock today | What to build |
 |---|---|---|---|
@@ -83,7 +103,7 @@ Every service is swapped in one place: `AppEnvironment.live()` in [`CrashSafe/Ap
 | — | `WeatherService` — `Services/Weather/` | Real (`OpenMeteoWeatherService`) | — |
 | Detection / AI | `DrivingMonitor`, `DrivingAdvice`, `CoachingEngine`, `DriveCoach` — `Services/Driving/` | Real sensors + rules-based coaching; speed limits only in demo scenarios | Speed-limit data source; swap `CoachingEngine.message` for a model (same inputs/outputs). |
 
-## Switching from mock auth to Firebase
+## Switching from mock auth to Firebase on iOS
 
 The `FirebaseAuthService` (email/password + Sign in with Apple) is already written in `Services/Auth/FirebaseAuthService.swift`. It's wrapped in `#if canImport(FirebaseAuth)`, so it compiles only once the SDK is added.
 
@@ -97,7 +117,7 @@ Using Supabase instead? Write a `SupabaseAuthService: AuthService` and return it
 
 ## CarPlay
 
-There are two pieces:
+The iOS integration has two pieces. For the Android car integration, see [Android Auto](android/README.md#android-auto).
 
 - **CarPlay mode (phone)** — `Features/CarPlay/CarPlayModeView.swift`. A full-screen driving dashboard on the phone: speed gauge, limit vs. "safe now" speed, Pulse's advice, g-force, hard brakes, road type. Works anywhere, no approval needed.
 - **Native CarPlay** — `Features/CarPlay/CarPlaySceneDelegate.swift`. A real CarPlay scene using Apple's templates (an information screen + alert pop-ups for warnings), driven by the same `DriveCoach`. CarPlay apps can't draw custom UI, so it's simpler than the phone version.
@@ -107,6 +127,8 @@ There are two pieces:
 Coaching runs whenever a drive is active (not only on the CarPlay screen). With **Profile → Watch every drive** on, Core Motion's automotive activity starts live monitoring automatically, and the `location` + `audio` background modes keep spoken coaching going with the phone locked.
 
 ## Design notes
+
+The details below describe the iOS design system; Android uses Jetpack Compose with the same brand palette and corresponding native components.
 
 - Brand palette: **night blue** (`#2563EB`) with a **signal teal** accent (`#0E7C86`), dark navy canvas with a soft blue/teal glow in dark mode. All defined in `DesignSystem/Brand.swift`.
 - Apple-style layout: pill buttons, 20pt rounded cards, 4/8/16/24/48 spacing, fade-up entrances, spring press feedback, haptics.
@@ -149,6 +171,8 @@ the app's verified evidence cards and the team's sentence filter) and has Cartes
 that to 1,000); past the limit, or with no signal, Pulse answers with the phone's own Apple Intelligence model using
 the team's short prompt (`core_mini`), and without that the on-device guides and an Apple voice answer.
 
+That on-device model fallback is specific to iOS. Android uses local guide cards and the phone's text-to-speech voice when cloud services are unavailable; both platforms can use OpenRouter and Cartesia when configured.
+
 To build with the keys (they stay out of git):
 
 ```
@@ -156,8 +180,9 @@ Tools/Pulse/write_app_keys.sh   # Backend/rag/.env -> Config/Pulse.xcconfig.loca
 xcodegen
 ```
 
-The keys are readable inside builds made this way, so keep those builds on your own phones. For TestFlight or
-the App Store, leave the keys out and deploy `Backend/` (Dockerfile) so the keys stay on a server.
+The Android build reads the same git-ignored `Config/Pulse.xcconfig.local`; see its [key setup](android/README.md#run-it).
+
+The keys are readable inside builds made this way, so keep those builds on your own phones. For public distribution on either platform, leave the keys out and deploy `Backend/` (Dockerfile) so the keys stay on a server.
 
 ## Source-backed assistant integration
 

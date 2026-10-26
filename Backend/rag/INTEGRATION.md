@@ -1,6 +1,6 @@
 # CrashSafe repository integration
 
-The iOS app and backend are maintained together in this repository. See ../../docs/rag-integration.md for the iOS service and privacy boundary.
+The iOS app, Android app and shared backend are maintained together in this repository. See [RAG integration](../../docs/rag-integration.md) for the app services and privacy boundary, and the [Android guide](../../android/README.md) for Android setup.
 
 From Backend/rag, build the medical index with python rag.py ingest. To build an isolated developer index from local clones, run:
 
