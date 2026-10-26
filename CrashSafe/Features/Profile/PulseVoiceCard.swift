@@ -25,7 +25,7 @@ struct PulseVoiceCard: View {
                                tint: voice.isNatural ? Brand.greenInk : Brand.amberInk)
                 }
             }
-            Picker("Voice", selection: Binding(get: { current?.id ?? "" }, set: choose)) {
+            Picker("Voice", selection: Binding(get: { current?.id ?? "" }, set: { choose($0) })) {
                 ForEach(voices) { voice in
                     Text("\(voice.name) · \(voice.qualityLabel) · \(voice.language)").tag(voice.id)
                 }
