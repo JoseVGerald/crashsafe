@@ -155,13 +155,6 @@ The details below describe the iOS design system; Android uses Jetpack Compose w
 - App Store privacy "nutrition label" matching the privacy manifest; a privacy policy URL.
 - Final app icon (current one is a placeholder).
 
-## AI use disclosure
-
-Several CAC districts require disclosing AI use. Keep a running list here. Starting entry: the app shell (project setup, screens, mocks, tests and this README) was generated with Claude Code from the team's build prompt, then reviewed and tested by the team.
-
-Shared sensor acquisition and experimental crash-evidence evaluation, their tests, the macOS/iOS verification workflow, and implementation notes were developed with OpenAI Codex. Automated core and iPhone simulator tests were run through GitHub Actions. Real-device and crash-dataset validation remain to be done by the team.
-
-
 ## Pulse without a server
 
 Pulse needs no Mac and no server: the phone asks OpenRouter (free models, with the team's Pulse core prompt,
